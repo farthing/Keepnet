@@ -3,6 +3,12 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.1.1
+
+- The "Maintain" tick box of 1.1.0 is gone again, and with it buying a flat number at every
+  vendor visit. The number is always what to keep in your bags: a vendor visit buys what is
+  missing, and nothing when you have enough.
+
 ## 1.1.0
 
 - Buying lures reads more plainly on the Gear & food tab. You choose one lure from a list

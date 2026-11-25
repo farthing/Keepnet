@@ -119,16 +119,7 @@ local function Build(frame)
     count:SetMaxLetters(3)
     local countLabel = W.Text(frame, "GameFontHighlightSmall", "in my bags at all times")
     countLabel:SetPoint("LEFT", count, "RIGHT", 8, 0)
-    count.tooltipText = "Maintain ticked: with fewer than this in your bags, a vendor visit buys what is missing. "
-        .. "Maintain unticked: this many are bought at every vendor visit, whatever you have."
-    -- Maintain (keep the bags at the number) or, unticked, a flat number every visit
-    local maintain = W.Check(frame, "Maintain", function(checked)
-        settings.buyLureFlat = not checked
-        Changed()
-        UI.Refresh()
-    end)
-    maintain:SetPoint("TOPLEFT", left + 280, y - 73)
-    frame.buyLureMaintain, frame.buyLureCountLabel = maintain, countLabel
+    count.tooltipText = "With fewer than this in your bags, a vendor visit buys what is missing. With this many or more, nothing is bought."
     -- Gold that is never spent on lures: with this much or less nothing is bought, and with
     -- more, buying stops before the money would go under it
     local floorLabel = W.Text(frame, "GameFontHighlightSmall", "Never spend my last")
@@ -261,11 +252,6 @@ local function Build(frame)
         if not (floor.HasFocus and floor:HasFocus()) then
             floor:SetText(tostring(Vendor.Floor()))
         end
-        local flat = settings.buyLureFlat and true or false
-        maintain:SetChecked(not flat)
-        maintain:SetAlpha(buying and 1 or 0.45)
-        countBefore:SetText(flat and "Buy" or "Keep")
-        countLabel:SetText(flat and "at every vendor visit" or "in my bags at all times")
         local chosen = Vendor.Chosen()
         -- (the item's name in the game's own language, once the game has told it)
         lure:Set(chosen and chosen.id or false, chosen and (Util.ItemInfo(chosen.id) or chosen.name) or NO_LURE)

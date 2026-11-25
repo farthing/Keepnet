@@ -322,34 +322,6 @@ function T.run(ns)
     tab.buyLureFloor:SetText("250")
     tab.buyLureFloor:GetScript("OnTextChanged")(tab.buyLureFloor)
     eq(settings.buyLureFloor, 250, "gold typed in is the limit")
-    -- Maintain, or a flat number every visit
-    eq(tab.buyLureMaintain:GetChecked(), true, "Maintain is ticked to begin with")
-    eq(tab.buyLureCountLabel:GetText(), "in my bags at all times", "and the number is what to keep")
-    tab.buyLureMaintain:SetChecked(false)
-    tab.buyLureMaintain:GetScript("OnClick")(tab.buyLureMaintain)
-    eq(settings.buyLureFlat, true, "unticked: a flat number")
-    eq(tab.buyLureCountLabel:GetText(), "at every vendor visit", "and the number says so")
-    settings.buyLureCount, settings.buyLureFloor, settings.buyAttractors = 5, 0, false
-    Vendor.Choose(BRIGHT)
-    Stub.purchases = {}
-    Stub.bags = { [BRIGHT] = 50 }
-    Stub.money = 100000
-    Stub.advance(11)
-    Stub.openMerchant(Supplier())
-    eq(Bought(BRIGHT), 5, "flat: that many are bought whatever is in the bags")
-    Stub.openMerchant(Supplier())
-    eq(Bought(BRIGHT), 10, "and again at the next visit")
-    Stub.slowDelivery = true
-    Stub.openMerchant(Supplier())
-    Stub.fire("MERCHANT_SHOW")
-    eq(Bought(BRIGHT), 15, "but the window sent twice in a row is one visit")
-    Stub.deliver()
-    Stub.slowDelivery = nil
-    tab.buyLureMaintain:SetChecked(true)
-    tab.buyLureMaintain:GetScript("OnClick")(tab.buyLureMaintain)
-    eq(settings.buyLureFlat, false, "ticked again: maintain")
-    Stub.openMerchant(Supplier())
-    eq(Bought(BRIGHT), 15, "with more than the number in the bags, maintain buys nothing")
     -- Ticking the Attractor's box
     tab.buyAttractors:SetChecked(true)
     tab.buyAttractors:GetScript("OnClick")(tab.buyAttractors)

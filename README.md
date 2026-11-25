@@ -12,9 +12,8 @@ the net an angler keeps the catch in.
   - *What:* choose one of the five basic lures from a list (Shiny Bauble, Nightcrawlers,
     Aquadynamic Fish Lens, Bright Baubles, Flesh Eating Worm). A tick box of its own also
     buys every Aquadynamic Fish Attractor a vendor has, since vendors only ever have a few.
-  - *How many:* with "Maintain" ticked, enough to keep the number you set in your bags (20
-    unless you change it): have fewer, and a vendor visit buys what is missing. Unticked,
-    that many are bought at every visit.
+  - *How many:* enough to keep the number you set in your bags (20 unless you change it):
+    have fewer, and a vendor visit buys what is missing.
   - *The gold you keep:* set an amount and buying lures never takes you under it. With that
     much gold or less, nothing is bought at all.
   Chat says what was bought and what it cost. Off until you turn it on.

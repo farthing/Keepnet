@@ -4,6 +4,13 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.1.1 (2026-11-25, evening): the Maintain box and the flat number are out again.** The
+owner: "so the everytime i open a vendor in flat mode, can end up being multiple purchases.
+i think we need to reduce this logic. so let's remove the maintain tickbox. let's assume,
+that is the default. so whenever I visit a vendor that sells whatever lure i have selected.
+i buy enough to make the number selected". `buyLureFlat` is no longer read. One lure, one
+number to keep, the kept gold, the Attractor's switch. Not seen in the game.
+
 **1.1.0 (2026-11-25, evening): the lure buying's tab section reworded. Passes its offline
 tests, committed and tagged; not on CurseForge.** The owner, before trying the buying: "the
 text is a bit ambigious, i also thought about it differently now. replace tick boxes with a

@@ -12,8 +12,6 @@
 --                               could once be ticked, and still can be here
 --   ns.settings.buyLureCount    how many to keep in the bags: with fewer, a vendor visit
 --                               buys what is missing (20 unless changed)
---   ns.settings.buyLureFlat     false (the default): maintain, as above. true: that many
---                               are bought at every vendor visit, whatever is in the bags
 --   ns.settings.buyAttractors   every Aquadynamic Fish Attractor a vendor has
 --   ns.settings.buyLureFloor    gold that is never spent (0 unless changed): with this much
 --                               or less nothing at all is bought, and with more, buying
@@ -160,16 +158,8 @@ local function Wanted(item, settings)
     if not settings.buyLures or not (settings.buyLureItems and settings.buyLureItems[item.id]) then return 0 end
     for _, lure in ipairs(Vendor.LURES) do
         if lure.id == item.id then
-            local want
-            if settings.buyLureFlat then
-                -- That many every visit, whatever is in the bags; but not again while the
-                -- last lot is still on its way (the vendor's window sent twice)
-                Have(item.id)
-                want = arriving[item.id] and 0 or Vendor.Count()
-            else
-                -- Maintain: what is missing from that many in the bags
-                want = math.max(0, Vendor.Count() - Have(item.id))
-            end
+            -- What is missing from that many in the bags
+            local want = math.max(0, Vendor.Count() - Have(item.id))
             if item.available then want = math.min(want, item.available) end
             return want
         end
