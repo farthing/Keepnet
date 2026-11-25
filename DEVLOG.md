@@ -46,6 +46,17 @@ that run: whether the channel was joined and stayed out of chat (ask, or read
 yet). The capture of Settings carries the development-copy sentence, which no player's copy
 shows, so it is not a picture for the gallery as it is.
 
+**The update notice on the released copy, the owner's report (2026-11-25, on 1.0.0 from the
+CurseForge app):** "i saw no joined channel message, nor did I see a chat tab". So the
+channel prints nothing and sits on no chat window, on a copy that announces. Read after
+the owner quit the game: `!BugGrabber.lua` holds no error that names Keepnet (its newest
+error of any addon is six game sessions old), and `KeepnetDB.updates.heard` is empty, as it
+must be while no version newer than 1.0.0 exists. **Still not known: that the channel is
+really joined.** Nothing on screen tells a hidden channel from one never joined. The check
+is one line typed in the game a minute after login: `/dump GetChannelName("KeepersNet")`
+prints a number above 0 when it is joined. Announcing and being told can only be seen once
+a version after 1.0.0 is out and two players run it.
+
 **1.0.0, the update notice (2026-11-25): Keepnet tells the player that a newer version is
 out. It passes its offline tests and is in the repo. It is NOT yet in the owner's game: the
 game holds the 1.0.0 development copy without the notice until `tools\install.ps1` is run
