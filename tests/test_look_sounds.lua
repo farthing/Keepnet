@@ -116,6 +116,38 @@ function T.run(ns)
     check(tostring(small.__font[1]):find("Overpass", 1, true), "an unknown font is the default")
     settings.font = "overpass"
 
+    -- Fonts other addons on this computer share are offered too
+    eq(#W.FontChoices(), 2, "with nobody sharing fonts: Keepnet's two")
+    Stub.sharedFonts = { ["Zebra Sans"] = "Interface\\AddOns\\Pack\\zebra.ttf", ["apple Serif"] = "Interface\\AddOns\\Pack\\apple.ttf" }
+    local choices = W.FontChoices()
+    eq(#choices, 4, "two shared fonts are added")
+    eq(choices[1].name, "Overpass", "Keepnet's own first")
+    eq(choices[2].name, "The game's own", "then the game's")
+    eq(choices[3].name, "apple Serif", "then the shared ones, A to Z whatever their capitals")
+    eq(choices[4].key, "shared:Zebra Sans", "each saved under the name it is shared by")
+    settings.font = "shared:Zebra Sans"
+    W.ApplyTheme()
+    eq(small.__font[1], "Interface\\AddOns\\Pack\\zebra.ttf", "a shared font chosen: drawn from that addon's file")
+    eq(heading.__font[1], "Interface\\AddOns\\Pack\\zebra.ttf", "headings from the same file")
+    eq(small.__font[2], 10, "at the game font's size")
+    eq(W.FontChoice(settings.font).name, "Zebra Sans", "and shown under its name")
+    -- The addon that shared it is removed: the default takes its place, the choice is kept
+    Stub.sharedFonts = { ["apple Serif"] = "Interface\\AddOns\\Pack\\apple.ttf" }
+    W.ApplyTheme()
+    check(tostring(small.__font[1]):find("Overpass", 1, true), "a shared font that is gone: the default")
+    eq(W.FontChoice(settings.font).name, "Overpass", "which is what the list shows")
+    eq(settings.font, "shared:Zebra Sans", "the choice itself is kept, for when it is back")
+    -- An addon that loads after Keepnet shares it: taken up at once
+    check(Stub.mediaCallback ~= nil, "Keepnet asks to hear of newly shared media")
+    Stub.sharedFonts["Zebra Sans"] = "Interface\\AddOns\\Pack\\zebra.ttf"
+    Stub.mediaCallback("LibSharedMedia_Registered", "font", "Some Other")
+    check(tostring(small.__font[1]):find("Overpass", 1, true), "another font being shared changes nothing")
+    Stub.mediaCallback("LibSharedMedia_Registered", "font", "Zebra Sans")
+    eq(small.__font[1], "Interface\\AddOns\\Pack\\zebra.ttf", "the chosen one being shared is taken up")
+    Stub.sharedFonts, Stub.mediaCallback = nil, nil
+    settings.font = "overpass"
+    W.ApplyTheme()
+
     -- The colour picker: dragging applies, Cancel puts the old colour back
     local seen
     W.PickColor(0.2, 0.4, 0.6, function(r, g, b) seen = { r, g, b } end)

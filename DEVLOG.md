@@ -82,7 +82,18 @@ needs the owner's word (`tools\install.ps1`), and a full restart, because files 
   game's own; `settings.font`, changes at once). How: `W.FontObject` keeps a copy of each
   game font the texts are made in and draws the copy from the chosen file, so sizes and
   colours stay the game's. Used for the western languages and Russian; the others keep the
-  game's font, and so do the small numbers on item pictures. **Not seen in the game:**
+  game's font, and so do the small numbers on item pictures. **The list also offers every
+  font another addon on the computer shares through LibSharedMedia** (the owner: "i think
+  we should a few more, but i am not sure what options to include, unless we target what
+  are installed on a machine, if that is safe and doable?"). An addon cannot see the
+  computer's own fonts, only files inside the game's folders; what other addons share is
+  the nearest thing, and it costs Keepnet nothing to ship and nothing to license: the file
+  stays in the addon that brought it. Saved as `shared:` and the name; when that addon is
+  gone the default shows in its place (the choice is kept), and one that loads after
+  Keepnet is taken up when it shares its fonts (the library's "registered" callback). On
+  the owner's computer the library is there (EllesmereUI, Questie, RareScanner and BugSack
+  bring it) and EllesmereUI shares its fonts through it, so the list should hold those and
+  the game's own four. **Not seen in the game:**
   whether the text sits in the middle of buttons and rows (this font is known for sitting a
   little high or low), how its size compares, and that its digits are not all one width,
   so changing numbers may shift a little. What the research said, for the record: no free

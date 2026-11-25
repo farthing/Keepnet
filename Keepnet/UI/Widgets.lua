@@ -231,6 +231,13 @@ end
 -- copy; changing the font is changing the file the copies are drawn from, so every text
 -- follows at once. A file is only used for the languages it has letters for, and a file that
 -- isn't there leaves the game's font in place.
+--
+-- Besides its own, Keepnet offers every font another addon on this computer shares through
+-- LibSharedMedia (interface suites and font packs do): W.FontChoices. Such a font stays in
+-- the addon that brought it; Keepnet only asks the library where the file is. Its choice is
+-- saved as "shared:" and the name it is shared under. When that addon is gone the default
+-- takes its place, and when it loads after Keepnet the font is taken up as soon as it is
+-- shared.
 -- ---------------------------------------------------------------------------------------------
 local WESTERN = {
     enUS = true, enGB = true, deDE = true, frFR = true, esES = true, esMX = true, itIT = true,
@@ -254,19 +261,105 @@ function W.Font(key)
     return W.FONTS[1]
 end
 
+local SHARED = "shared:"
+
+local function SharedMedia()
+    return LibStub and LibStub("LibSharedMedia-3.0", true) or nil
+end
+
+-- The file of a font another addon shares, by the name it is shared under; nil when nobody
+-- shares it (now)
+local function SharedFont(name)
+    local media = SharedMedia()
+    if not media then return nil end
+    local ok, file = pcall(media.Fetch, media, "font", name, true)
+    if ok and type(file) == "string" and file ~= "" then return file end
+end
+
+-- The name a saved choice was shared under, or nil for one of Keepnet's own
+local function SharedName(key)
+    if type(key) == "string" and key:sub(1, #SHARED) == SHARED then return key:sub(#SHARED + 1) end
+end
+
+-- Everything there is to choose from: Keepnet's own, then what other addons share, A to Z:
+-- { { key, name } }
+function W.FontChoices()
+    local list = {}
+    for _, font in ipairs(W.FONTS) do
+        list[#list + 1] = { key = font.key, name = font.name }
+    end
+    local media = SharedMedia()
+    if media then
+        -- (the library lists only the fonts that have this language's letters)
+        local ok, names = pcall(media.List, media, "font")
+        if ok and type(names) == "table" then
+            local shared = {}
+            for _, name in ipairs(names) do
+                if type(name) == "string" and SharedFont(name) then shared[#shared + 1] = name end
+            end
+            table.sort(shared, function(a, b) return a:lower() < b:lower() end)
+            for _, name in ipairs(shared) do
+                list[#list + 1] = { key = SHARED .. name, name = name }
+            end
+        end
+    end
+    return list
+end
+
+-- The choice in use, as the list shows it: { key, name }. A shared font that is gone is the
+-- default.
+function W.FontChoice(key)
+    local name = SharedName(key)
+    if name and SharedFont(name) then return { key = key, name = name } end
+    local font = W.Font(key)
+    return { key = font.key, name = font.name }
+end
+
+-- The files a choice is drawn from, for ordinary text and for headings; nothing for the
+-- game's own
+local function FontFiles(key)
+    local name = SharedName(key)
+    if name then
+        local file = SharedFont(name)
+        if file then return file, file end
+        key = nil
+    end
+    local font = W.Font(key)
+    if font.regular and font.locales[GetLocale and GetLocale() or "enUS"] then
+        return font.regular, font.bold
+    end
+end
+
 -- The game's fonts that stand for a heading: these get the heavier file
 local HEADING_FONTS = { GameFontNormal = true, GameFontNormalLarge = true }
 
 local fonts = {} -- by the game font's name: { object, file, size, flags, heading }, or false
 
 local function SetFontFile(entry)
-    local choice = W.Font(ns.settings and ns.settings.font)
+    local regular, heading = FontFiles(ns.settings and ns.settings.font)
     -- The game's own first: it stays when the file asked for next isn't there
     entry.object:SetFont(entry.file, entry.size, entry.flags)
-    if choice.regular and choice.locales[GetLocale and GetLocale() or "enUS"] then
-        pcall(entry.object.SetFont, entry.object, entry.heading and choice.bold or choice.regular,
-            entry.size, entry.flags)
+    if regular then
+        pcall(entry.object.SetFont, entry.object, entry.heading and heading or regular, entry.size, entry.flags)
     end
+end
+
+local function RefreshFonts()
+    for _, entry in pairs(fonts) do
+        if entry then SetFontFile(entry) end
+    end
+end
+
+-- A font shared by an addon that loads after Keepnet: taken up when it is shared
+local watching = false
+local function WatchSharedFonts()
+    if watching then return end
+    local media = SharedMedia()
+    if not media or type(media.RegisterCallback) ~= "function" then return end
+    watching = true
+    pcall(media.RegisterCallback, W, "LibSharedMedia_Registered", function(_, kind, name)
+        if kind == "font" and SharedName(ns.settings and ns.settings.font) == name then RefreshFonts() end
+    end)
 end
 
 -- Keepnet's copy of one of the game's fonts, or nil where the game's own is to be used as it
@@ -414,9 +507,8 @@ function W.ApplyTheme()
     end
     accent = own or accent
     if W.retro and ns.Retro then ns.Retro.Apply(scheme, own) end
-    for _, entry in pairs(fonts) do
-        if entry then SetFontFile(entry) end
-    end
+    RefreshFonts()
+    WatchSharedFonts()
     W.COLORS.accent[1], W.COLORS.accent[2], W.COLORS.accent[3] = accent[1], accent[2], accent[3]
     W.COLORS.border[4] = (settings.borders == false) and 0 or 1
     W.opacity.window = settings.windowOpacity or 0.94

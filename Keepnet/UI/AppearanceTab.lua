@@ -164,9 +164,10 @@ local function Build(frame)
     -- The font of Keepnet's own looks
     local fontLabel = W.Text(frame, "GameFontHighlightSmall", "Font")
     fontLabel:SetPoint("TOPLEFT", right, ry - 84)
+    -- (Keepnet's own, and every font another addon here shares)
     local font = W.Dropdown(frame, 170, function()
         local options = {}
-        for _, entry in ipairs(W.FONTS) do
+        for _, entry in ipairs(W.FontChoices()) do
             options[#options + 1] = { value = entry.key, text = entry.name }
         end
         return options
@@ -267,7 +268,7 @@ local function Build(frame)
         end
         scheme:SetAlpha(current.schemes and 1 or 0.45)
         -- The font is a matter of Keepnet's own looks: the others bring theirs
-        local chosenFont = W.Font(settings.font)
+        local chosenFont = W.FontChoice(settings.font)
         font:Set(chosenFont.key, chosenFont.name)
         font:SetAlpha((W.native or W.retro) and 0.45 or 1)
         for _, option in ipairs(ACCENT_MODES) do

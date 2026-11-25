@@ -496,17 +496,25 @@ function PlaySoundFile(path, channel)
 end
 function UnitClass() return "Mage", Stub.class end
 RAID_CLASS_COLORS = { MAGE = { r = 0.25, g = 0.78, b = 0.92 } }
--- Another addon's LibSharedMedia, when Stub.sharedMedia is set
+-- Another addon's LibSharedMedia, when Stub.sharedMedia (sounds: name -> path) or
+-- Stub.sharedFonts (fonts: name -> path) is set. What asks to hear of newly shared media is
+-- kept in Stub.mediaCallback.
 function LibStub(name)
-    if name ~= "LibSharedMedia-3.0" or not Stub.sharedMedia then return nil end
+    if name ~= "LibSharedMedia-3.0" or not (Stub.sharedMedia or Stub.sharedFonts) then return nil end
+    local function Of(kind)
+        return (kind == "font" and Stub.sharedFonts or kind ~= "font" and Stub.sharedMedia) or {}
+    end
     local media = {}
-    function media:List()
+    function media:List(kind)
         local names = {}
-        for key in pairs(Stub.sharedMedia) do names[#names + 1] = key end
+        for key in pairs(Of(kind)) do names[#names + 1] = key end
         table.sort(names)
         return names
     end
-    function media:Fetch(_, key) return Stub.sharedMedia[key] end
+    function media:Fetch(kind, key) return Of(kind)[key] end
+    function media.RegisterCallback(_, event, fn)
+        if event == "LibSharedMedia_Registered" then Stub.mediaCallback = fn end
+    end
     return media
 end
 -- The colour picker: remembers what it was asked, so a test can pick or cancel
