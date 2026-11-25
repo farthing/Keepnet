@@ -312,6 +312,35 @@ understand versions of three parts.
   95, Keepnet rounded, the other colours and the Font list with shared fonts were only
   tested offline. Watch the comments and the error reports.
 - The source on GitHub is at the same commit, tagged `v1.0.1`.
+- **"Approved"** within about twenty minutes (seen on the Media tab's file list).
+
+### Four pictures for the looks (the same evening)
+
+The owner set each screen up and said when it showed ("i think we only need a single image
+for each, live tracking and main window together for each. don't need sub tabs"). Each is
+the window and the live panel together, taken with `tools\capture.ps1`; all say v1.0.1 (the
+development copy in the game had to be made again first: it still said 1.0.0).
+
+- `07-appearance.png`, "Appearance: looks, colours and font" (`2272/275`, not featured): the
+  Keepnet look, Overpass, the Appearance tab with its three lists and the Font list. The
+  gallery never had a picture of this tab before.
+- `13-look-win95.png`, "The Windows 95 look" (`2272/276`, featured): the Session tab with
+  the sample character. **A name stood in the world just above the window's corner: it was
+  smudged** (`tools\smudge.ps1`) and the place looked at up close before the cut.
+- `14-look-glass.png`, "The Glass look" (`2272/277`, featured): Amber, the Session tab with
+  the sample character.
+- `15-look-rounded.png`, "The Keepnet rounded look" (`2272/278`, not featured): Dusk, the
+  Appearance tab.
+
+Which two are featured was my choice. They stand last in the gallery's order, sixteen
+pictures now, nine featured. The description does not show them.
+
+What this taught: `cut.ps1 -Frame both` does not find the Windows 95 or the Glass window (it
+looks for the dark flat frames): cut those with `-Box left,top,width,height` read off the
+capture. And **the gallery's edit form stays open after "Apply"**: a second edit sent
+straight after goes to the same picture (two titles landed on the wrong one and were put
+right). Press Cancel, or check that the form's title is the picture's own, before every
+edit; read all titles back after a reload.
 
 ## Four pictures redone for 1.0.0 (2026-11-25, evening)
 

@@ -22,8 +22,19 @@ about the looks. What went up and how is in `PUBLISHING.md`, "1.0.1". The owner'
 holds the development copy made from the same files a few minutes before the version number
 changed (it says 1.0.0 and is marked as a development build); the CurseForge app will offer
 1.0.1 once it is approved, and `tools/install.ps1 -Remove` takes the development copy out
-first. Open: pictures of the new looks for the gallery; the owner also asked where else the
-addon could be published (Wago Addons: see `PUBLISHING.md`, "Other sites").
+first. The owner also asked where else the addon could be published (Wago Addons: see
+`PUBLISHING.md`, "Other sites").
+
+**Seen in the game that evening, in captures for the gallery (the development copy, made
+again as 1.0.1):** all four of Keepnet's own looks run. Keepnet with Overpass: text sits in
+the middle of buttons and rows, the Appearance tab's new rows fit. Windows 95: the title
+bars, the tabs on their page, the white list with its headings, the progress bar and the
+dots button are as meant; the greys inside texts (percentages, "next press", "off") are
+faint on the grey face, and the font is the game's Arial Narrow. Glass in Amber: the scene
+shows through, rim, wash and shadow are there, text reads at 65 % over dark water (a
+bright scene is still untried). Keepnet rounded in Dusk: round corners everywhere. The
+error log held nothing from Keepnet. Four pictures of these are in the gallery
+(`PUBLISHING.md`, "1.0.1"). **1.0.1 is "Approved".**
 
 **What the looks are (written while they were an experiment on the branch `looks`, before
 the release above):** The owner: "for now,
