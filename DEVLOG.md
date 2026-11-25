@@ -24,6 +24,20 @@ things to look at there are in the notice's own entry below ("Not seen in the ga
 listing's description says what the notice does and how to turn it off since a few minutes
 after the upload (the owner: "add those details in there").
 
+**Seen in the game later on 2026-11-25, in captures taken for new pictures** (the owner set
+the screens up, sample sessions on): the History tab's top row (list of characters, zone
+list, "Today's prices", totals) and the Zones tab's (hint, heading, list of characters) fit
+without touching; the history search works on the list of characters' choice; and, after
+the owner installed the build with the notice and restarted the game, the "New versions"
+block sits at the bottom of the right column of Settings with room to spare, the module
+loads, and its note ends "This is a development copy: it listens and never announces": so
+`C_AddOns.GetAddOnMetadata` does read the custom TOC line on this client. Not yet known from
+that run: whether the channel was joined and stayed out of chat (ask, or read
+`!BugGrabber.lua` and the saved data after the owner's next logout). New pictures in
+`media\screens`: `03-history.png`, `04-zones.png`, `09-find-a-fish.png` (not in the gallery
+yet). The capture of Settings carries the development-copy sentence, which no player's copy
+shows, so it is not a picture for the gallery as it is.
+
 **1.0.0, the update notice (2026-11-25): Keepnet tells the player that a newer version is
 out. It passes its offline tests and is in the repo. It is NOT yet in the owner's game: the
 game holds the 1.0.0 development copy without the notice until `tools\install.ps1` is run
