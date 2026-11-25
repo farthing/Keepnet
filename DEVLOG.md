@@ -4,6 +4,35 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.0.3 (2026-11-25, night): the line's strip. Passes its offline tests, committed and
+tagged; NOT in the owner's game and NOT on CurseForge (the changelog for the next upload
+starts after 1.0.1).** The owner: "i know the ui is hidden. but we need some sort of either
+a counter on screen, or a progress bar counting backwards, showing the length of time the
+line is out and when it expires. secondary to that i want either the loot window to show up
+or, a text list to appear showing what was fished up".
+
+- A small pane hangs under the live panel (`panel.strip`, `CreateStrip` in
+  `UI\LivePanel.lua`; it is the panel's child, so it goes where the panel goes, also out of
+  the hidden interface). A bar runs down from full to empty and says "Line out: 14 s"; under
+  it, for 8 seconds, what the last cast brought up, a line a kind (icon, name, "x2"; four
+  lines, the fourth "and N more"), or for 3 seconds "Nothing on the line". Between casts it
+  says "Line in" for as long as there is something to list, then goes.
+- When the line ends is the Fishing channel's own end (`UnitChannelInfo`, read when the
+  line goes out: `Fishing.Line()`). When the game won't say, the strip counts up instead
+  ("Line out for 6 s"). **Not seen in the game: what `UnitChannelInfo` answers here**, so
+  which of the two the owner will see.
+- `settings.lineStrip`: `hidden` (the default: only while Keepnet has the interface hidden,
+  in either hiding mode), `always`, `off`. Settings tab, "Live panel", a list "Line timer
+  and catch"; the "New versions" block moved down for it.
+- The list was chosen over the loot window: the game's loot window is part of the hidden
+  interface and taken out of it only with trouble, and Keepnet already takes the loot
+  itself while everything is hidden. My choice of the two the owner offered.
+- `Fishing.lua`: "LINE" false is now sent after the cast is marked as stopped.
+- Tests: `tests\test_line_strip.lua`. The stand-in game's Fishing channel has a start and
+  an end.
+- **Not seen in the game:** all of it. The strip's place under the panel when the panel
+  sits low on the screen, how it looks in each look, the new row on the Settings tab.
+
 **1.0.2 (2026-11-25, late evening): a colour set called Matrix. Passes its offline tests,
 committed and tagged; NOT in the owner's game (the development copy there is 1.0.1:
 `tools/install.ps1`, which is usually blocked for me, then `/reload`, no file was added) and

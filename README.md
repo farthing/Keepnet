@@ -296,6 +296,8 @@ and runs:
   interface.
 - `test_looks.lua`: the looks Keepnet draws itself besides its flat one: Windows 95, Keepnet
   rounded and Glass.
+- `test_line_strip.lua`: the strip under the live panel: the line's time running down, what
+  each cast brought up, and when it shows.
 - `test_look_sounds.lua`: looks, colours, font, accent, opacity and size; a sound per kind of rare catch;
   your own files (and names that try to leave the sounds folder); shared sounds.
 - `test_gear_food.lua`: gear on and off with the pole (also through a reload and combat), eating

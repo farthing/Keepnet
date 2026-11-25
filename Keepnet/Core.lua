@@ -30,6 +30,8 @@ local DEFAULTS = {
     panelLocked = false,  -- the live panel can't be dragged or sized
     panelCatches = true,  -- the live panel lists what was caught this session
     panelKit = true,      -- the live panel shows the lure, food and fishing gear in use
+    lineStrip = "hidden", -- the strip under the panel with the line's time and what came up:
+                          -- "hidden" (while Keepnet has the interface hidden), "always" or "off"
     todayPrices = false,  -- History shows finished sessions at today's prices
     gear = true,          -- wear fishing gear from the bags while the pole is on
     foodMode = "off",     -- fishing food: "off", "auto" (best in the bags) or "specific"

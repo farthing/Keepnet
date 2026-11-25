@@ -42,8 +42,28 @@ function Fishing.LineOut()
     return name == Fishing.Name()
 end
 
--- The cast in the water: { started, stopped }
+-- The cast in the water: { started, stopped, from, ends }
 local cast
+
+-- When the line in the water went out and when it comes in by itself, as the game counts
+-- time (GetTime): the Fishing channel's own start and end. Nothing when the game won't say.
+local function ChannelTimes()
+    if not UnitChannelInfo then return nil end
+    local ok, name, _, _, startMs, endMs = pcall(UnitChannelInfo, "player")
+    if not ok or not name then return nil end
+    if Util.Hidden(startMs) or Util.Hidden(endMs) or type(startMs) ~= "number" or type(endMs) ~= "number" then
+        return nil
+    end
+    if endMs <= startMs then return nil end
+    return startMs / 1000, endMs / 1000
+end
+
+-- The line that is out now: when it went out, and when it comes in by itself (nil when the
+-- game won't say). Nothing when no line is out.
+function Fishing.Line()
+    if not cast or cast.stopped then return nil end
+    return cast.from or cast.started, cast.ends
+end
 
 local function Finish(result, loot)
     cast = nil
@@ -60,15 +80,16 @@ local function OnChannelStart()
         end
     end
     cast = { started = GetTime() }
+    cast.from, cast.ends = ChannelTimes()
     ns.Fire("CAST_START")
     ns.Fire("LINE", true)
 end
 
 local function OnChannelStop()
-    ns.Fire("LINE", false)
     local this = cast
+    if this then this.stopped = GetTime() end
+    ns.Fire("LINE", false)
     if not this then return end
-    this.stopped = GetTime()
     C_Timer.After(LOOT_GRACE, function()
         if cast == this then Finish("miss") end
     end)
@@ -429,7 +450,10 @@ end)
 -- After a /reload with the line out: the cast was already counted before the reload
 ns.On("WORLD", function()
     if Fishing.LineOut() then
-        if not cast then cast = { started = GetTime() } end
+        if not cast then
+            cast = { started = GetTime() }
+            cast.from, cast.ends = ChannelTimes()
+        end
         ns.Fire("LINE", true)
     else
         cast = nil

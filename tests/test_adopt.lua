@@ -46,7 +46,7 @@ function T.run(ns)
     Stub.equip(Stub.POLE)
     eq(handed.Panel, nil, "nothing is handed over before the suite is ready")
     Stub.suiteSkin.callback(S)
-    eq(handed.Panel, 1, "once it is, the waiting live panel is handed over")
+    eq(handed.Panel, 2, "once it is, the waiting live panel is handed over, and the strip under it")
     check((handed.Button or 0) >= 2, "with its buttons")
     eq(KeepnetPanel.__backdrop[4], 0, "Keepnet's own background on it steps aside")
 

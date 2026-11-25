@@ -7,6 +7,10 @@
 -- its room, and the panel's bottom right corner can be dragged: sideways for the panel's width,
 -- up and down for how many catches show before the list scrolls. Keepnet's version is in small
 -- print beside the value.
+-- Under the panel hangs a small strip while a line is out (by default only while Keepnet has
+-- the game's interface hidden, when the game's own cast bar and loot window can't be seen): a
+-- bar that runs down with the seconds the line has left, and under it, for a few seconds,
+-- what the cast brought up.
 -- A cog in the corner opens the settings. Each line of the section for what is in use is a
 -- button too: it opens a list of what could be used instead, so the lure, the food and the
 -- fishing gear can be changed without opening the window.
@@ -394,6 +398,164 @@ local function RefreshList(session)
         + (room > 0 and (room * LIST_ROW + 8) or 0))
 end
 
+-- ---------------------------------------------------------------------------------------------
+-- The line's strip: a small pane hanging under the panel, with a bar that runs down while
+-- the line is out and the seconds it has left ("Line out: 14 s"), and under the bar what the
+-- last cast brought up, for a few seconds. It is for when the game's own cast bar and loot
+-- window can't be seen: ns.settings.lineStrip is "hidden" (only while Keepnet has the
+-- interface hidden; the default), "always" or "off".
+-- ---------------------------------------------------------------------------------------------
+local STRIP_ROW, STRIP_ROWS = 15, 4
+local STRIP_BAR = 13
+local CAME_SECONDS, EMPTY_SECONDS = 8, 3
+-- What the last cast brought up, as lines to show ({ icon, text }), and until when
+local came = { rows = nil, expires = 0 }
+
+local function StripWanted()
+    local mode = ns.settings.lineStrip
+    if mode == "off" then return false end
+    return mode == "always" or ns.HideUI.IsActive()
+end
+
+-- The bar and its seconds: as often as the screen is drawn while the strip shows
+local function StripTick()
+    local strip = panel.strip
+    local now = GetTime()
+    local from, ends = strip.lineFrom, strip.lineEnds
+    local label
+    if not from then
+        strip.fill:Hide()
+        label = "|cff9d9d9dLine in|r"
+    elseif ends and ends > from then
+        -- Runs down: full when the line goes out, empty when it comes in by itself
+        local left = math.max(0, ends - now)
+        local room = Width() - 18
+        local width = room * math.min(1, left / (ends - from))
+        if width >= 1 then
+            strip.fill:SetWidth(width)
+            strip.fill:Show()
+        else
+            strip.fill:Hide()
+        end
+        label = ("Line out: %d s"):format(math.ceil(left))
+    else
+        -- The game didn't say when it ends: count up
+        strip.fill:SetWidth(Width() - 18)
+        strip.fill:Show()
+        label = ("Line out for %d s"):format(math.floor(now - from))
+    end
+    if label ~= strip.label then
+        strip.label = label
+        strip.text:SetText(label)
+    end
+end
+
+local function StripRefresh()
+    local strip = panel and panel.strip
+    if not strip then return end
+    if came.rows and GetTime() >= came.expires then came.rows = nil end
+    local from, ends = ns.Fishing.Line()
+    local rows = came.rows
+    if not StripWanted() or not (from or rows) then
+        strip:Hide()
+        return
+    end
+    local shown = 0
+    for index, row in ipairs(strip.rows) do
+        local entry = rows and rows[index]
+        if entry then
+            row.icon:SetTexture(entry.icon)
+            row.name:SetText(entry.text)
+            shown = index
+        end
+        row.icon:SetShown(entry ~= nil)
+        row.name:SetShown(entry ~= nil)
+    end
+    strip:SetHeight(7 + STRIP_BAR + 7 + (shown > 0 and shown * STRIP_ROW or 0))
+    strip.lineFrom, strip.lineEnds = from, ends
+    strip:Show()
+    StripTick()
+end
+
+-- What a cast brought up, as the strip's lines
+local function CameUp(loot)
+    local rows = {}
+    for index, drop in ipairs(loot) do
+        if index == STRIP_ROWS and #loot > STRIP_ROWS then
+            rows[#rows + 1] = { text = ("|cff9d9d9dand %d more|r"):format(#loot - STRIP_ROWS + 1) }
+            break
+        end
+        if drop.hidden then
+            rows[#rows + 1] = { text = "|cff9d9d9dsomething the game won't show yet|r" }
+        else
+            local name = drop.name or Util.LinkName(drop.link) or ("item " .. tostring(drop.id))
+            rows[#rows + 1] = {
+                icon = drop.icon or Util.ItemIcon(drop.id),
+                text = W.QualityText(name, drop.quality) .. ((drop.count or 1) > 1 and ("  x" .. drop.count) or ""),
+            }
+        end
+    end
+    -- (coins are not in the list of what was caught)
+    if #rows == 0 then rows[1] = { text = "|cff9d9d9dCoins|r" } end
+    return rows
+end
+
+ns.On("CAST_END", function(result, loot)
+    if result == "catch" then
+        came.rows, came.expires = CameUp(loot or {}), GetTime() + CAME_SECONDS
+    elseif result == "miss" then
+        came.rows, came.expires = { { text = "|cff9d9d9dNothing on the line|r" } }, GetTime() + EMPTY_SECONDS
+    else
+        return -- thrown again: what the cast before brought up stays
+    end
+    StripRefresh()
+end)
+ns.On("LINE", function() StripRefresh() end)
+
+local function CreateStrip()
+    local retro = W.retro and ns.Retro
+    local strip = W.Panel(nil, panel, Width(), 7 + STRIP_BAR + 7, "panel")
+    panel.strip = strip
+    strip:SetPoint("TOPLEFT", panel, "BOTTOMLEFT", 0, -4)
+    local bar = CreateFrame("Frame", nil, strip, "BackdropTemplate")
+    strip.bar = bar
+    bar:SetSize(Width() - 16, STRIP_BAR)
+    bar:SetPoint("TOPLEFT", 8, -7)
+    W.Skin(bar, W.COLORS.header, nil, "thin")
+    if retro then
+        strip.fill, strip.text = retro.Progress(bar)
+    else
+        strip.fill = bar:CreateTexture(nil, "ARTWORK")
+        local inset = W.round and 2 or 1
+        strip.fill:SetPoint("TOPLEFT", inset, -inset)
+        strip.fill:SetPoint("BOTTOMLEFT", inset, inset)
+        W.BarFill(strip.fill, W.native and 0.9 or 0.55)
+        strip.text = W.Text(bar, "GameFontHighlightSmall")
+        strip.text:SetPoint("CENTER")
+    end
+    strip.rows = {}
+    for index = 1, STRIP_ROWS do
+        local y = -(7 + STRIP_BAR + 5) - (index - 1) * STRIP_ROW
+        local row = {}
+        row.icon = strip:CreateTexture(nil, "ARTWORK")
+        row.icon:SetSize(STRIP_ROW - 3, STRIP_ROW - 3)
+        row.icon:SetPoint("TOPLEFT", 9, y)
+        row.name = W.Text(strip)
+        row.name:SetPoint("TOPLEFT", 9 + STRIP_ROW, y)
+        row.name:SetJustifyH("LEFT")
+        row.name:SetWordWrap(false)
+        strip.rows[index] = row
+    end
+    strip:SetScript("OnUpdate", function()
+        if came.rows and GetTime() >= came.expires then
+            StripRefresh() -- what came up has been shown long enough
+        else
+            StripTick()
+        end
+    end)
+    strip:Hide()
+end
+
 -- Green: the skill (with lure, gear and food) is enough for guaranteed catches here.
 -- Yellow: the line can be cast but some fish will get away. Red: it can't be cast here.
 local STANDING_COLORS = Waters.COLORS
@@ -480,6 +642,7 @@ local function Refresh()
     RefreshKit()
     RefreshSkill()
     RefreshList(session)
+    StripRefresh()
     panel.buffs:SetText(BuffLine())
     if GetTime() < notice.expires and notice.highlight then
         panel:SetBackdropBorderColor(unpack(W.COLORS.accent))
@@ -499,6 +662,9 @@ local function LayoutWidth()
     panel.skillBar:SetWidth(width - 20)
     panel.buffs:SetWidth(width - 20)
     panel.menu:SetMenuWidth(width - 16)
+    panel.strip:SetWidth(width)
+    panel.strip.bar:SetWidth(width - 16)
+    for _, row in ipairs(panel.strip.rows) do row.name:SetWidth(width - 18 - STRIP_ROW) end
     -- The lure line holds the lure's name, how many there are, its bonus and its time: the
     -- button beside it is only an "A" to leave room for all four
     kit.lureText:SetWidth(width - 20 - KIT_ROW - LURE_TOGGLE - 14)
@@ -752,6 +918,7 @@ local function Create()
         end
     end)
     CreateGrip()
+    CreateStrip()
     LayoutWidth()
     ApplyPosition()
     LivePanel.Detach(detached)

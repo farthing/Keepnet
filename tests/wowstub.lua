@@ -479,7 +479,14 @@ function GetRealmName() return Stub.realm end
 function GetRealZoneText() return Stub.zone end
 function GetSubZoneText() return Stub.subzone end
 function InCombatLockdown() return Stub.lockdown end
-function UnitChannelInfo() return Stub.channel end
+-- The channel's name, then (as in the game) when it began and when it ends, in thousandths
+-- of a second. Stub.lineSeconds is how long a line stays out; Stub.channelTimesHidden makes
+-- the game keep the two times to itself.
+function UnitChannelInfo()
+    if not Stub.channel then return nil end
+    if Stub.channelTimesHidden then return Stub.channel, nil, nil, Stub.SECRET, Stub.SECRET end
+    return Stub.channel, nil, nil, Stub.channelStartMs, Stub.channelEndMs
+end
 function UnitCastingInfo() return Stub.casting end
 function GetInventoryItemID(_, slot)
     if slot == 16 then return Stub.mainHand end
@@ -798,6 +805,8 @@ local function CastFishing()
         Stub.fire("UNIT_SPELLCAST_CHANNEL_STOP", "player", "cast-guid", 7620)
     end
     Stub.channel = "Fishing"
+    Stub.channelStartMs = Stub.now * 1000
+    Stub.channelEndMs = (Stub.now + (Stub.lineSeconds or 20)) * 1000
     Stub.fire("UNIT_SPELLCAST_SUCCEEDED", "player", "cast-guid", 7620)
     Stub.fire("UNIT_SPELLCAST_CHANNEL_START", "player", "cast-guid", 7620)
     return "cast"

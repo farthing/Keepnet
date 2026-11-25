@@ -248,6 +248,20 @@ local function Build(frame)
         Changed()
     end)
     kitCheck:SetPoint("TOPLEFT", right, ry - 66)
+    -- The strip under the panel: the line's time, and what each cast brought up
+    local STRIP_MODES = {
+        { value = "hidden", text = "While the interface is hidden" },
+        { value = "always", text = "Always" },
+        { value = "off", text = "Never" },
+    }
+    local stripLabel = W.Text(frame, "GameFontHighlightSmall", "Line timer and catch")
+    stripLabel:SetPoint("TOPLEFT", right, ry - 92)
+    local strip = W.Dropdown(frame, 210, function() return STRIP_MODES end, function(value)
+        settings.lineStrip = value
+        Changed()
+    end)
+    strip:SetPoint("TOPLEFT", right + 150, ry - 88)
+    strip.modes = STRIP_MODES
     local reset = W.Button(frame, "Reset panel", 110, 22, function()
         ns.LivePanel.ResetPosition()
     end)
@@ -255,7 +269,7 @@ local function Build(frame)
     reset:SetPoint("TOPLEFT", right + 250, ry - 24)
 
     -- ------------------------------------------------------------------ new versions
-    ry = ry - 98
+    ry = ry - 124
     Heading(frame, "New versions", right, ry)
     local updates = W.Check(frame, "Tell me when a newer Keepnet is out", function(checked)
         settings.updates = checked
@@ -323,6 +337,9 @@ local function Build(frame)
         lock:SetChecked(settings.panelLocked and true or false)
         catches:SetChecked(settings.panelCatches and true or false)
         kitCheck:SetChecked(settings.panelKit and true or false)
+        for _, option in ipairs(strip.modes) do
+            if option.value == (settings.lineStrip or "hidden") then strip:Set(option.value, option.text) end
+        end
         for _, choice in ipairs(Prices.Choices()) do
             if choice.value == (settings.priceSource or "auto") then source:Set(choice.value, choice.text) end
         end

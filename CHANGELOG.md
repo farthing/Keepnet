@@ -3,6 +3,16 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.0.3
+
+- With the game's interface hidden you could not see how long the line had left, or what it
+  brought up. Now a small strip hangs under the live panel while a line is out: a bar that
+  runs down, with the seconds the line has left, and under it what the cast brought up,
+  for a few seconds (or "Nothing on the line").
+- It shows while Keepnet has the interface hidden, when the game's own cast bar and loot
+  window can't be seen. Settings, "Live panel", "Line timer and catch" changes that to
+  always or never.
+
 ## 1.0.2
 
 - New colours, Matrix, for the Keepnet, Keepnet rounded and Glass looks: black, with green

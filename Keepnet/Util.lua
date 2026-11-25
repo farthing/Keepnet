@@ -3,7 +3,7 @@
 -- (tests\run_tests.py).
 local ADDON, ns = ...
 ns.ADDON = ADDON or "Keepnet"
-ns.VERSION = "1.0.2"
+ns.VERSION = "1.0.3"
 
 local Util = {}
 ns.Util = Util
