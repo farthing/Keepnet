@@ -4,6 +4,102 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**On the branch `looks` only (2026-11-25, evening): more looks, as an experiment. Not on
+`main`, not pushed, no version number of its own, not for CurseForge.** The owner: "for now,
+the tinkering with these themes and stuff is purely development, i am not sure if it will see
+the light of day. depends on how much of what we can take from other ui's". `main` is still
+the released 1.0.0. Everything in this entry passes its offline tests and has never run in
+the game.
+
+What the owner asked for, in order: looks like the ten most popular interface packs "using
+their assets" (see "What can be taken from other packs" below: almost nothing); then "one
+theme, called windows 95 ... to look exactly like windows 95 dialogues"; then round corners
+for the Keepnet look "as an option? so keepnet, keepnet rounded. then have a seperate
+selector for the colours? windows 95 would sit in the first selection"; then "a few different
+colour schemes, for each theme"; then a font "that sort of fits with the fishing theme ...
+the default for the keepnet theme" and a "glass skin/theme" (both only researched so far).
+
+What is built:
+
+- **Look and colours are two choices** (Appearance tab: "Look", "Colours", then the accent).
+  The setting `theme` now names the look: `keepnet`, `rounded`, `win95`, `forever`,
+  `ellesmereui`, `elvui`. The colours are in `settings.schemes[family]` (`keepnet` for both
+  Keepnet looks, which share the six sets that used to be themes; `win95` for its own). A
+  saved theme that was one of the old colours (`slate`, `forest`, `ember`, `dusk`, `black`)
+  becomes the Keepnet look in those colours the first time it is applied. Forever and the
+  suite looks have only their own colours: the list says "The look's own" and is dimmed.
+  Colours change at once; a look drawn another way asks for a reload (`W.look`: `flat`,
+  `round`, `retro`, `native`).
+- **A frame can be drawn by a look instead of by its backdrop.** `W.Skin(frame, color,
+  group, kind)` now replaces the frame's `SetBackdropColor` and `SetBackdropBorderColor`
+  with ones that reach whatever draws it, so the screens go on colouring frames the way
+  they did. `kind` says what the frame is (`button`, `header`, `field`, `list`, `menu`,
+  `slot`, `thin`, `track`) for looks that draw each differently.
+- **Keepnet rounded** (`UI\Round.lua`): a quarter circle in each corner with plain colour
+  between, the border the same way from a quarter ring. Four small pictures in
+  `Keepnet\Media` (`RoundFill8/4.tga`, `RoundRing8/4.tga`), white so they take any colour,
+  made by `tools\make_art.py`: the first files in the addon that are not code. Corners 8
+  wide for the window and the live panel, 4 for everything else; column headings stay
+  square.
+- **Windows 95** (`UI\Retro.lua`): nothing but plain colour. Two-line bevels (out for
+  windows and buttons, in for text boxes, lists and tick boxes), a title bar with a close
+  box, tabs on a framed page with the front one taller, a tick, a drop-down with an arrow
+  button, a slider with a groove and a raised handle, a progress bar whose text is light
+  over the filling and dark beside it, lists on a white sheet with the chosen line in the
+  selection colour, menus that turn the line under the mouse that colour, buttons that go
+  in while held. The live panel gets a title bar too: the zone and the clock stand on it and
+  the cog is a small button with three dots. Text is dark: every text made by `W.Text` is
+  "dressed" (`Retro.Dress`), which swaps each colour, the ones written inside a text too,
+  for the nearest dark one of that screen's sixteen. All nineteen of that system's colour
+  schemes are there with its own numbers (source in `CREDITS.md`). An accent of the
+  player's own colours the title bar and the selection.
+- Tests: `tests\test_looks.lua` (100 checks), `tests\test_look_sounds.lua` changed for the
+  two choices. The stand-in game now remembers text and picture colours.
+
+**Not seen in the game: any of it.** The first things to look at: whether the bevel lines
+come out even (one measure of the interface is about 2.8 dots on the owner's screen, so a
+line may be 2 or 3 dots); the font (see below); the tabs' place on the page's edge; the
+Appearance tab, whose left column is one row longer; texts that are a size larger than
+before in the Windows 95 look and may run into each other; the round corners against a
+bright scene. The game holds the copy from the CurseForge app: installing this branch
+needs the owner's word (`tools\install.ps1`), and a full restart, because files were added.
+
+**Open, waiting for the owner:**
+
+- **The Windows 95 font.** Until a file of its own is there the look uses the game's Arial
+  Narrow, which is close but not it. `Retro.lua` already asks for `Media\W95FA.otf`: W95FA
+  (Alina Sava / FontsArena, a redrawing of that system's font, SIL Open Font License 1.1
+  according to Fontsource). Fetching a file from the web needs the owner's yes, and its
+  licence text has to be read and shipped with it.
+- **A font for the Keepnet look** (the owner: "a font that is not default that sort of fits
+  with the fishing theme ... the default for the keepnet theme"). Researched, nothing built
+  or fetched. No free text face has a real history at sea; the honest links are signs. In
+  order: **Overpass** (from American road-sign lettering; Latin and Cyrillic; OFL 1.1 with
+  no reserved name; static files about 210 KB each in its own repository; its digits are
+  probably not all one width, and text may sit a little off centre), **Signika Negative**
+  (made for signs and for light text on dark, digits all one width; no Cyrillic; about 344
+  KB each), **National Park** (drawn from carved trail signs in a national park, the one
+  with a real outdoors history; 110 KB; small sizes and digits untried). For a title only:
+  **Spinnaker**, from lettering on posters for travel by ship (OFL with a reserved name,
+  one weight, no Cyrillic). A font without Cyrillic needs the game's own font for the
+  Russian client. Each needs its licence text shipped beside it.
+- **A glass look** (the owner: "i've seen the option for a glass skin/theme somewhere"):
+  research was still running when this was written; nothing built.
+
+**What can be taken from other packs (researched 2026-11-25; figures and licences as read
+that day):** almost nothing. Of sixteen packs looked at, nine are "all rights reserved" or
+forbid redistribution outright (ElvUI, Tukui, EllesmereUI's own art, BenikUI, GW2 UI,
+ToxiUI, NDui, RealUI, and one more whose licence also forbids any use of its content by an
+AI assistant: it was not read past its licence and must not be worked from); AzeriteUI is
+MIT for code but says its artwork may not be shared; WindTools limits its GPL to its own
+family of addons; only ShestakUI (MIT) and a pack dead since 2019 would allow it on paper,
+and the origin of their pictures is unknown. Fonts are a separate question in every pack:
+several ship commercial ones. CurseForge's own rule is permission or licence, plus credit.
+What others do instead, and what is open to Keepnet: draw the style with plain colour
+(BigWigs' "ElvUI" and "TukUI" bar styles are numbers, not pictures), or use the pack's own
+pictures at run time when the pack is installed, which is what the EllesmereUI and ElvUI
+looks already do. Naming a look after a pack has precedent (BigWigs, Details).
+
 **The repository is public since 2026-11-25** (the owner: "publish to git and fix, make repo
 public. push to curse"). Its history starts again from one commit of 1.0.0: the history from
 before is kept by the owner, privately, and is not part of the public repository. From here

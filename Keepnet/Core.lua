@@ -37,8 +37,9 @@ local DEFAULTS = {
     rareQuality = 2,      -- alert for a catch of at least this quality (2 green, 3 blue, 4 purple; 0 off)
     rareGold = 0,         -- alert for a catch worth at least this much gold each (0 off)
     rareSound = true,     -- play a sound with the alert
-    theme = "keepnet",    -- the theme (see W.THEMES)
-    accentMode = "theme", -- the accent colour: "theme", "class" or "custom"
+    theme = "keepnet",    -- the look (see W.THEMES)
+    schemes = nil,        -- the colours chosen for each family of looks: { keepnet = "slate", ... }
+    accentMode = "theme", -- the accent colour: "theme" (the colours' own), "class" or "custom"
     accentColor = nil,    -- { r, g, b } for "custom"
     windowOpacity = 0.94, -- how solid the window's background is, 0.2 to 1
     panelOpacity = 0.94,  -- the same for the live panel

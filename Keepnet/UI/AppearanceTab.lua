@@ -1,6 +1,7 @@
--- Keepnet: the Appearance tab: colour theme, accent colour, how solid the backgrounds are,
--- the size of the live panel, and hiding the game's own interface while fishing. Everything
--- changes as it is set, without a reload.
+-- Keepnet: the Appearance tab: the look, its colours, the accent colour, how solid the
+-- backgrounds are, the size of the live panel, and hiding the game's own interface while
+-- fishing. Everything changes as it is set; only a look that is drawn another way needs the
+-- interface reloaded.
 local _, ns = ...
 local W, UI, HideUI = ns.Widgets, ns.UI, ns.HideUI
 
@@ -11,7 +12,7 @@ local HIDE_MODES = {
 }
 
 local ACCENT_MODES = {
-    { value = "theme", text = "The theme's own colour" },
+    { value = "theme", text = "The colours' own" },
     { value = "class", text = "My class colour" },
     { value = "custom", text = "My own colour" },
 }
@@ -41,10 +42,10 @@ local function Build(frame)
         ns.Fire("SETTINGS")
     end
 
-    -- ----------------------------------------------------------------------- colours
+    -- --------------------------------------------------------------- look and colours
     local y = UI.TOP - 2
-    Heading(frame, "Colours", left, y)
-    local themeLabel = W.Text(frame, "GameFontHighlightSmall", "Theme")
+    Heading(frame, "Look and colours", left, y)
+    local themeLabel = W.Text(frame, "GameFontHighlightSmall", "Look")
     themeLabel:SetPoint("TOPLEFT", left, y - 26)
     local theme = W.Dropdown(frame, 200, function()
         local options = {}
@@ -62,8 +63,25 @@ local function Build(frame)
     end)
     theme:SetPoint("TOPLEFT", left + 90, y - 22)
 
+    -- The colours the chosen look comes in. A look with only its own has nothing to choose.
+    local OWN = "The look's own"
+    local schemeLabel = W.Text(frame, "GameFontHighlightSmall", "Colours")
+    schemeLabel:SetPoint("TOPLEFT", left, y - 52)
+    local scheme = W.Dropdown(frame, 200, function()
+        local options = {}
+        for _, entry in ipairs(W.Theme(settings.theme).schemes or {}) do
+            options[#options + 1] = { value = entry.key, text = entry.name }
+        end
+        if #options == 0 then options[1] = { value = false, text = OWN } end
+        return options
+    end, function(value)
+        if value then W.SetScheme(W.Theme(settings.theme), value) end
+        Apply()
+    end)
+    scheme:SetPoint("TOPLEFT", left + 90, y - 48)
+
     local accentLabel = W.Text(frame, "GameFontHighlightSmall", "Accent colour")
-    accentLabel:SetPoint("TOPLEFT", left, y - 56)
+    accentLabel:SetPoint("TOPLEFT", left, y - 78)
     local accent = W.Dropdown(frame, 200, function() return ACCENT_MODES end, function(value)
         settings.accentMode = value
         if value == "custom" and not settings.accentColor then
@@ -71,13 +89,13 @@ local function Build(frame)
         end
         Apply()
     end)
-    accent:SetPoint("TOPLEFT", left + 90, y - 52)
+    accent:SetPoint("TOPLEFT", left + 90, y - 74)
 
     -- The swatch shows the accent in use; clicking it opens the colour picker
     local swatch = CreateFrame("Button", nil, frame, "BackdropTemplate")
     swatch:SetSize(20, 20)
     swatch:SetPoint("LEFT", accent, "RIGHT", 8, 0)
-    W.Skin(swatch, W.COLORS.button)
+    W.Skin(swatch, W.COLORS.button, nil, "slot")
     swatch.color = swatch:CreateTexture(nil, "ARTWORK")
     swatch.color:SetPoint("TOPLEFT", 2, -2)
     swatch.color:SetPoint("BOTTOMRIGHT", -2, 2)
@@ -96,10 +114,9 @@ local function Build(frame)
         GameTooltip:Show()
     end)
     swatch:SetScript("OnLeave", function() GameTooltip:Hide() end)
-    Note(frame, "Keepnet and the colour themes are Keepnet's own flat look. Forever is built from "
-        .. "the game's own windows and buttons. A theme named after an interface suite lets that "
-        .. "suite paint Keepnet like the rest of your interface. Changing between these looks "
-        .. "reloads the interface.", left, y - 84)
+    Note(frame, "Keepnet, Keepnet rounded and Windows 95 are drawn by Keepnet. Forever is the game's "
+        .. "own windows; a look named after an interface suite lets that suite paint Keepnet. A "
+        .. "look drawn another way reloads the interface.", left, y - 102)
 
     -- ------------------------------------------------------------------- backgrounds
     local ry = UI.TOP - 2
@@ -144,8 +161,9 @@ local function Build(frame)
     end)
     borders:SetPoint("TOPLEFT", right, ry - 54)
 
-    local reset = W.Button(frame, "Colours, backgrounds and size back to the defaults", 300, 22, function()
+    local reset = W.Button(frame, "Look, colours, backgrounds and size back to the defaults", 320, 22, function()
         settings.theme, settings.accentMode, settings.accentColor = "keepnet", "theme", nil
+        settings.schemes = nil
         settings.windowOpacity, settings.panelOpacity, settings.panelScale = 0.94, 0.94, 1
         settings.borders = true
         Apply()
@@ -153,7 +171,7 @@ local function Build(frame)
     reset:SetPoint("TOPLEFT", right, ry - 86)
 
     -- ------------------------------------------------- hiding the game's interface
-    y = y - 124
+    y = y - 144
     Heading(frame, "Hide the game's interface while fishing", left, y)
     local hide = W.Dropdown(frame, 290, function() return HIDE_MODES end, function(value)
         settings.hideMode = value
@@ -225,6 +243,13 @@ local function Build(frame)
         borders:SetChecked(settings.borders ~= false)
         local current = W.Theme(settings.theme)
         theme:Set(current.key, current.name)
+        if current.schemes then
+            local colours = W.Scheme(current)
+            scheme:Set(colours.key, colours.name)
+        else
+            scheme:Set(false, OWN)
+        end
+        scheme:SetAlpha(current.schemes and 1 or 0.45)
         for _, option in ipairs(ACCENT_MODES) do
             if option.value == (settings.accentMode or "theme") then accent:Set(option.value, option.text) end
         end

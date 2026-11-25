@@ -179,11 +179,12 @@ for name in ([[
     SetPoint ClearAllPoints SetAllPoints
     SetFrameStrata SetFrameLevel SetClampedToScreen SetMovable EnableMouse
     EnableMouseWheel RegisterForDrag RegisterForClicks StartMoving
-    StopMovingOrSizing SetTextColor SetJustifyH SetWordWrap SetTexture
+    StopMovingOrSizing SetJustifyH SetWordWrap
     SetDesaturated SetCheckedTexture SetThumbTexture SetOrientation SetMinMaxValues SetValueStep
     SetObeyStepOnDrag SetHitRectInsets SetOwner AddLine SetHyperlink SetItemByID
     SetFontObject SetAutoFocus SetTextInsets SetMaxLetters ClearFocus SetPropagateKeyboardInput
-    SetTexCoord SetVertexColor SetBlendMode GenerateMenu
+    SetTexCoord SetBlendMode GenerateMenu
+    SetFont SetShadowColor SetShadowOffset SetClipsChildren SetHighlightColor
 ]]):gmatch("%S+") do
     QUIET[name] = true
 end
@@ -278,6 +279,10 @@ function Methods:SetBackdropColor(r, g, b, a) self.__backdrop = { r, g, b, a } e
 function Methods:SetBackdropBorderColor(r, g, b, a) self.__border = { r, g, b, a } end
 function Methods:SetBackdrop(backdrop) self.__backdropFile = backdrop and backdrop.bgFile end
 function Methods:SetColorTexture(r, g, b, a) self.__color = { r, g, b, a } end
+-- What a text or a picture was last given, for the tests of the looks
+function Methods:SetTextColor(r, g, b, a) self.__textColor = { r, g, b, a } end
+function Methods:SetVertexColor(r, g, b, a) self.__vertex = { r, g, b, a } end
+function Methods:SetTexture(texture) self.__texture = texture end
 function Methods:SetScale(scale) self.__scale = scale end
 function Methods:GetLeft() return 400 end
 function Methods:GetTop() return 600 end
@@ -304,6 +309,15 @@ Stub.templates = {
     PanelTabButtonTemplate = { "Text" },
 }
 function DoesTemplateExist(template) return Stub.templates[template] ~= nil end
+
+-- A font of an addon's own
+function CreateFont(name)
+    local font = Mock("Font", name)
+    _G[name] = font
+    return font
+end
+-- The language of the client: a test names another in Stub.locale
+function GetLocale() return Stub.locale or "enUS" end
 
 function CreateFrame(kind, name, parent, template)
     if template and not Stub.templates[template] then

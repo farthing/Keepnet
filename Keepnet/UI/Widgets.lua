@@ -1,7 +1,7 @@
 -- Keepnet: the building blocks of the screens: flat panels and buttons, a tick box, a slider,
--- a drop-down list, a text box and the sortable table, and the theme that colours them all.
--- Built from plain frames so they don't depend on game templates that differ between client
--- versions.
+-- a drop-down list, a text box and the sortable table, and the look and colours they are
+-- drawn in. Built from plain frames so they don't depend on game templates that differ
+-- between client versions.
 --   "THEME"  the colours changed; screens redraw what they coloured themselves
 local _, ns = ...
 local Util = ns.Util
@@ -12,18 +12,24 @@ ns.Widgets = W
 local FLAT = "Interface\\Buttons\\WHITE8x8"
 
 -- ---------------------------------------------------------------------------------------------
--- Themes. All dark, since the text is the game's own light fonts. The first is the default.
+-- Looks and colours. The player chooses a look (W.THEMES; the setting is still called
+-- "theme") and, for the looks that have more than one, a set of colours (the look's
+-- "schemes"). The first of each is the default.
 --
--- A theme is six colours, and one of two looks:
+-- A look is drawn in one of four ways:
 --   flat    (the default) plain coloured frames with thin borders, all drawn by Keepnet;
+--   round   (round = true) the same with round corners (UI\Round.lua);
+--   retro   (retro = true) grey bevelled windows with dark text (UI\Retro.lua);
 --   native  (native = true) everything made from the game's own templates and art.
--- Themes of the same look switch at once. Going from one look to the other rebuilds every
--- frame, which needs the interface reloaded; the player is asked.
--- A native theme names the game art for the pieces that have no template: "art" for the live
+-- Going from one way of drawing to another rebuilds every frame, which needs the interface
+-- reloaded; the player is asked. Colours change at once.
+-- A set of colours is six of them: background, header, button, buttonHover, border, accent.
+-- Looks that share a "family" share the player's choice of colours. A look without schemes
+-- carries its own six colours.
+-- A native look names the game art for the pieces that have no template: "art" for the live
 -- panel, "smallArt" for bars and item slots; its colours only tint that art.
--- A native theme may also name an interface suite in "adopt": every piece is then handed to
+-- A native look may also name an interface suite in "adopt": every piece is then handed to
 -- that suite to paint (UI\Adopt.lua, which needs an adapter for the suite).
--- To add a theme, add an entry here: nothing else needs to know.
 -- ---------------------------------------------------------------------------------------------
 -- The game's tooltip frame, for the pieces of a native theme that have no template of their own
 local NATIVE_ART = {
@@ -39,12 +45,52 @@ local NATIVE_SMALL_ART = {
     insets = { left = 2, right = 2, top = 2, bottom = 2 },
 }
 
-W.THEMES = {
+-- Keepnet's own colours. All dark, since the text is the game's own light fonts.
+W.SCHEMES = {
     {
-        -- Keepnet's own look: flat, blue-black, a cyan accent
+        -- blue-black, a cyan accent
         key = "keepnet", name = "Keepnet",
         background = { 0.06, 0.07, 0.09 }, header = { 0.13, 0.15, 0.19 }, button = { 0.17, 0.20, 0.25 },
         buttonHover = { 0.24, 0.29, 0.36 }, border = { 0, 0, 0 }, accent = { 0.31, 0.76, 0.97 },
+    },
+    {
+        key = "slate", name = "Slate",
+        background = { 0.10, 0.10, 0.11 }, header = { 0.17, 0.17, 0.19 }, button = { 0.23, 0.23, 0.26 },
+        buttonHover = { 0.32, 0.32, 0.36 }, border = { 0, 0, 0 }, accent = { 1.00, 0.82, 0.00 },
+    },
+    {
+        key = "forest", name = "Forest",
+        background = { 0.05, 0.08, 0.06 }, header = { 0.10, 0.17, 0.12 }, button = { 0.14, 0.23, 0.16 },
+        buttonHover = { 0.20, 0.33, 0.23 }, border = { 0, 0, 0 }, accent = { 0.52, 0.88, 0.45 },
+    },
+    {
+        key = "ember", name = "Ember",
+        background = { 0.10, 0.06, 0.05 }, header = { 0.20, 0.12, 0.09 }, button = { 0.27, 0.16, 0.12 },
+        buttonHover = { 0.38, 0.23, 0.16 }, border = { 0, 0, 0 }, accent = { 1.00, 0.58, 0.22 },
+    },
+    {
+        key = "dusk", name = "Dusk",
+        background = { 0.06, 0.05, 0.10 }, header = { 0.13, 0.11, 0.21 }, button = { 0.18, 0.15, 0.29 },
+        buttonHover = { 0.26, 0.22, 0.41 }, border = { 0, 0, 0 }, accent = { 0.74, 0.58, 1.00 },
+    },
+    {
+        key = "black", name = "Plain black",
+        background = { 0, 0, 0 }, header = { 0.10, 0.10, 0.10 }, button = { 0.17, 0.17, 0.17 },
+        buttonHover = { 0.28, 0.28, 0.28 }, border = { 0.30, 0.30, 0.30 }, accent = { 1, 1, 1 },
+    },
+}
+
+W.THEMES = {
+    -- Keepnet's own look: flat
+    { key = "keepnet", name = "Keepnet", family = "keepnet", schemes = W.SCHEMES },
+    -- The same with round corners (UI\Round.lua)
+    { key = "rounded", name = "Keepnet rounded", round = true, family = "keepnet", schemes = W.SCHEMES },
+    {
+        -- Grey bevelled windows, a title bar, dark text (UI\Retro.lua, which adds its colour
+        -- schemes to this entry; the colours here are only what stands in before it has)
+        key = "win95", name = "Windows 95", retro = true, family = "win95",
+        background = { 0.75, 0.75, 0.75 }, header = { 0.75, 0.75, 0.75 }, button = { 0.75, 0.75, 0.75 },
+        buttonHover = { 0.75, 0.75, 0.75 }, border = { 0, 0, 0 }, accent = { 0, 0, 0.5 },
     },
     {
         -- The game's own look. native = true: every window, button, tick box, slider, text box,
@@ -76,31 +122,6 @@ W.THEMES = {
         buttonHover = { 0.20, 0.20, 0.20 }, border = { 0, 0, 0 }, accent = { 1.00, 0.82, 0.00 },
         art = NATIVE_ART, smallArt = NATIVE_SMALL_ART, artBorder = { 0.8, 0.8, 0.8 },
     },
-    {
-        key = "slate", name = "Slate",
-        background = { 0.10, 0.10, 0.11 }, header = { 0.17, 0.17, 0.19 }, button = { 0.23, 0.23, 0.26 },
-        buttonHover = { 0.32, 0.32, 0.36 }, border = { 0, 0, 0 }, accent = { 1.00, 0.82, 0.00 },
-    },
-    {
-        key = "forest", name = "Forest",
-        background = { 0.05, 0.08, 0.06 }, header = { 0.10, 0.17, 0.12 }, button = { 0.14, 0.23, 0.16 },
-        buttonHover = { 0.20, 0.33, 0.23 }, border = { 0, 0, 0 }, accent = { 0.52, 0.88, 0.45 },
-    },
-    {
-        key = "ember", name = "Ember",
-        background = { 0.10, 0.06, 0.05 }, header = { 0.20, 0.12, 0.09 }, button = { 0.27, 0.16, 0.12 },
-        buttonHover = { 0.38, 0.23, 0.16 }, border = { 0, 0, 0 }, accent = { 1.00, 0.58, 0.22 },
-    },
-    {
-        key = "dusk", name = "Dusk",
-        background = { 0.06, 0.05, 0.10 }, header = { 0.13, 0.11, 0.21 }, button = { 0.18, 0.15, 0.29 },
-        buttonHover = { 0.26, 0.22, 0.41 }, border = { 0, 0, 0 }, accent = { 0.74, 0.58, 1.00 },
-    },
-    {
-        key = "black", name = "Plain black",
-        background = { 0, 0, 0 }, header = { 0.10, 0.10, 0.10 }, button = { 0.17, 0.17, 0.17 },
-        buttonHover = { 0.28, 0.28, 0.28 }, border = { 0.30, 0.30, 0.30 }, accent = { 1, 1, 1 },
-    },
 }
 
 -- The colours in use. These tables are filled by W.ApplyTheme and never replaced, so anything
@@ -130,6 +151,17 @@ local function Paint(entry)
         entry.frame:SetBackdropBorderColor(0, 0, 0, 0)
         return
     end
+    local color = entry.color
+    local alpha = entry.group and W.opacity[entry.group] or 1
+    -- The looks that draw a frame themselves, in place of its backdrop
+    if W.retro and ns.Retro then
+        ns.Retro.Paint(entry, alpha)
+        return
+    end
+    if W.round and ns.Round and ns.Round.Wants(entry) then
+        ns.Round.Paint(entry, color, alpha)
+        return
+    end
     -- A theme with frame art: the big frames (those with a group) take "art", the small
     -- pieces "smallArt"
     local art
@@ -141,8 +173,6 @@ local function Paint(entry)
         entry.frame:SetBackdrop(backdrop)
         entry.backdrop = backdrop
     end
-    local color = entry.color
-    local alpha = entry.group and W.opacity[entry.group] or 1
     entry.frame:SetBackdropColor(color[1], color[2], color[3], alpha)
     if art then
         local tint = activeTheme.artBorder or W.COLORS.border
@@ -161,12 +191,42 @@ end
 
 -- Gives a frame a background in one of the W.COLORS and a border. group is "window" or "panel"
 -- for a big frame: its background follows that opacity setting and takes the theme's frame
--- art, when the theme has any.
-function W.Skin(frame, color, group)
-    local entry = { frame = frame, color = color or W.COLORS.background, group = group }
+-- art, when the theme has any. kind says what the frame is, for the looks that draw each
+-- kind differently: "button", "header" (a column heading), "field" (a text box, a tick box),
+-- "list", "menu", "slot" (an item), "thin" (a bar), "track" (a slider). Left out, it follows
+-- from the colour.
+--
+-- Whatever draws the frame, the screens go on colouring it with SetBackdropColor and
+-- SetBackdropBorderColor: where a look draws the frame itself, those two reach its drawing.
+function W.Skin(frame, color, group, kind)
+    local entry = { frame = frame, color = color or W.COLORS.background, group = group, kind = kind }
+    local fill, edge = frame.SetBackdropColor, frame.SetBackdropBorderColor
+    frame.SetBackdropColor = function(self, r, g, b, a)
+        if entry.custom then entry.custom:Fill(r, g, b, a) else fill(self, r, g, b, a) end
+    end
+    frame.SetBackdropBorderColor = function(self, r, g, b, a)
+        if entry.custom then entry.custom:Edge(r, g, b, a) else edge(self, r, g, b, a) end
+    end
+    frame.keepnetSkin = entry
     skinned[#skinned + 1] = entry
     W.built = true
     Paint(entry)
+end
+
+-- A thin dividing line
+function W.Rule(texture)
+    if W.retro and ns.Retro then
+        ns.Retro.Rule(texture)
+    else
+        texture:SetColorTexture(1, 1, 1, 0.12)
+    end
+end
+
+-- A faint wash over what is under it: the line the mouse is on, a scroll track. Light on the
+-- dark looks, dark on a light one.
+function W.Faint(texture, alpha)
+    local shade = (W.retro and ns.Retro) and ns.Retro.Shade() or 1
+    texture:SetColorTexture(shade, shade, shade, alpha)
 end
 
 -- A bar's filling in the accent colour: flat, or the game's status bar art in a native theme
@@ -202,6 +262,36 @@ function W.Theme(key)
     return W.THEMES[1]
 end
 
+-- The set of colours a look is shown in: the player's choice for its family, or its first.
+-- A look without schemes is its own.
+function W.Scheme(theme)
+    local schemes = theme.schemes
+    if not schemes then return theme end
+    local chosen = ns.settings and ns.settings.schemes and ns.settings.schemes[theme.family]
+    for _, scheme in ipairs(schemes) do
+        if scheme.key == chosen then return scheme end
+    end
+    return schemes[1]
+end
+
+-- Chooses a look's colours (for every look of its family). W.ApplyTheme shows them.
+function W.SetScheme(theme, key)
+    if not theme.schemes or not ns.settings then return end
+    ns.settings.schemes = ns.settings.schemes or {}
+    ns.settings.schemes[theme.family] = key
+end
+
+-- Before looks and colours were two choices, each of Keepnet's colours was a theme
+local OLD_COLOUR_THEMES = { slate = true, forest = true, ember = true, dusk = true, black = true }
+
+local function Migrate(settings)
+    if OLD_COLOUR_THEMES[settings.theme] then
+        settings.schemes = settings.schemes or {}
+        settings.schemes.keepnet = settings.theme
+        settings.theme = "keepnet"
+    end
+end
+
 -- The character's class colour, or nil
 local function ClassColor()
     local _, class = UnitClass("player")
@@ -223,33 +313,40 @@ StaticPopupDialogs["KEEPNET_RELOAD_FOR_THEME"] = {
 
 function W.ApplyTheme()
     local settings = ns.settings or {}
+    Migrate(settings)
     local theme = W.Theme(settings.theme)
-    local native = theme.native and true or false
+    -- How the look is drawn
+    local look = (theme.native and "native") or (theme.retro and "retro") or (theme.round and "round") or "flat"
     local adopting = theme.adopt or false -- the suite's name
-    if W.native == nil or not W.built then
+    if W.look == nil or not W.built then
         -- Nothing is on screen yet: the look is free to choose
-        W.native, W.adopting = native, adopting
-    elseif native ~= W.native or adopting ~= W.adopting then
+        W.look, W.adopting = look, adopting
+        W.native, W.retro, W.round = look == "native", look == "retro", look == "round"
+    elseif look ~= W.look or adopting ~= W.adopting then
         -- Frames of the other look are already built. The choice is saved and takes effect
         -- at the next reload; until then everything stays as it is.
         StaticPopup_Show("KEEPNET_RELOAD_FOR_THEME")
         return
     end
     activeTheme = theme
+    local scheme = W.Scheme(theme)
     for _, name in ipairs({ "background", "header", "button", "buttonHover", "border" }) do
-        local from, to = theme[name], W.COLORS[name]
+        local from, to = scheme[name], W.COLORS[name]
         to[1], to[2], to[3], to[4] = from[1], from[2], from[3], 1
     end
     -- (the border's fourth number is set below: borders can be turned off)
-    local accent = theme.accent
+    local accent = scheme.accent
+    local own = nil -- the player's own accent, when the look's isn't wanted
     if adopting and ns.Adopt then
         accent = ns.Adopt.Accent() or accent
     end
     if settings.accentMode == "class" then
-        accent = ClassColor() or accent
+        own = ClassColor()
     elseif settings.accentMode == "custom" and settings.accentColor then
-        accent = settings.accentColor
+        own = settings.accentColor
     end
+    accent = own or accent
+    if W.retro and ns.Retro then ns.Retro.Apply(scheme, own) end
     W.COLORS.accent[1], W.COLORS.accent[2], W.COLORS.accent[3] = accent[1], accent[2], accent[3]
     W.COLORS.border[4] = (settings.borders == false) and 0 or 1
     W.opacity.window = settings.windowOpacity or 0.94
@@ -305,20 +402,23 @@ end
 
 function W.Text(parent, font, text)
     local fontString = parent:CreateFontString(nil, "OVERLAY", font or "GameFontHighlightSmall")
+    if W.retro and ns.Retro then ns.Retro.Dress(fontString, font or "GameFontHighlightSmall") end
     fontString:SetText(text or "")
     if ns.Adopt then ns.Adopt.Apply("text", fontString) end
     return fontString
 end
 
--- A flat button. button.label is its text.
-function W.Button(parent, text, width, height, onClick)
+-- A flat button. button.label is its text. kind: see W.Skin (a drop-down is a button that
+-- looks like a text box in one of the looks).
+local function MakeButton(parent, text, width, height, onClick, kind)
     local button = CreateFrame("Button", nil, parent, "BackdropTemplate")
     button:SetSize(width, height or 22)
-    W.Skin(button, W.COLORS.button)
+    W.Skin(button, W.COLORS.button, nil, kind)
     button.label = W.Text(button, "GameFontHighlightSmall", text)
     button.label:SetPoint("CENTER")
     button:SetScript("OnEnter", function(self)
-        self:SetBackdropColor(unpack(W.COLORS.buttonHover))
+        -- (a button of the retro look doesn't light up under the mouse: it goes in when held)
+        if not W.retro then self:SetBackdropColor(unpack(W.COLORS.buttonHover)) end
         if self.tooltip then
             GameTooltip:SetOwner(self, "ANCHOR_TOP")
             GameTooltip:SetText(self.tooltip, 1, 1, 1, 1, true)
@@ -326,20 +426,27 @@ function W.Button(parent, text, width, height, onClick)
         end
     end)
     button:SetScript("OnLeave", function(self)
-        self:SetBackdropColor(unpack(W.COLORS.button))
+        if not W.retro then self:SetBackdropColor(unpack(W.COLORS.button)) end
         GameTooltip:Hide()
     end)
+    if W.retro and ns.Retro and kind ~= "field" then ns.Retro.Pressable(button) end
     if onClick then button:SetScript("OnClick", onClick) end
     return button
 end
 
+function W.Button(parent, text, width, height, onClick)
+    return MakeButton(parent, text, width, height, onClick)
+end
+
 -- A tab of the window. tab:SetSelected(true/false) marks it as the one showing.
 function W.Tab(parent, name, title, onClick)
+    if W.retro and ns.Retro then return ns.Retro.Tab(parent, title, onClick) end
     local tab = W.Button(parent, title, 100, 22, onClick)
     tab.line = tab:CreateTexture(nil, "OVERLAY")
     tab.line:SetHeight(2)
-    tab.line:SetPoint("BOTTOMLEFT")
-    tab.line:SetPoint("BOTTOMRIGHT")
+    -- (clear of the round corners, where there are any)
+    tab.line:SetPoint("BOTTOMLEFT", W.round and 4 or 0, 0)
+    tab.line:SetPoint("BOTTOMRIGHT", W.round and -4 or 0, 0)
     W.Accent(tab.line)
     function tab:SetSelected(selected)
         if selected then
@@ -356,7 +463,7 @@ end
 function W.Header(parent, title, width, height, right)
     local header = CreateFrame("Button", nil, parent, "BackdropTemplate")
     header:SetSize(width, height)
-    W.Skin(header, W.COLORS.header)
+    W.Skin(header, W.COLORS.header, nil, "header")
     header.label = W.Text(header, "GameFontNormalSmall", title)
     header.label:SetPoint(right and "RIGHT" or "LEFT", right and -6 or 6, 0)
     return header
@@ -366,17 +473,22 @@ end
 function W.Check(parent, text, onChange)
     local check = CreateFrame("CheckButton", nil, parent, "BackdropTemplate")
     check:SetSize(16, 16)
-    W.Skin(check, W.COLORS.button)
-    local tick = check:CreateTexture(nil, "OVERLAY")
-    tick:SetPoint("TOPLEFT", 3, -3)
-    tick:SetPoint("BOTTOMRIGHT", -3, 3)
-    W.Accent(tick)
-    check:SetCheckedTexture(tick)
+    W.Skin(check, W.COLORS.button, nil, "field")
+    if W.retro and ns.Retro then
+        ns.Retro.Tick(check)
+    else
+        local tick = check:CreateTexture(nil, "OVERLAY")
+        tick:SetPoint("TOPLEFT", 3, -3)
+        tick:SetPoint("BOTTOMRIGHT", -3, 3)
+        W.Accent(tick)
+        check:SetCheckedTexture(tick)
+    end
     check.label = W.Text(check, "GameFontHighlightSmall", text)
     check.label:SetPoint("LEFT", check, "RIGHT", 6, 0)
     -- Clicking the text ticks the box too
     check:SetHitRectInsets(0, -(check.label:GetStringWidth() or 0) - 8, 0, 0)
     check:SetScript("OnClick", function(self)
+        if self.keepnetSync then self:keepnetSync() end
         if onChange then onChange(self:GetChecked() and true or false) end
     end)
     return check
@@ -387,11 +499,15 @@ function W.Slider(parent, width, low, high, step, onChange)
     local slider = CreateFrame("Slider", nil, parent, "BackdropTemplate")
     slider:SetSize(width, 14)
     slider:SetOrientation("HORIZONTAL")
-    W.Skin(slider, W.COLORS.header)
-    local thumb = slider:CreateTexture(nil, "OVERLAY")
-    thumb:SetSize(10, 14)
-    W.Accent(thumb)
-    slider:SetThumbTexture(thumb)
+    W.Skin(slider, W.COLORS.header, nil, "track")
+    if W.retro and ns.Retro then
+        ns.Retro.Thumb(slider)
+    else
+        local thumb = slider:CreateTexture(nil, "OVERLAY")
+        thumb:SetSize(10, 14)
+        W.Accent(thumb)
+        slider:SetThumbTexture(thumb)
+    end
     slider:SetMinMaxValues(low, high)
     slider:SetValueStep(step)
     if slider.SetObeyStepOnDrag then slider:SetObeyStepOnDrag(true) end
@@ -417,8 +533,12 @@ end
 function W.EditBox(parent, width, onEnter, onChange)
     local box = CreateFrame("EditBox", nil, parent, "BackdropTemplate")
     box:SetSize(width, 20)
-    W.Skin(box, W.COLORS.header)
-    box:SetFontObject("GameFontHighlightSmall")
+    W.Skin(box, W.COLORS.header, nil, "field")
+    if W.retro and ns.Retro then
+        ns.Retro.Edit(box)
+    else
+        box:SetFontObject("GameFontHighlightSmall")
+    end
     box:SetAutoFocus(false)
     box:SetTextInsets(6, 6, 0, 0)
     box:SetMaxLetters(64)
@@ -453,6 +573,7 @@ local function PopupRefresh()
             else
                 row.label:SetTextColor(1, 1, 1)
             end
+            if row.keepnetCool then row.keepnetCool() end
             row:Show()
         else
             row:Hide()
@@ -480,7 +601,7 @@ local function PopupCreate()
     catcher:Hide()
 
     popup = CreateFrame("Frame", nil, catcher, "BackdropTemplate")
-    W.Skin(popup, W.COLORS.header)
+    W.Skin(popup, W.COLORS.header, nil, "list")
     popup:SetFrameStrata("FULLSCREEN_DIALOG")
     popup.catcher = catcher
     popup.rows = {}
@@ -491,11 +612,15 @@ local function PopupCreate()
         row:SetHeight(POPUP_ROW_HEIGHT)
         row:SetPoint("TOPLEFT", 1, -1 - (i - 1) * POPUP_ROW_HEIGHT)
         row:SetPoint("RIGHT", -1, 0)
-        local highlight = row:CreateTexture(nil, "HIGHLIGHT")
-        highlight:SetAllPoints()
-        highlight:SetColorTexture(1, 1, 1, 0.12)
         row.label = W.Text(row, "GameFontHighlightSmall")
         row.label:SetPoint("LEFT", 6, 0)
+        if W.retro and ns.Retro then
+            ns.Retro.Hover(row, { row.label }, "paper")
+        else
+            local highlight = row:CreateTexture(nil, "HIGHLIGHT")
+            highlight:SetAllPoints()
+            highlight:SetColorTexture(1, 1, 1, 0.12)
+        end
         row:SetScript("OnClick", function(self)
             local dropdown = popup.owner
             catcher:Hide()
@@ -518,16 +643,21 @@ end
 -- getOptions() returns { { value = ..., text = "..." }, ... }; onSelect(value) is called when
 -- the player picks one. dropdown:Set(value, text) shows a choice without calling onSelect.
 function W.Dropdown(parent, width, getOptions, onSelect)
-    local dropdown = W.Button(parent, "", width, 20)
+    local retro = W.retro and ns.Retro
+    local dropdown = retro and MakeButton(parent, "", width, 20, nil, "field") or W.Button(parent, "", width, 20)
     dropdown.label:ClearAllPoints()
     dropdown.label:SetPoint("LEFT", 6, 0)
-    dropdown.label:SetPoint("RIGHT", -18, 0)
+    dropdown.label:SetPoint("RIGHT", retro and -20 or -18, 0)
     dropdown.label:SetJustifyH("LEFT")
     dropdown.label:SetWordWrap(false)
-    local arrow = W.Text(dropdown, "GameFontHighlightSmall", "v")
-    arrow:SetPoint("RIGHT", -6, 0)
-    arrow:SetTextColor(unpack(W.COLORS.accent))
-    ns.On("THEME", function() arrow:SetTextColor(unpack(W.COLORS.accent)) end)
+    if retro then
+        retro.Combo(dropdown)
+    else
+        local arrow = W.Text(dropdown, "GameFontHighlightSmall", "v")
+        arrow:SetPoint("RIGHT", -6, 0)
+        arrow:SetTextColor(unpack(W.COLORS.accent))
+        ns.On("THEME", function() arrow:SetTextColor(unpack(W.COLORS.accent)) end)
+    end
     dropdown.onSelect = onSelect
 
     function dropdown:Set(value, text)
@@ -610,7 +740,7 @@ function W.Menu(width)
 
     local menu = CreateFrame("Frame", nil, catcher, "BackdropTemplate")
     menu:SetSize(width, MENU_ROW)
-    W.Skin(menu, W.COLORS.header)
+    W.Skin(menu, W.COLORS.header, nil, "menu")
     menu:SetFrameStrata("FULLSCREEN_DIALOG")
     menu:EnableMouse(true)
     menu.catcher = catcher
@@ -619,7 +749,8 @@ function W.Menu(width)
     -- The solid background, under the theme's frame
     local fill = menu:CreateTexture(nil, "BACKGROUND", nil, -8)
     local function PaintFill()
-        local inset = W.native and 3 or 1
+        -- (inside the frame's border: thicker in the game's art, and clear of round corners)
+        local inset = (W.native or W.round) and 3 or (W.retro and 2 or 1)
         local color = W.COLORS.header
         fill:ClearAllPoints()
         fill:SetPoint("TOPLEFT", inset, -inset)
@@ -636,9 +767,11 @@ function W.Menu(width)
         row:SetHeight(MENU_ROW)
         row:SetPoint("TOPLEFT", 1, -3 - (index - 1) * MENU_ROW)
         row:SetPoint("TOPRIGHT", -1, -3 - (index - 1) * MENU_ROW)
-        local highlight = row:CreateTexture(nil, "HIGHLIGHT")
-        highlight:SetAllPoints()
-        highlight:SetColorTexture(1, 1, 1, 0.12)
+        if not (W.retro and ns.Retro) then
+            local highlight = row:CreateTexture(nil, "HIGHLIGHT")
+            highlight:SetAllPoints()
+            highlight:SetColorTexture(1, 1, 1, 0.12)
+        end
         -- The mark of an entry in use
         row.mark = row:CreateTexture(nil, "ARTWORK")
         row.mark:SetSize(5, 5)
@@ -653,6 +786,9 @@ function W.Menu(width)
         row.label = W.Text(row, "GameFontHighlightSmall")
         row.label:SetJustifyH("LEFT")
         row.label:SetWordWrap(false)
+        if W.retro and ns.Retro then
+            ns.Retro.Hover(row, { row.label, row.right }, "face", row.mark)
+        end
         row:SetScript("OnClick", function(self)
             local entry = self.entry
             if not entry or not entry.onClick then return end
@@ -721,6 +857,7 @@ function W.Menu(width)
             end
             -- Headings and notes are not for clicking, and don't light up
             row:EnableMouse(entry.onClick ~= nil)
+            if row.keepnetCool then row.keepnetCool() end
             row:Show()
         end
         for index = #entries + 1, #self.rows do
@@ -812,21 +949,26 @@ function W.Table(parent, columns, options)
         x = x + column.width
     end
 
+    -- The retro look's lists are white sheets set into the window
+    local retro = W.retro and ns.Retro
+    if retro then retro.Paper(t, width, ROW_HEIGHT, visible) end
+
     for r = 1, visible do
         local row = CreateFrame("Button", nil, t)
         row:SetSize(width, ROW_HEIGHT)
         row:SetPoint("TOPLEFT", 0, -ROW_HEIGHT * r)
-        if r % 2 == 0 then
+        if r % 2 == 0 and not retro then
             local stripe = row:CreateTexture(nil, "BACKGROUND")
             stripe:SetAllPoints()
             stripe:SetColorTexture(1, 1, 1, 0.04)
         end
         local highlight = row:CreateTexture(nil, "HIGHLIGHT")
         highlight:SetAllPoints()
-        highlight:SetColorTexture(1, 1, 1, 0.08)
+        W.Faint(highlight, 0.08)
         row.selected = row:CreateTexture(nil, "BORDER")
         row.selected:SetAllPoints()
-        W.Accent(row.selected, 0.25)
+        -- (the retro look's chosen line is solid, with light text on it)
+        W.Accent(row.selected, retro and 1 or 0.25)
         row.selected:Hide()
         row.cells, row.icons = {}, {}
         local cx = 0
@@ -844,6 +986,7 @@ function W.Table(parent, columns, options)
             cell:SetWidth(cx + column.width - 6 - left)
             cell:SetJustifyH(column.align or "LEFT")
             cell:SetWordWrap(false)
+            if retro then cell:SetSurface("paper") end
             row.cells[i] = cell
             cx = cx + column.width
         end
@@ -871,6 +1014,7 @@ function W.Table(parent, columns, options)
     t.footer:SetPoint("TOPRIGHT", 0, -ROW_HEIGHT * (visible + 1) - 3)
     t.empty = W.Text(t, "GameFontDisable", options.emptyText or "Nothing here yet.")
     t.empty:SetPoint("TOP", 0, -ROW_HEIGHT * 3)
+    if retro then t.empty:SetSurface("paper") end
 
     function t:Refresh()
         local data = self.data
@@ -890,17 +1034,15 @@ function W.Table(parent, columns, options)
             local entry = data[r + self.offset]
             row.data = entry
             if entry then
+                local chosen = options.id and self.selectedId ~= nil and options.id(entry) == self.selectedId
                 for i, column in ipairs(columns) do
+                    if retro then row.cells[i]:SetSurface(chosen and "select" or "paper") end
                     row.cells[i]:SetText(column.text(entry) or "")
                     if row.icons[i] then
                         row.icons[i]:SetTexture(column.icon(entry))
                     end
                 end
-                if options.id and self.selectedId ~= nil and options.id(entry) == self.selectedId then
-                    row.selected:Show()
-                else
-                    row.selected:Hide()
-                end
+                row.selected:SetShown(chosen and true or false)
                 row:Show()
             else
                 row:Hide()
@@ -953,7 +1095,7 @@ end
 function W.ItemButton(parent, size, onClick)
     local button = CreateFrame("Button", nil, parent, "BackdropTemplate")
     button:SetSize(size, size)
-    W.Skin(button, W.COLORS.button)
+    W.Skin(button, W.COLORS.button, nil, "slot")
     button.icon = button:CreateTexture(nil, "ARTWORK")
     button.icon:SetPoint("TOPLEFT", 2, -2)
     button.icon:SetPoint("BOTTOMRIGHT", -2, 2)

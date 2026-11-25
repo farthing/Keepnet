@@ -1,4 +1,4 @@
--- Themes, accent colour, background opacity and panel size; the sound for each kind of rare
+-- Looks, colours, accent colour, background opacity and panel size; the sound for each kind of rare
 -- catch; the player's own sound files; sounds shared by other addons.
 local T = {}
 
@@ -26,7 +26,9 @@ function T.run(ns)
     -- ------------------------------------------------------------------------- themes
     eq(settings.theme, "keepnet", "the default theme is Keepnet's own")
     eq(W.THEMES[1].name, "Keepnet", "listed first")
-    eq(W.THEMES[2].name, "Forever", "then the game's own look")
+    eq(W.THEMES[2].name, "Keepnet rounded", "then the same with round corners")
+    eq(W.THEMES[3].name, "Windows 95", "then the grey one")
+    eq(W.THEMES[4].name, "Forever", "then the game's own look")
 
     -- Forever is another look altogether (the game's own windows and buttons): frames of the
     -- flat look are already on screen, so it can't be switched to in place
@@ -43,17 +45,32 @@ function T.run(ns)
     eq(Stub.reloads, 1, "going back to a theme of the look on screen needs no reload")
 
     local accentTable, backgroundTable = W.COLORS.accent, W.COLORS.background
-    settings.theme = "ember"
+    -- Colours are a choice of their own, and change at once
+    W.SetScheme(W.Theme("keepnet"), "ember")
     W.ApplyTheme()
-    check(Close(W.COLORS.accent[1], 1.00) and Close(W.COLORS.accent[2], 0.58), "another theme: its accent")
-    check(Close(W.COLORS.background[1], 0.10), "another theme: its background")
+    eq(Stub.reloads, 1, "other colours need no reload")
+    check(Close(W.COLORS.accent[1], 1.00) and Close(W.COLORS.accent[2], 0.58), "other colours: their accent")
+    check(Close(W.COLORS.background[1], 0.10), "other colours: their background")
     check(W.COLORS.accent == accentTable and W.COLORS.background == backgroundTable,
         "the colour tables are refilled, not replaced, so everything holding them follows")
     check(Close(KeepnetPanel.__backdrop[1], 0.10), "the live panel is repainted at once")
     eq(W.AccentHex(), "ff9338", "the accent as text colour")
+    settings.schemes.keepnet = "no such colours"
+    W.ApplyTheme()
+    check(Close(W.COLORS.accent[1], 0.31), "unknown colours fall back to the look's first")
     settings.theme = "no such theme"
     W.ApplyTheme()
-    check(Close(W.COLORS.accent[1], 0.31), "an unknown theme falls back to the default")
+    check(Close(W.COLORS.accent[1], 0.31), "an unknown look falls back to the default")
+    -- Each of Keepnet's colours used to be a theme: a saved one becomes the Keepnet look in
+    -- those colours
+    settings.theme, settings.schemes = "dusk", nil
+    W.ApplyTheme()
+    eq(settings.theme, "keepnet", "a colour saved as the theme: the look is Keepnet")
+    eq(settings.schemes.keepnet, "dusk", "in those colours")
+    check(Close(W.COLORS.accent[1], 0.74), "which are shown")
+    eq(Stub.reloads, 1, "without a reload")
+    settings.schemes = nil
+    W.ApplyTheme()
 
     settings.accentMode = "class"
     W.ApplyTheme()

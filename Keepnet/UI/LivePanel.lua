@@ -526,20 +526,36 @@ local function Create()
         SavePosition()
     end)
 
+    -- The retro look gives the panel a title bar: the zone and the clock stand on it, and
+    -- the cog is a small button at its end
+    local retro = W.retro and ns.Retro
+    if retro then retro.Caption(panel) end
     panel.zone = W.Text(panel, "GameFontNormal")
-    panel.zone:SetPoint("TOPLEFT", 10, -9)
+    panel.zone:SetPoint("TOPLEFT", retro and 7 or 10, retro and -6 or -9)
     panel.zone:SetJustifyH("LEFT")
     panel.zone:SetWordWrap(false)
     panel.time = W.Text(panel, "GameFontHighlight")
-    panel.time:SetPoint("TOPRIGHT", -30, -9)
+    panel.time:SetPoint("TOPRIGHT", retro and -26 or -30, retro and -6 or -9)
+    if retro then
+        -- (not bold: the number after the zone's name has a colour of its own)
+        panel.zone.keepnetBold = false
+        panel.zone:SetSurface("title")
+        panel.time:SetSurface("title")
+    end
 
     -- The cog: the window on its Settings tab, or closed again when that is what it shows
-    panel.cog = W.IconButton(panel, COG, 14, function()
+    local function Settings()
         -- The window is part of the interface: bring that back first
         ns.HideUI.Show()
         ns.UI.Toggle("settings")
-    end)
-    panel.cog:SetPoint("TOPRIGHT", -9, -8)
+    end
+    if retro then
+        panel.cog = retro.CaptionButton(panel, "dots", Settings)
+        panel.cog:SetPoint("TOPRIGHT", -5, -5)
+    else
+        panel.cog = W.IconButton(panel, COG, 14, Settings)
+        panel.cog:SetPoint("TOPRIGHT", -9, -8)
+    end
     panel.cog.tooltip = "Settings"
 
     -- The Fishing skill bar
@@ -547,13 +563,19 @@ local function Create()
     panel.skillBar = bar
     bar:SetSize(Width() - 20, 15)
     bar:SetPoint("TOPLEFT", 10, -28)
-    W.Skin(bar, W.COLORS.header)
-    panel.skillFill = bar:CreateTexture(nil, "ARTWORK")
-    panel.skillFill:SetPoint("TOPLEFT", 1, -1)
-    panel.skillFill:SetPoint("BOTTOMLEFT", 1, 1)
-    W.BarFill(panel.skillFill, W.native and 0.9 or 0.55)
-    panel.skillText = W.Text(bar, "GameFontHighlightSmall")
-    panel.skillText:SetPoint("CENTER")
+    W.Skin(bar, W.COLORS.header, nil, "thin")
+    if retro then
+        panel.skillFill, panel.skillText = retro.Progress(bar)
+    else
+        panel.skillFill = bar:CreateTexture(nil, "ARTWORK")
+        -- (clear of the round corners, where there are any)
+        local inset = W.round and 2 or 1
+        panel.skillFill:SetPoint("TOPLEFT", inset, -inset)
+        panel.skillFill:SetPoint("BOTTOMLEFT", inset, inset)
+        W.BarFill(panel.skillFill, W.native and 0.9 or 0.55)
+        panel.skillText = W.Text(bar, "GameFontHighlightSmall")
+        panel.skillText:SetPoint("CENTER")
+    end
 
     -- Under the bar: the points of Fishing skill gained in the running session
     panel.gains = W.Text(panel)
@@ -602,7 +624,7 @@ local function Create()
     kitLine:SetHeight(1)
     kitLine:SetPoint("TOPLEFT", 10, KIT_TOP + 5)
     kitLine:SetPoint("TOPRIGHT", -10, KIT_TOP + 5)
-    kitLine:SetColorTexture(1, 1, 1, 0.12)
+    W.Rule(kitLine)
     local function KitRow(index, withIcon)
         local y = KIT_TOP - (index - 1) * KIT_ROW
         local icon
@@ -626,9 +648,14 @@ local function Create()
         row:SetPoint("TOPLEFT", 8, KIT_TOP - (index - 1) * KIT_ROW + 2)
         local highlight = row:CreateTexture(nil, "HIGHLIGHT")
         highlight:SetAllPoints()
-        highlight:SetColorTexture(1, 1, 1, 0.08)
-        row.arrow = W.Text(row, "GameFontHighlightSmall", "v")
-        row.arrow:SetPoint("RIGHT", -3, 0)
+        W.Faint(highlight, 0.08)
+        if retro then
+            row.arrow = retro.Glyph(row, "down")
+            row.arrow:SetPoint("RIGHT", -4, 0)
+        else
+            row.arrow = W.Text(row, "GameFontHighlightSmall", "v")
+            row.arrow:SetPoint("RIGHT", -3, 0)
+        end
         row:SetScript("OnClick", function(self)
             GameTooltip:Hide()
             if panel.menu:IsOpenAt(self) then
@@ -663,10 +690,15 @@ local function Create()
     kit.lureToggle:SetPoint("TOPRIGHT", -10, KIT_TOP + 1)
     -- Its highlight: the accent colour over the button, shown while lures are applied. Above
     -- the button's own background and under its letter, in the flat and the native look alike.
-    kit.lureToggle.lit = kit.lureToggle:CreateTexture(nil, "BORDER")
-    kit.lureToggle.lit:SetPoint("TOPLEFT", 1, -1)
-    kit.lureToggle.lit:SetPoint("BOTTOMRIGHT", -1, 1)
-    W.Accent(kit.lureToggle.lit, 0.55)
+    -- In the retro look the button stays in instead.
+    if retro then
+        kit.lureToggle.lit = retro.Latch(kit.lureToggle)
+    else
+        kit.lureToggle.lit = kit.lureToggle:CreateTexture(nil, "BORDER")
+        kit.lureToggle.lit:SetPoint("TOPLEFT", 1, -1)
+        kit.lureToggle.lit:SetPoint("BOTTOMRIGHT", -1, 1)
+        W.Accent(kit.lureToggle.lit, 0.55)
+    end
     kit.foodIcon, kit.foodText = KitRow(2, true)
     kit.foodRow = KitButton(2, FoodEntries, "Click to choose the food the fishing key eats.")
     local _, gearText = KitRow(3, false)
@@ -678,12 +710,12 @@ local function Create()
     panel.listLine:SetHeight(1)
     panel.listLine:SetPoint("TOPLEFT", 10, LIST_TOP + 5)
     panel.listLine:SetPoint("TOPRIGHT", -10, LIST_TOP + 5)
-    panel.listLine:SetColorTexture(1, 1, 1, 0.12)
+    W.Rule(panel.listLine)
     panel.listLine:Hide()
     -- Where the rows on show are in a list that is longer than its room: a faint track in the
     -- right margin with a mark in the accent colour. The mouse wheel does the scrolling.
     panel.scrollTrack = panel:CreateTexture(nil, "ARTWORK")
-    panel.scrollTrack:SetColorTexture(1, 1, 1, 0.1)
+    W.Faint(panel.scrollTrack, 0.1)
     panel.scrollTrack:Hide()
     panel.scrollThumb = panel:CreateTexture(nil, "OVERLAY")
     W.Accent(panel.scrollThumb, 0.9)
@@ -832,7 +864,7 @@ function CreateGrip()
         grip.dots[#grip.dots + 1] = dot
     end
     local function Paint(alpha)
-        for _, dot in ipairs(grip.dots) do dot:SetColorTexture(1, 1, 1, alpha) end
+        for _, dot in ipairs(grip.dots) do W.Faint(dot, alpha) end
     end
     Paint(0.4)
     grip:SetScript("OnEnter", function(self)

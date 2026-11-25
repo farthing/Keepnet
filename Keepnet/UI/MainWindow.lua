@@ -63,6 +63,10 @@ local function Create()
         -- tabs hang underneath, so the content starts higher up
         if window.TitleText then window.TitleText:SetText("Keepnet  v" .. ns.VERSION) end
         UI.TOP = -34
+    elseif W.retro and ns.Retro then
+        -- A title bar with a close box, and the tabs on the top edge of a framed page
+        ns.Retro.Caption(window, "Keepnet  v" .. ns.VERSION, function() window:Hide() end)
+        ns.Retro.Page(window)
     else
         local title = W.Text(window, "GameFontNormalLarge", "Keepnet")
         title:SetPoint("TOPLEFT", UI.LEFT, -10)
@@ -82,6 +86,9 @@ local function Create()
             else
                 button:SetPoint("TOPLEFT", window, "BOTTOMLEFT", 10, 2)
             end
+        elseif button.retroTab then
+            -- Side by side, each as wide as its name
+            x = button:Place(window, previous and x or ns.Retro.PAGE_SIDE + 2)
         else
             button:SetPoint("TOPLEFT", x, -34)
             x = x + 104

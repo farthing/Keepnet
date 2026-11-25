@@ -31,6 +31,7 @@ ALLOWED_GLOBALS = {
     "KeepnetPanel",
     "KeepnetWindow",
     "KeepnetPicker",
+    "KeepnetRetroFont",  # the Windows 95 look's font: the game names every font an addon makes
     "KeepnetWindowTab1", "KeepnetWindowTab2", "KeepnetWindowTab3", "KeepnetWindowTab4",
     "KeepnetWindowTab5", "KeepnetWindowTab6", "KeepnetWindowTab7",
 }
