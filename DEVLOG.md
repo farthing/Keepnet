@@ -4,6 +4,15 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**TO DO, AS SOON AS POSSIBLE (the owner, 2026-11-25: "we can do pictures later, mark as
+asap"): gallery pictures for 1.1.4.** Nothing on the listing shows the lure buying (Gear &
+food tab, "Lures from vendors"), the gear key's button (Settings tab, top row) or the line's
+strip under the live panel (a cast with the interface hidden, and one with a catch listed).
+The existing pictures of the Gear & food and Settings tabs are from before and should be
+replaced by the new ones (delete the old, restore the order). Raise it at the start of the
+next session. Also still open from before: the lure buying has not bought anything in the
+real game.
+
 **1.1.4 is on CurseForge (uploaded 2026-11-25, about 19:55; "Processing" when last looked)
 and on GitHub (`main`, tag `v1.1.4`).** It brings everything from 1.0.2 to 1.1.4. The
 listing's description was brought up to date in the same go. What went up and how is in
