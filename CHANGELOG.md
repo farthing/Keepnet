@@ -13,9 +13,11 @@ newer version is out.
 - Every character has its own sessions. The live panel, the Session tab, History, the
   history search and the Zones tab show the character you are playing, and a session you
   left running on one character carries on when you are back on it in time.
-- History and Zones have a list of your characters (top left in History, top right in
-  Zones): pick another character to see its sessions, or "All characters" for everyone's.
-  It only changes those lists. The live panel always follows the character you are playing.
+- Searchable sessions for each character. History and its "Find a fish or item" search work
+  on one character's sessions at a time. History and Zones have a list of your characters
+  (top left in History, top right in Zones): pick another character to see and search its
+  sessions, or "All characters" for everyone's. It only changes those lists. The live panel
+  always follows the character you are playing.
 - Everything you set is kept per character. That is every setting: the fishing key, the
   lure, the food and the other items, fishing gear on or off and the gear chosen per slot,
   the fishing sound and its volume, the alerts and their sounds, everything on the

@@ -246,7 +246,37 @@ the description of the plugin, start with a bullet list of features".
 - The pictures' small version label reads v0.9.1 on some and v0.9.2 on others (two rounds);
   the sample sessions with opened catches only exist from 0.9.2.
 
-## For the next description (written 2026-11-25, nothing on the site yet)
+## Where it stands (2026-11-25)
+
+The owner, with 1.0.0 finished: "publish to git and fix, make repo public. push to curse",
+and while the upload form was open: "add bullet point about searchable character sessions".
+
+- **Keepnet 1.0.0 uploaded** as the sixth file (`dist\Keepnet-1.0.0.zip`), through the
+  author site in Chrome as before (no API token): release, 1.60.1, Auctionator optional
+  (copied by the form from 0.9.9), published automatically once approved, display name typed
+  over as "Keepnet 1.0.0". Its changelog on the site is written for the site under two
+  headings, "Each character its own" (four points, the second of them the searchable
+  sessions per character the owner asked for) and "New versions" (four points, the hidden
+  channel and its switch among them). Status right after: "Uploading". **The last version on
+  CurseForge is now 1.0.0**; the next upload's changelog starts after it
+  (`release.py --since 1.0.0`).
+- **1.0.0 went up without the update notice ever having run in the real game.** The
+  per-character half was seen there by the owner; the notice was only tested offline (the
+  owner's game still held the build before it). Watch the comments and the error reports.
+- **One line added to the description's feature list**, after "Sessions and history":
+  "Searchable sessions for each character: every character keeps its own session history,
+  which you can search for a fish or item; a list switches to another character's sessions,
+  or to all of them." Saved ("Changes saved successfully") and read back after a reload;
+  `media\curseforge-description.html` holds it. Nothing else in the description or the
+  gallery was touched: the update notice and its hidden channel are in the file's changelog,
+  not yet in the description (see the next section).
+- The upload form this time: the Chrome extension was not connected until Chrome was
+  started; the zip went in the way described above (the form's own file field kept on the
+  page by replacing `HTMLInputElement.prototype.click` for a moment).
+- **The source is public since that day**: https://github.com/farthing/Keepnet, one commit
+  for 1.0.0. The listing's "Source" tab does not point at it yet.
+
+## For the next description (written 2026-11-25; one line of it is on the site, see above)
 
 The description on the site stops at 0.9.9. When 1.0.0 goes up and the owner asks for the
 listing to be brought up to date, it should cover:

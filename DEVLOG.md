@@ -11,6 +11,18 @@ on everything in this repository is public the moment it is pushed: no player's 
 character's real name in any file, picture or commit message (the samples' "Vale" and
 made-up names only), and a look at every picture at full size before it is committed.
 
+**1.0.0 is on CurseForge since the same hour** (uploaded 2026-11-25; "Under Review" a
+minute later, approval not seen yet). The next upload's changelog starts after 1.0.0
+(`release.py --since 1.0.0`). The owner also had one line added to the listing's feature
+list ("add bullet point about searchable character sessions"). What went up and how is in
+`PUBLISHING.md`, "Where it stands (2026-11-25)". **The update notice went out without ever
+having run in the real game**: the owner's game still held the build from before it (the
+per-character half was seen there and "works well"). Where the entries below say 1.0.0 is
+not on CurseForge, or that the owner has not confirmed the number, that was before. Open:
+the owner's game needs `tools\install.ps1` and a full restart to get the notice; the first
+things to look at there are in the notice's own entry below ("Not seen in the game"); and
+the listing's description does not mention the notice or its hidden channel yet.
+
 **1.0.0, the update notice (2026-11-25): Keepnet tells the player that a newer version is
 out. It passes its offline tests and is in the repo. It is NOT yet in the owner's game: the
 game holds the 1.0.0 development copy without the notice until `tools\install.ps1` is run

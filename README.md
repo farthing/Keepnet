@@ -64,8 +64,8 @@ the net an angler keeps the catch in.
   sortable by any column and listable by zone.
 - **Each character its own.** Sessions, the running session, History and Zones belong to the
   character you are playing. A list on the History and Zones tabs shows another of your
-  characters instead, or all of them together; the live panel always follows the character
-  you are playing. Everything you set is kept per character as well: every setting (the
+  characters instead, or all of them together, and the history search looks through the
+  sessions on show; the live panel always follows the character you are playing. Everything you set is kept per character as well: every setting (the
   key, lure, food, gear, sound, alerts, appearance, hiding the interface, prices) and the
   live panel's place and size. A character Keepnet sees for the first time starts with a
   copy of the settings of the character you played last; after that, what you change on
