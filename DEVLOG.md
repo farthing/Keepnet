@@ -4,6 +4,13 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.1.3 (2026-11-25, evening): the gear key works in combat.** The owner: "one bug, the gear
+swap combo, does not work when in combat. but i can equip my weapon in combat". `Gear.Toggle`
+no longer refuses in combat: the hands are changed at once (the game allows that), the
+clothing by the listeners that were already there when combat ends, and chat says "Your
+clothing changes when combat ends". Not seen in the game: that the equip call from the
+key's click is let through in combat on this client.
+
 **1.1.2 (2026-11-25, evening): the kept money in gold and silver.** The owner: "need to
 seperate gold and silver, in the never spend my last section". A second box, silver (0 to
 99, `settings.buyLureFloorSilver`); `Vendor.FloorCopper()` is the two together and is what

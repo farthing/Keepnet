@@ -81,15 +81,34 @@ function T.run(ns)
     Stub.advance(2)
     eq(Stub.mainHand, DAGGER, "and off again")
 
-    -- In combat nothing changes
+    -- In combat the hands can still be changed: the weapon comes back at once, and the
+    -- clothing when combat ends
+    Stub.press(GEAR_KEY)
+    Stub.advance(1.5)
+    eq(Stub.equipped[HEAD], LUCKY_HAT, "fishing, with the hat on")
     Stub.enterCombat()
     Stub.chat = {}
     Stub.press(GEAR_KEY)
-    Stub.advance(1)
-    eq(Stub.mainHand, DAGGER, "in combat the key changes nothing")
-    check(Said("press the gear key again afterwards"), "and says to press again afterwards")
+    Stub.advance(2)
+    eq(Stub.mainHand, DAGGER, "attacked while fishing: the key puts the weapon back in combat")
+    eq(Stub.equipped[17], SHIELD, "and the other hand's")
+    eq(Stub.equipped[HEAD], LUCKY_HAT, "the hat stays on until combat ends")
+    check(Said("Your clothing changes when combat ends"), "and the player is told so")
     Stub.leaveCombat()
     Stub.advance(1)
+    eq(Stub.equipped[HEAD], PLAIN_HELM, "combat over: the player's own hat is back")
+    -- And the other way, the pole on in combat
+    Stub.enterCombat()
+    Stub.press(GEAR_KEY)
+    Stub.advance(1.5)
+    check(Stub.mainHand ~= DAGGER, "in combat the key puts the pole on as well")
+    eq(Stub.equipped[HEAD], PLAIN_HELM, "the fishing hat waits")
+    Stub.leaveCombat()
+    Stub.advance(1.5)
+    eq(Stub.equipped[HEAD], LUCKY_HAT, "and goes on when combat ends")
+    Stub.press(GEAR_KEY)
+    Stub.advance(2)
+    eq(Stub.mainHand, DAGGER, "off again")
 
     -- A pole put on by hand: nothing is written down to go back to
     Stub.bags[Stub.POLE] = Stub.bags[Stub.POLE] - 1

@@ -428,8 +428,8 @@ ns.On("CHARACTER", function() plan = nil end)
 --   Pole on:     what was in the main hand goes back, then what was in the off hand. The
 --                pole coming off turns fishing mode off, which puts the clothing back.
 -- The key is bound for as long as it is set, pole or no pole; while it is, the game's own
--- use of that key is out of reach. Nothing is changed in combat: the player is told to
--- press again afterwards.
+-- use of that key is out of reach. It works in combat too, for the hands: the game lets a
+-- weapon be changed there. The clothing waits for combat to end.
 --
 -- A pole the player put on by hand has nothing written down to go back to. Keepnet says so
 -- instead of guessing.
@@ -507,7 +507,7 @@ local function PoleOff()
     if off and GetInventoryItemID("player", OFF_HAND) ~= ItemID(off) and Util.ItemCount(ItemID(off)) > 0 then
         names[#names + 1] = LinkName(off)
         C_Timer.After(PRESS_GAP, function()
-            if InCombatLockdown() or ns.inCombat or ns.fishing then return end
+            if ns.fishing then return end
             if GetInventoryItemID("player", OFF_HAND) ~= ItemID(off) then EquipCall(off, OFF_HAND) end
         end)
     end
@@ -523,14 +523,17 @@ function Gear.Toggle()
     local now = GetTime()
     if now - lastPress < PRESS_GAP then return end
     lastPress = now
-    if InCombatLockdown() or ns.inCombat then
-        Util.Print("Gear can't be changed in combat: press the gear key again afterwards.")
-        return
-    end
+    -- What is held in the hands can be changed in combat, so the key works there too: the
+    -- weapon is back at once. Clothing can't be: it follows when combat ends, as it always
+    -- did (the "COMBAT" listener further up).
+    local changed
     if ns.fishing then
-        PoleOff()
+        changed = PoleOff()
     else
-        PoleOn()
+        changed = PoleOn()
+    end
+    if changed and (InCombatLockdown() or ns.inCombat) then
+        Util.Print("Your clothing changes when combat ends.")
     end
 end
 

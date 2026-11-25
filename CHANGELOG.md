@@ -3,6 +3,12 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.1.3
+
+- The gear key works in combat. Attacked while fishing, one press puts your weapon back in
+  your hands at once; your clothing follows when combat ends, since the game doesn't let
+  clothing change in combat.
+
 ## 1.1.2
 
 - The money that buying lures never spends is set in gold and silver now: "Never spend my

@@ -648,7 +648,8 @@ end
 -- Swaps a bag item into a slot; what was there goes to the bags
 function C_Item.EquipItemByName(item, slot)
     local id = ItemID(item)
-    if Stub.lockdown then
+    -- (what is held in the two hands can be changed in combat; clothing can't)
+    if Stub.lockdown and slot ~= 16 and slot ~= 17 then
         Stub.errors[#Stub.errors + 1] = "clothing changed in combat"
         return
     end
