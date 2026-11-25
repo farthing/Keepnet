@@ -4,7 +4,7 @@
 ## Author: farthing
 ## X-License: MIT
 ## X-Curse-Project-ID: 1825443
-## Version: 1.0.6
+## Version: 1.0.7
 ## IconTexture: Interface\Icons\INV_Misc_Net_01
 ## SavedVariables: KeepnetDB
 ## OptionalDeps: EllesmereUI, Auctionator, TradeSkillMaster, Auc-Advanced, aux-forever, RECrystallize, OribosExchange, KeepnetSounds

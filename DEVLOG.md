@@ -4,6 +4,17 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.0.7 (2026-11-25, night): a gold limit for buying lures. Passes its offline tests,
+committed and tagged; not on CurseForge.** The owner: "maybe add a field, where someone can
+set a 'if i have less than this amount of money, don't buy anything' option and then if the
+person has that amount or less, it does not buy". `settings.buyLureFloor`, in gold, 0 unless
+changed (`Vendor.Floor`). With that much or less (the amount itself counts, as asked)
+`Vendor.Shop` buys nothing, the Attractors neither, and says so once in chat, only where
+there was something it would have bought. It is a gate, not a reserve: with more than the
+limit, a purchase may still take the money under it (my reading; the owner asked for the
+gate). The box is on the number's line of the Gear & food tab ("Not with [ ] gold or less").
+Not seen in the game.
+
 **1.0.6 (2026-11-25, night): buying lures. Passes its offline tests, committed and tagged;
 not on CurseForge (the changelog for the next upload starts after 1.0.1). A file was added
 (`Vendor.lua`), so the game needs a full restart after `tools/install.ps1`, not a

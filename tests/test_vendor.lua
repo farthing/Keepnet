@@ -158,6 +158,37 @@ function T.run(ns)
     Stub.openMerchant(Supplier())
     eq(Bought(ATTRACTOR), 0, "Attractors switched off: left on the shelf")
 
+    -- With no more gold than the player set, nothing is bought at all
+    eq(settings.buyLureFloor, 0, "no such limit to begin with")
+    settings.buyLures, settings.buyAttractors = true, true
+    settings.buyLureItems = { [BRIGHT] = true }
+    settings.buyLureFloor = 10 -- gold
+    Stub.purchases = {}
+    Stub.bags = {}
+    Stub.money = 100000 -- ten gold exactly
+    Stub.chat = {}
+    Stub.openMerchant(Supplier())
+    eq(#Stub.purchases, 0, "exactly the gold that was set: nothing is bought")
+    eq(Stub.money, 100000, "not the Attractors either")
+    check(Said("No lures bought"), "and the player is told why")
+    Stub.money = 99999
+    Stub.openMerchant(Supplier())
+    eq(#Stub.purchases, 0, "less than that: nothing")
+    -- No word when there was nothing to buy anyway
+    Stub.chat = {}
+    Stub.openMerchant({ { id = BREAD, price = 25 } })
+    check(not Said("No lures bought"), "a vendor with nothing wanted: no word about it")
+    -- More than that: bought as usual
+    Stub.money = 100001
+    Stub.openMerchant(Supplier())
+    eq(Stub.bags[BRIGHT], 20, "a copper more than was set: the lures are bought")
+    eq(Stub.bags[ATTRACTOR], 2, "and the Attractors")
+    settings.buyLureFloor = "nonsense"
+    eq(Vendor.Floor(), 0, "a limit that isn't a number is none")
+    settings.buyLureFloor = 0
+    settings.buyAttractors = false
+    Stub.money = 100000
+
     -- The Gear & food tab: the switch, the number, a tick box a lure, the Attractor's own
     settings.buyLures, settings.buyLureItems = true, { [CRAWLERS] = true }
     ns.UI.Show("gear")
@@ -181,6 +212,10 @@ function T.run(ns)
     tab.buyLureCount:SetText("")
     tab.buyLureCount:GetScript("OnTextChanged")(tab.buyLureCount)
     eq(settings.buyLureCount, 35, "an empty box changes nothing")
+    eq(tab.buyLureFloor:GetText(), "0", "the gold limit shows")
+    tab.buyLureFloor:SetText("250")
+    tab.buyLureFloor:GetScript("OnTextChanged")(tab.buyLureFloor)
+    eq(settings.buyLureFloor, 250, "gold typed in is the limit")
     -- Ticking
     tab.buyLureChecks[4]:SetChecked(true)
     tab.buyLureChecks[4]:GetScript("OnClick")(tab.buyLureChecks[4])

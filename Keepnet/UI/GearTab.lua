@@ -98,8 +98,22 @@ local function Build(frame)
     end)
     count:SetPoint("TOPLEFT", left + 22, y - 43)
     count:SetMaxLetters(3)
-    local countLabel = W.Text(frame, "GameFontHighlightSmall", "of each in my bags: buy up to that many")
+    local countLabel = W.Text(frame, "GameFontHighlightSmall", "of each in my bags")
     countLabel:SetPoint("LEFT", count, "RIGHT", 8, 0)
+    -- With this much gold or less, nothing is bought: not the lures, not the Attractors
+    local floorLabel = W.Text(frame, "GameFontHighlightSmall", "Not with")
+    floorLabel:SetPoint("TOPLEFT", left + 176, y - 47)
+    local floor = W.EditBox(frame, 56, nil, function(text)
+        local number = tonumber(text)
+        if number then
+            settings.buyLureFloor = math.max(0, math.min(Vendor.MOST_GOLD, math.floor(number)))
+        end
+    end)
+    floor:SetPoint("LEFT", floorLabel, "RIGHT", 6, 0)
+    floor:SetMaxLetters(6)
+    local floorAfter = W.Text(frame, "GameFontHighlightSmall", "gold or less")
+    floorAfter:SetPoint("LEFT", floor, "RIGHT", 6, 0)
+    frame.buyLureFloor = floor
     -- Three on the first line, the two long names on the second
     local LURE_PLACES = { { 22, 68 }, { 132, 68 }, { 250, 68 }, { 22, 88 }, { 190, 88 } }
     local lureChecks = {}
@@ -215,6 +229,9 @@ local function Build(frame)
         end
         count:SetAlpha(buying and 1 or 0.45)
         countLabel:SetAlpha(buying and 1 or 0.45)
+        if not (floor.HasFocus and floor:HasFocus()) then
+            floor:SetText(tostring(Vendor.Floor()))
+        end
         for _, check in ipairs(lureChecks) do
             -- (the item's name in the game's own language, once the game has told it)
             check.label:SetText(Util.ItemInfo(check.lure.id) or check.lure.name)

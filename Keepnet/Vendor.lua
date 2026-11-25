@@ -10,6 +10,8 @@
 --   ns.settings.buyLureItems    which: { [item ID] = true }
 --   ns.settings.buyLureCount    how many of each to have in the bags (20 unless changed)
 --   ns.settings.buyAttractors   every Aquadynamic Fish Attractor a vendor has
+--   ns.settings.buyLureFloor    nothing at all is bought while the character has this much
+--                               gold or less (0 unless changed)
 --
 -- The numbers of the lures and which of them a vendor can sell on this client were checked
 -- against Mastercraft's list and two guides for this client; see CREDITS.md.
@@ -32,6 +34,13 @@ Vendor.ATTRACTOR = { id = 6533, name = "Aquadynamic Fish Attractor" }
 
 Vendor.DEFAULT_COUNT = 20
 Vendor.MOST = 200 -- the most the number can be set to
+Vendor.MOST_GOLD = 999999
+
+-- The gold at or under which nothing is bought, as the player set it
+function Vendor.Floor()
+    local floor = tonumber(ns.settings.buyLureFloor) or 0
+    return math.max(0, math.min(Vendor.MOST_GOLD, math.floor(floor)))
+end
 
 -- The number the player set, kept within reason
 function Vendor.Count()
@@ -98,11 +107,20 @@ function Vendor.Shop()
     if not (GetMerchantNumItems and BuyMerchantItem) then return 0 end
     local money = Number(GetMoney and GetMoney())
     if not money then return 0 end
+    -- With this much or less the player wants nothing bought at all
+    local floor = Vendor.Floor()
+    local held = floor > 0 and money <= floor * 10000
     local bought, spent, short = {}, 0, {}
     for index = 1, Number(GetMerchantNumItems()) or 0 do
         local ok, item = pcall(ItemAt, index)
         if ok and item then
             local want = Wanted(item, settings)
+            if want > 0 and held then
+                -- Said once, and only where there was something to buy
+                Util.Print(("No lures bought: you have %s, and that is not more than the %s you set."):format(
+                    Util.Money(money), Util.Money(floor * 10000)))
+                return 0
+            end
             if want > 0 then
                 local name = Util.ItemInfo(item.id) or ("item " .. item.id)
                 -- What the money left will pay for
