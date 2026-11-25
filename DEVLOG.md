@@ -4,6 +4,11 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**The gear key in combat, seen in the game by the owner on 1.1.4 (2026-11-25, about 19:45):**
+"yep that works". Then: "document, save, publish to curse. publish to public git." **Buying
+lures has still not bought anything in the real game** when 1.1.4 went up: the owner was
+told so.
+
 **1.1.4 (2026-11-25, evening): the gear key on a protected button.** The owner tried 1.1.3
 in a fight: "tried, first bug grabbed by the addon". Seen on their screen: "Back in your
 hands: ..." and "Your clothing changes when combat ends", the pole still on, then three
