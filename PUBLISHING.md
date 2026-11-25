@@ -300,10 +300,28 @@ new pictures with the old titles and stars, and in the description in place of t
   `-Margin 0`, because the live panel's corner showed in the margin.
 - `09-find-a-fish.png`, "History: where a fish was caught" (`2271/923`, featured).
 
-**The four old pictures are still in the gallery** (`2265/894`, `2265/895`, `2267/304`,
-`2265/899`), under the same titles, and the new ones stand last in the order: deleting the
-old ones and putting the order back waits for the owner's yes. Nothing in the description
-uses the old ones any more.
+**The four old pictures were deleted** (`2265/894`, `2265/895`, `2267/304`, `2265/899`;
+"Delete successful" each time) and the gallery put back in its order: in the game, live
+panel, session, history, zones, gear, alerts, settings, find a fish, zone session, lure
+list, interface hidden. Twelve pictures, the same seven featured, read back after a reload.
+
+**The owner's rule since that day: "always clean up images when we update them".** A picture
+that is replaced is deleted in the same job, once nothing uses it any more, and the order is
+put back. No asking first.
+
+What reordering taught this time:
+
+- Right after deletes, "Reorder gallery" can still list the deleted pictures (it listed
+  sixteen cards for twelve). Cancel, leave the project's pages and come back, and count the
+  cards before moving anything.
+- The arrow keys move the held card across the grid, not along the order: Left and Right
+  stop at the ends of a row, Up and Down move a whole row (three places at this window
+  size). A Left on the first card of a row does nothing, and says nothing.
+- Before the Space that picks a card up: `blur()`, `focus()`, and a second's wait. Without
+  them the Space was ignored once. Two seconds after each key, and read the order back (the
+  cards that are not `position: fixed`) and the page's live region ("was moved over ...")
+  before the next one: Chrome was minimised behind the game and slow to redraw.
+- Done saves ("Edit successful").
 
 What the edit form taught this time: whether a picture is featured can be read from its
 star in the form (the pencil): the star's path is filled orange (`#F16436`) when it is, and
