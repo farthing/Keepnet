@@ -182,7 +182,7 @@ for name in ([[
     StopMovingOrSizing SetJustifyH SetWordWrap
     SetDesaturated SetCheckedTexture SetThumbTexture SetOrientation SetMinMaxValues SetValueStep
     SetObeyStepOnDrag SetHitRectInsets SetOwner AddLine SetHyperlink SetItemByID
-    SetAutoFocus SetTextInsets SetMaxLetters ClearFocus SetPropagateKeyboardInput CopyFontObject
+    SetAutoFocus SetTextInsets SetMaxLetters ClearFocus SetPropagateKeyboardInput
     SetTexCoord SetBlendMode GenerateMenu
     SetShadowColor SetShadowOffset SetClipsChildren SetHighlightColor
 ]]):gmatch("%S+") do
@@ -281,6 +281,10 @@ function Methods:SetBackdrop(backdrop) self.__backdropFile = backdrop and backdr
 function Methods:SetColorTexture(r, g, b, a) self.__color = { r, g, b, a } end
 -- What a text or a picture was last given, for the tests of the looks
 function Methods:SetTextColor(r, g, b, a) self.__textColor = { r, g, b, a } end
+function Methods:GetTextColor()
+    local color = self.__textColor or { 1, 1, 1, 1 }
+    return color[1], color[2], color[3], color[4]
+end
 function Methods:SetVertexColor(r, g, b, a) self.__vertex = { r, g, b, a } end
 function Methods:SetTexture(texture) self.__texture = texture end
 -- A texture that goes from one colour to another: { orientation, from, to }
@@ -336,7 +340,15 @@ for name, size in pairs({
 }) do
     local font = Mock("Font", name)
     font.__font = { "Fonts\\FRIZQT__.TTF", size, "" }
+    -- White, the game's gold, or grey
+    font.__textColor = name:find("Normal") and { 1, 0.82, 0, 1 } or name:find("Disable") and { 0.5, 0.5, 0.5, 1 } or { 1, 1, 1, 1 }
     _G[name] = font
+end
+-- A copy takes the colour of what it copies, as in the game
+function Methods:CopyFontObject(source)
+    if source and source.__textColor then
+        self.__textColor = { source.__textColor[1], source.__textColor[2], source.__textColor[3], source.__textColor[4] }
+    end
 end
 
 function CreateFrame(kind, name, parent, template)

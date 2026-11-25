@@ -4,6 +4,36 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.0.2 (2026-11-25, late evening): a colour set called Matrix. Passes its offline tests,
+committed and tagged; NOT in the owner's game (the development copy there is 1.0.1:
+`tools/install.ps1`, which is usually blocked for me, then `/reload`, no file was added) and
+NOT on CurseForge (uploads wait for the owner's word; the changelog for the next upload
+starts after 1.0.1).** The owner: "i want a colour scheme added to both keepnet and glass.
+call it Matrix. i want it to use the same colour scheme/looks that the code in the movies
+of the matrix used."
+
+- It is in the "Colours" list of Keepnet and Keepnet rounded (they share one list) and of
+  Glass: black panes, green borders (a green rim on the glass), green buttons, the accent
+  the green usually given for that code (`00FF41`).
+- **The writing is green too, which no set of colours could do before.** A set of colours
+  may now name an "ink": a function every text colour goes through (`MatrixInk` in
+  `UI\Widgets.lua`). White becomes the full green, greys and other colours darker greens by
+  how bright they are, the game's gold (headings, the yellow of a caution) the palest green,
+  almost white, as the first sign of each falling line was; red stays red and green stays
+  green, so "none left", "can't fish here" and "fed" still mean something. My choices, all
+  of them: the owner asked for the look, not for these rules.
+- How: every text of Keepnet's own looks (not the game's looks, not Windows 95, which has
+  its own way) now remembers what it was given, because its `SetText` and `SetTextColor`
+  are stood in for (`Remember` in `UI\Widgets.lua`), and Keepnet's copies of the game's
+  fonts remember the game's colour. Choosing other colours goes over all of it at once
+  (`SetInk`), so Matrix needs no reload and going back puts every text as it was. **This
+  touches every text of the default look**, ink or none: watch for a text that reads wrong
+  or is not updated.
+- Not coloured: item pictures, the cog, the game's tooltips, chat lines.
+- Tests: `tests\test_look_sounds.lua` ("Matrix") and `tests\test_looks.lua` (on glass).
+- **Not seen in the game.** How the greens read against each other, and on glass over a
+  bright scene, is untried.
+
 **1.0.1 (2026-11-25, evening): the looks are released.** The owner, an hour after calling
 them an experiment that might never see the light of day, with the Glass look in their game:
 "publish to curse as 1.0.0.1, add a not early on that the themes are in and there is a

@@ -253,7 +253,7 @@ function T.run(ns)
     eq(W.look, "glass", "after the reload the Glass look is built")
     eq(W.glass, true, "its pieces are in use")
     eq(W.round, true, "which are round ones")
-    eq(#W.Theme("glass").schemes, 5, "it comes in five colours")
+    eq(#W.Theme("glass").schemes, 6, "it comes in six colours")
     eq(W.Scheme(W.Theme("glass")).name, "Smoked", "smoked from the start")
     Stub.equip(Stub.POLE)
     local glass = KeepnetPanel.keepnetSkin.round
@@ -319,6 +319,17 @@ function T.run(ns)
     check(Close(glass.bands[1].__color[3], 0.14), "the pane takes the new tint")
     check(Close(KeepnetPanel.menu.keepnetSkin.round.bands[1].__color[4], 0.93), "a menu is nearly solid")
     check(Close(KeepnetPanel.menu.keepnetSkin.round.bands[1].__color[3], 0.14), "in the pane's tint")
+
+    -- Matrix on glass: black glass, a green rim, green buttons, green writing
+    W.SetScheme(W.Theme("glass"), "matrix")
+    W.ApplyTheme()
+    check(Close(glass.bands[1].__color[2], 0.04) and glass.bands[1].__color[1] == 0, "Matrix: the pane is black with a breath of green")
+    check(Close(glass.lineTop.__color[1], 0.30) and Close(glass.lineTop.__color[2], 1), "its rim is green")
+    check(Close(glassButton.bands[1].__color[2], 1) and glassButton.bands[1].__color[1] == 0, "its buttons are green patches")
+    check(Close(KeepnetGameFontHighlightSmall.__textColor[2], 1) and KeepnetGameFontHighlightSmall.__textColor[1] == 0, "and its writing is green")
+    W.SetScheme(W.Theme("glass"), "water")
+    W.ApplyTheme()
+    eq(KeepnetGameFontHighlightSmall.__textColor[1], 1, "other colours: the writing is white again")
 
     PokeEveryTab(ns)
 

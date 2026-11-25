@@ -44,7 +44,8 @@ the net an angler keeps the catch in.
   gold you chose. Green, blue, purple and worth-gold catches each have their own sound: one of the game's,
   one of your own files, or one another addon shares through LibSharedMedia.
 - **Looks.** Chosen in the Appearance tab, each with the colours it comes in:
-  - **Keepnet** (the default): Keepnet's own flat look, in six colours.
+  - **Keepnet** (the default): Keepnet's own flat look, in seven colours. One of them,
+    Matrix, writes everything in green on black; Glass has it too.
   - **Keepnet rounded**: the same with round corners.
   - **Glass**: round panes you can see the game through, with a rim of light and a soft
     shadow, in five colours. How dense the glass is, is yours to set (65% to begin with).

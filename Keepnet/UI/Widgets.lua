@@ -48,6 +48,28 @@ local NATIVE_SMALL_ART = {
     insets = { left = 2, right = 2, top = 2, bottom = 2 },
 }
 
+-- "Matrix": black, with everything written in the green of the falling code in those films.
+-- A set of colours may name an "ink": a function that every text colour goes through, the
+-- colours written inside a text too (see "Text in the colours' own hue" further down). This
+-- one puts each colour on the code's own run of greens by how bright it is: white is the
+-- full green, greys and other colours darker greens, and the game's gold (headings, and the
+-- yellow of a caution) the palest, almost white, as the leading sign of each falling line
+-- was. Red stays red, so that a warning still reads as one.
+local function MatrixInk(r, g, b)
+    local high, low = math.max(r, g, b), math.min(r, g, b)
+    if high <= 0 then return r, g, b end
+    if r >= 0.8 and g <= 0.5 and b <= 0.5 then return r, g, b end        -- a warning
+    if g >= 0.8 and g - math.max(r, b) >= 0.3 then return r, g, b end    -- green already
+    local spread = (high - low) / high
+    if spread >= 0.25 and r >= 0.8 and g >= 0.5 and b <= 0.5 then
+        return 0.80, 1.00, 0.84                                          -- gold, yellow, orange
+    end
+    local light = 0.299 * r + 0.587 * g + 0.114 * b
+    if spread < 0.25 and light >= 0.9 then return 0, 1, 0.25 end         -- white
+    local t = math.min(1, math.max(light, high * 0.75) / 0.9) ^ 1.6
+    return 0, 0.25 + 0.75 * t, 0.06 + 0.19 * t
+end
+
 -- Keepnet's own colours. All dark, since the text is the game's own light fonts.
 W.SCHEMES = {
     {
@@ -81,17 +103,26 @@ W.SCHEMES = {
         background = { 0, 0, 0 }, header = { 0.10, 0.10, 0.10 }, button = { 0.17, 0.17, 0.17 },
         buttonHover = { 0.28, 0.28, 0.28 }, border = { 0.30, 0.30, 0.30 }, accent = { 1, 1, 1 },
     },
+    {
+        -- black, green borders, everything written in green
+        key = "matrix", name = "Matrix", ink = MatrixInk,
+        background = { 0.01, 0.03, 0.01 }, header = { 0.00, 0.11, 0.02 }, button = { 0.00, 0.16, 0.03 },
+        buttonHover = { 0.00, 0.28, 0.06 }, border = { 0.00, 0.56, 0.07 }, accent = { 0.00, 1.00, 0.25 },
+    },
 }
 
 -- The colours of the Glass look. The background is the tint of the panes (how dense it is
 -- the player sets); the others say how solid they are themselves: what is set into a pane
 -- darkens it, a button lightens it. The border is the colour of the rim of light.
-local function Glass(key, name, tint, accent)
-    return {
+-- other: anything a set of colours has that differs from the rest
+local function Glass(key, name, tint, accent, other)
+    local scheme = {
         key = key, name = name, background = tint, accent = accent,
         header = { 0, 0, 0, 0.32 }, button = { 1, 1, 1, 0.09 }, buttonHover = { 1, 1, 1, 0.20 },
         border = { 1, 1, 1 },
     }
+    for part, value in pairs(other or {}) do scheme[part] = value end
+    return scheme
 end
 
 W.GLASS_SCHEMES = {
@@ -100,6 +131,11 @@ W.GLASS_SCHEMES = {
     Glass("midnight", "Midnight", { 0.05, 0.06, 0.16 }, { 0.62, 0.70, 1.00 }),
     Glass("moss", "Moss", { 0.05, 0.11, 0.06 }, { 0.60, 0.90, 0.45 }),
     Glass("amber", "Amber", { 0.14, 0.09, 0.04 }, { 1.00, 0.70, 0.30 }),
+    -- black glass with a green rim, green buttons, everything written in green
+    Glass("matrix", "Matrix", { 0.00, 0.04, 0.01 }, { 0.00, 1.00, 0.25 }, {
+        ink = MatrixInk, border = { 0.30, 1.00, 0.45 },
+        header = { 0, 0.07, 0.01, 0.45 }, button = { 0, 1, 0.25, 0.08 }, buttonHover = { 0, 1, 0.25, 0.18 },
+    }),
 }
 
 W.THEMES = {
@@ -360,7 +396,7 @@ end
 -- The game's fonts that stand for a heading: these get the heavier file
 local HEADING_FONTS = { GameFontNormal = true, GameFontNormalLarge = true }
 
-local fonts = {} -- by the game font's name: { object, file, size, flags, heading }, or false
+local fonts = {} -- by the game font's name: { object, file, size, flags, heading, color }, or false
 
 local function SetFontFile(entry)
     local regular, heading = FontFiles(ns.settings and ns.settings.font)
@@ -370,6 +406,8 @@ local function SetFontFile(entry)
         pcall(entry.object.SetFont, entry.object, entry.heading and heading or regular, entry.size, entry.flags)
     end
 end
+
+local SetInk -- further down, with the texts it goes over
 
 local function RefreshFonts()
     for _, entry in pairs(fonts) do
@@ -404,7 +442,13 @@ function W.FontObject(name)
                 local object = CreateFont("Keepnet" .. name)
                 object:CopyFontObject(source)
                 entry = { object = object, file = file, size = size, flags = flags or "", heading = HEADING_FONTS[name] }
+                -- The colour the game gave this font, to come back to
+                if object.GetTextColor then
+                    local r, g, b, a = object:GetTextColor()
+                    if r then entry.color = { r, g, b, a or 1 } end
+                end
                 SetFontFile(entry)
+                W.InkFont(entry)
             end
         end
         fonts[name] = entry
@@ -538,6 +582,7 @@ function W.ApplyTheme()
     if W.retro and ns.Retro then ns.Retro.Apply(scheme, own) end
     RefreshFonts()
     WatchSharedFonts()
+    SetInk((not W.native and not W.retro) and scheme.ink or nil)
     W.COLORS.accent[1], W.COLORS.accent[2], W.COLORS.accent[3] = accent[1], accent[2], accent[3]
     W.COLORS.border[4] = (settings.borders == false) and 0 or 1
     -- How solid the window and the live panel are. Glass has settings of its own for it (how
@@ -598,6 +643,75 @@ function W.Panel(name, parent, width, height, group)
     return frame
 end
 
+-- ---------------------------------------------------------------------------------------------
+-- Text in the colours' own hue. Where the colours in use name an "ink", every colour a text
+-- is given goes through it: the colour of the font it is made in (Keepnet's copies of the
+-- game's fonts take it), a colour the screens give it afterwards, and the colours written
+-- inside the text. For that, every text of Keepnet's own looks remembers what it was given
+-- (its SetText and SetTextColor are stood in for), so that other colours can be chosen at
+-- once and the text put back as it was.
+-- ---------------------------------------------------------------------------------------------
+local ink                                         -- the function of the colours in use, or nil
+local written = setmetatable({}, { __mode = "k" }) -- every text that remembers
+
+local function InkCode(alpha, red, green, blue)
+    local r, g, b = ink(tonumber(red, 16) / 255, tonumber(green, 16) / 255, tonumber(blue, 16) / 255)
+    local function Byte(value) return math.floor(math.max(0, math.min(1, value)) * 255 + 0.5) end
+    return ("|c%s%02x%02x%02x"):format(alpha, Byte(r), Byte(g), Byte(b))
+end
+
+local function InkText(text)
+    if not ink or type(text) ~= "string" or not text:find("|c", 1, true) then return text end
+    return (text:gsub("|c(%x%x)(%x%x)(%x%x)(%x%x)", InkCode))
+end
+
+-- A font's own colour, through the ink or as the game gave it
+function W.InkFont(entry)
+    local color = entry.color
+    if not color then return end
+    local r, g, b = color[1], color[2], color[3]
+    if ink then r, g, b = ink(r, g, b) end
+    entry.object:SetTextColor(r, g, b, color[4])
+end
+
+-- Gives a text again what it was given, through the ink in use
+local function Rewrite(text)
+    local chosen = text.keepnetColor
+    if chosen then
+        local r, g, b = chosen[1], chosen[2], chosen[3]
+        if ink then r, g, b = ink(r, g, b) end
+        text.keepnetSetColor(text, r, g, b, chosen[4])
+    end
+    if text.keepnetRaw ~= nil then
+        text.keepnetSetText(text, InkText(text.keepnetRaw))
+    end
+end
+
+local function Remember(text)
+    text.keepnetSetText, text.keepnetSetColor = text.SetText, text.SetTextColor
+    text.SetText = function(self, value)
+        self.keepnetRaw = value
+        self.keepnetSetText(self, InkText(value))
+    end
+    text.SetTextColor = function(self, r, g, b, a)
+        self.keepnetColor = { r, g, b, a }
+        if ink then r, g, b = ink(r, g, b) end
+        self.keepnetSetColor(self, r, g, b, a)
+    end
+    text.GetText = function(self) return self.keepnetRaw end
+    written[text] = true
+end
+
+-- Takes the ink of these colours (nil for none) and goes over everything written
+function SetInk(newInk)
+    if newInk == ink then return end
+    ink = newInk
+    for _, entry in pairs(fonts) do
+        if entry then W.InkFont(entry) end
+    end
+    for text in pairs(written) do Rewrite(text) end
+end
+
 function W.Text(parent, font, text)
     local fontString = parent:CreateFontString(nil, "OVERLAY", font or "GameFontHighlightSmall")
     if W.retro and ns.Retro then
@@ -605,6 +719,9 @@ function W.Text(parent, font, text)
     else
         local own = W.FontObject(font or "GameFontHighlightSmall")
         if own then fontString:SetFontObject(own) end
+        -- (the game's own looks keep the game's colours, and so do the small numbers on
+        -- item pictures)
+        if own and not W.native then Remember(fontString) end
     end
     fontString:SetText(text or "")
     if ns.Adopt then ns.Adopt.Apply("text", fontString) end

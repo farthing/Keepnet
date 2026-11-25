@@ -3,6 +3,13 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.0.2
+
+- New colours, Matrix, for the Keepnet, Keepnet rounded and Glass looks: black, with green
+  borders and everything written in the green of the falling code. White text is the full
+  green, dim text a darker green and headings the palest, almost white. Red stays red, so a
+  warning still reads as one. Pick it in the "Colours" list on the Appearance tab.
+
 ## 1.0.1
 
 Looks. Keepnet can be dressed several ways now, each in colours of its own, and it has a

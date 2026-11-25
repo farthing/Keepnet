@@ -149,6 +149,53 @@ function T.run(ns)
     settings.font = "overpass"
     W.ApplyTheme()
 
+    -- -------------------------------------------------------------------------- Matrix
+    -- A set of colours that writes everything in its own green: black, green borders
+    local reloadsBefore = Stub.reloads
+    local accentModeBefore = settings.accentMode
+    settings.accentMode = "theme"
+    W.SetScheme(W.Theme("keepnet"), "matrix")
+    W.ApplyTheme()
+    eq(Stub.reloads, reloadsBefore, "Matrix is colours like the others: no reload")
+    check(Close(W.COLORS.accent[2], 1) and W.COLORS.accent[1] == 0, "the code's green as the accent")
+    check(W.COLORS.background[1] < 0.05 and W.COLORS.background[2] < 0.05, "on black")
+    check(Close(W.COLORS.border[2], 0.56), "with green borders")
+    -- The fonts' own colours: white is the full green, the game's gold the palest, grey a dim green
+    local white, gold, grey = KeepnetGameFontHighlightSmall.__textColor, KeepnetGameFontNormal.__textColor,
+        KeepnetGameFontDisableSmall.__textColor
+    check(white[1] == 0 and Close(white[2], 1) and Close(white[3], 0.25), "white writing becomes the full green")
+    check(Close(gold[1], 0.80) and Close(gold[2], 1) and Close(gold[3], 0.84), "headings the palest, almost white")
+    check(grey[1] == 0 and grey[2] > 0.4 and grey[2] < 0.7, "grey writing a dimmer green")
+    eq(GameFontHighlightSmall.__textColor[1], 1, "the game's own fonts are not touched")
+    -- Colours written inside a text, and colours given to a text
+    local sign = W.Text(KeepnetPanel, "GameFontHighlightSmall", "|cffffffffFish|r |cff9d9d9dfew|r |cffff6060none left|r |cff40ff40fed|r")
+    eq(sign.__text, "|cff00ff40Fish|r |cff00a82afew|r |cffff6060none left|r |cff40ff40fed|r",
+        "inside a text: white and grey go green, red stays red, green stays")
+    eq(sign:GetText(), "|cffffffffFish|r |cff9d9d9dfew|r |cffff6060none left|r |cff40ff40fed|r", "the text itself is remembered as it was given")
+    sign:SetTextColor(1, 1, 1)
+    check(sign.__textColor[1] == 0 and Close(sign.__textColor[2], 1), "a text made white is made green")
+    sign:SetTextColor(1, 0.3, 0.3)
+    check(Close(sign.__textColor[1], 1) and Close(sign.__textColor[2], 0.3), "one made red stays red")
+    sign:SetText(12)
+    eq(sign.__text, 12, "a number is left alone")
+    sign:SetText("|cff0070ddRare fish|r")
+    -- Other colours: everything is put back as it was given
+    W.SetScheme(W.Theme("keepnet"), "keepnet")
+    W.ApplyTheme()
+    eq(KeepnetGameFontHighlightSmall.__textColor[1], 1, "back to other colours: white writing again")
+    check(Close(KeepnetGameFontNormal.__textColor[2], 0.82) and KeepnetGameFontNormal.__textColor[3] == 0, "and gold headings")
+    eq(sign.__text, "|cff0070ddRare fish|r", "a text gets its own colours back")
+    check(Close(sign.__textColor[2], 0.3) and Close(sign.__textColor[1], 1), "and the colour it was last given")
+    -- The Glass look has it too
+    local glassMatrix
+    for _, colours in ipairs(W.Theme("glass").schemes) do
+        if colours.key == "matrix" then glassMatrix = colours end
+    end
+    check(glassMatrix ~= nil and glassMatrix.name == "Matrix" and glassMatrix.ink ~= nil, "Glass comes in Matrix as well")
+    settings.schemes = nil
+    settings.accentMode = accentModeBefore
+    W.ApplyTheme()
+
     -- The colour picker: dragging applies, Cancel puts the old colour back
     local seen
     W.PickColor(0.2, 0.4, 0.6, function(r, g, b) seen = { r, g, b } end)
