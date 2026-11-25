@@ -13,6 +13,61 @@ replaced by the new ones (delete the old, restore the order). Raise it at the st
 next session. Also still open from before: the lure buying has not bought anything in the
 real game.
 
+**1.1.5 (2026-11-25, about 20:45): a minimap button, and an icon of Keepnet's own. Passes
+its offline tests, committed and tagged; not on CurseForge, NOT in the game, nothing of it
+seen there.** The owner: "i want keepnet to have a loaded addon icon, and button, like
+master craft currently does in the ui. or dungeon journal etc etc. one that sits with the
+minimap".
+
+- **The button** (`Keepnet\Minimap.lua`, new; `ns.MinimapButton`). Left click: the window.
+  Right click: the live panel (what `/kn panel` does). Drag: round the minimap. Which click
+  does what, the tooltip's wording and the starting place (190 degrees, left of the
+  minimap) are my choices, not the owner's.
+- **Made in one of two ways, decided once at the first entry into the world.** Through
+  LibDBIcon when another addon has loaded it with LibDataBroker (Keepnet brings neither):
+  the button is then `LibDBIcon10_Keepnet`, and Keepnet is a launcher for broker bars. A
+  button of Keepnet's own otherwise (`KeepnetMinimapButton`, the game's disc, ring and
+  highlight round the icon; on a square or part-square minimap it keeps to the square's
+  side, read from `GetMinimapShape`). **In the owner's game it will be LibDBIcon's**: five
+  installed addons bring that library (BugSack's copy is the newest, 57), and
+  EllesmereUIMinimap gathers every `LibDBIcon10_` button, which is how Mastercraft's and the
+  Dungeon Journal's get where they are. That is why this way was taken and no library is
+  bundled.
+- **Settings** (each character's own, like the rest): `minimapButton` (on unless changed)
+  and `minimapAngle`. LibDBIcon wants a table of its own to keep a button's place in;
+  Keepnet hands it one that holds nothing and reads and writes those two settings
+  (`place`, a metatable), so nothing of the library's is saved and a character's own place
+  is what the library sees. The library is only told to show, hide or move when what it was
+  last told changed: by then its button may be in a minimap addon's keeping. A button of
+  Keepnet's own that something has taken off the minimap is not put back on it either.
+- **Where it is switched:** the Settings tab, bottom left, "Minimap button" / "Show
+  Keepnet's button on the minimap"; `/kn minimap`.
+- **The icon:** `Keepnet\Media\Icon.tga`, 64 across, drawn by `tools\make_art.py`: the
+  logo's picture (net, fish, handle) drawn again for small sizes, since the logo itself
+  loses its mesh and hoop at 18 dots: lines two to three times as thick, a coarser mesh,
+  the fish bigger and in front of the mesh with a dark edge. Looked at only as a picture
+  (blown up, and shrunk to 32 and 18 dots), never in the game. The TOC's `IconTexture` is
+  that file now (it was the game's `INV_Misc_Net_01`), so the addon list and the minimap's
+  addon menu show it too.
+- **The addon menu on the minimap:** pointing at Keepnet shows the same lines
+  (`AddonCompartmentFuncOnEnter`, `...OnLeave` in the TOC), and a right click there is the
+  live panel. `Keepnet_OnAddonCompartmentClick` moved from `Core.lua` to `Minimap.lua`.
+- **Tests:** `tests\test_minimap.lua` (121 checks): both ways of making the button, the
+  clicks, dragging, every kind of minimap shape, hidden and shown, per character, a library
+  that refuses. The stand-in game has a `Minimap`, and `Stub.libs` for another addon's
+  libraries.
+- **Not known until it runs in the game:** that the game shows a TGA of an addon's own as
+  the `IconTexture` (Mastercraft's does, without the file ending, which is how Keepnet's is
+  written); how the icon reads at the button's size; where EllesmereUI's minimap puts the
+  button; that the addon menu passes "RightButton" on this client (the Dungeon Journal
+  relies on it).
+- **Not installed.** The game was running and holds 1.1.4 without the development mark in
+  its TOC: the CurseForge copy. `install.ps1` would put a development copy over it, so the
+  owner is asked first. Two files are new (`Minimap.lua`, `Media\Icon.tga`): a full restart
+  of the game, not `/reload`.
+- Left out of the listing's description on purpose: a minimap button is as much a given as
+  settings per character, which the owner did not want there. It is in the README.
+
 **1.1.4 is on CurseForge (uploaded 2026-11-25, about 19:55; "Processing" when last looked)
 and on GitHub (`main`, tag `v1.1.4`).** It brings everything from 1.0.2 to 1.1.4. The
 listing's description was brought up to date in the same go. What went up and how is in

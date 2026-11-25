@@ -185,6 +185,7 @@ for name in ([[
     SetAutoFocus SetTextInsets SetMaxLetters ClearFocus SetPropagateKeyboardInput
     SetTexCoord SetBlendMode GenerateMenu
     SetShadowColor SetShadowOffset SetClipsChildren SetHighlightColor GetFrameStrata HasFocus
+    SetHighlightTexture
 ]]):gmatch("%S+") do
     QUIET[name] = true
 end
@@ -305,6 +306,11 @@ end
 function Methods:SetFontObject(font) self.__fontObject = font end
 function Methods:SetScale(scale) self.__scale = scale end
 function Methods:GetLeft() return 400 end
+-- The middle of a frame, in its own measure: where a test puts it in frame.__center
+function Methods:GetCenter()
+    local center = self.__center or { 0, 0 }
+    return center[1], center[2]
+end
 function Methods:GetTop() return 600 end
 function Methods:GetBottom() return self.__bottom or 500 end
 function Methods:SetHeight(height) self.__height = height end
@@ -423,6 +429,11 @@ for _, name in ipairs({ "MinimapCluster", "PlayerFrame", "ChatFrame1", "MainMenu
     _G[name] = Mock("Frame", name, UIParent)
 end
 OtherAddonBarButton1 = Mock("Button", "OtherAddonBarButton1", OtherAddonBar)
+-- The minimap: 140 across, round unless a test defines GetMinimapShape as a minimap addon
+-- would
+Minimap = Mock("Frame", "Minimap", MinimapCluster)
+Minimap.__width, Minimap.__height = 140, 140
+Minimap.__center = { 1400, 800 }
 -- An interface suite: one whole-screen container holding its bars
 SuiteParent = Mock("Frame", "SuiteParent", UIParent)
 SuiteParent.__width, SuiteParent.__height = 1600, 900
@@ -535,7 +546,10 @@ RAID_CLASS_COLORS = { MAGE = { r = 0.25, g = 0.78, b = 0.92 } }
 -- Another addon's LibSharedMedia, when Stub.sharedMedia (sounds: name -> path) or
 -- Stub.sharedFonts (fonts: name -> path) is set. What asks to hear of newly shared media is
 -- kept in Stub.mediaCallback.
+-- Any other library another addon has loaded: a test puts it in Stub.libs under its name.
+Stub.libs = {}
 function LibStub(name)
+    if Stub.libs[name] then return Stub.libs[name] end
     if name ~= "LibSharedMedia-3.0" or not (Stub.sharedMedia or Stub.sharedFonts) then return nil end
     local function Of(kind)
         return (kind == "font" and Stub.sharedFonts or kind ~= "font" and Stub.sharedMedia) or {}
@@ -1170,6 +1184,8 @@ function Stub.reload()
     Stub.timers = {}
     Stub.bindings = {}
     KeepnetCastButton, KeepnetPanel, KeepnetWindow = nil, nil, nil
+    KeepnetMinimapButton = nil
+    Minimap.__scripts = {}
     local ns = Stub.loadAddon()
     Stub.login()
     return ns

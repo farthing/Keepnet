@@ -114,6 +114,11 @@ the net an angler keeps the catch in.
   it at the water or days later in town. The Session tab lists those items as "from an opened
   catch"; the catch list and the search still show only what was on the hook. Only things
   Keepnet saw you fish count: a clam you bought does not.
+- **A minimap button.** Keepnet's own icon on the minimap: a left click opens or closes the
+  window, a right click shows or hides the live panel, and you can drag it round the
+  minimap. If a minimap addon or a button collector tidies your other addons' buttons away,
+  it takes Keepnet's with them, and a broker bar shows Keepnet as a launcher. Hide it in
+  Settings ("Show Keepnet's button on the minimap") or with `/kn minimap`.
 - **New versions.** Keepnet tells you when a newer version is out: a chat line after logging
   in, a line on the live panel the first time the pole goes on, and a line on the Settings
   tab. An addon cannot reach the internet, so copies of Keepnet tell each other their
@@ -127,10 +132,11 @@ the net an angler keeps the catch in.
 
 | | |
 |---|---|
-| `/kn` or `/keepnet` | open the window (also in the addon menu on the minimap) |
+| `/kn` or `/keepnet` | open the window (also: a click on the minimap button, or on Keepnet in the addon menu on the minimap) |
 | `/kn new` | end the session; a new one starts with the next cast |
-| `/kn panel` | hide or show the live panel |
+| `/kn panel` | hide or show the live panel (also: a right click on the minimap button) |
 | `/kn reset` | put the live panel back in the middle, at the size it started with |
+| `/kn minimap` | hide or show the minimap button |
 | `/kn ui` | hide the game's interface, or bring it back (once turned on in Appearance) |
 
 Disable FishyWashy and Forever Fishing while you use it: they bind the same key and change the
@@ -244,9 +250,12 @@ Keepnet\            the addon (this folder is copied into the game)
   Sound.lua           the fishing sound profile
   OneKey.lua          the one key
   Updates.lua         hearing from other players' copies that a newer Keepnet is out
+  Minimap.lua         the minimap button, and Keepnet's entry in the minimap's addon menu
   UI\                 live panel, window, the seven tabs; Widgets.lua (the flat building blocks
                       and the themes), Native.lua (the same blocks from the game's own
                       templates), Adopt.lua (handing them to an interface suite)
+  Media\              the font, and the pictures tools\make_art.py draws: Keepnet's icon
+                      (Icon.tga) and the corners and shadow of the round looks
 sounds-local\         your own alert sounds (not committed; copied by install.ps1)
 tools\install.ps1     copies the addon into the game, marked as a development build (it
                       hears of newer versions and never announces its own)

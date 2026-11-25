@@ -317,6 +317,15 @@ local function Build(frame)
     goldNote:SetWidth(360)
     goldNote:SetJustifyH("LEFT")
 
+    -- ------------------------------------------------------------------ minimap button
+    Heading(frame, "Minimap button", left, y - 112)
+    local minimapButton = W.Check(frame, "Show Keepnet's button on the minimap", function(checked)
+        settings.minimapButton = checked
+        Changed()
+    end)
+    minimapButton:SetPoint("TOPLEFT", left, y - 134)
+    ns.SettingsChecks = { minimap = minimapButton } -- (for the tests)
+
     -- ------------------------------------------------------------------ live panel
     ry = ry - 84
     Heading(frame, "Live panel", right, ry)
@@ -422,6 +431,7 @@ local function Build(frame)
         gap.value:SetText(("%d min"):format(settings.sessionGap or 30))
         zoneSplit:SetChecked(settings.zoneSplit and true or false)
         cut:SetChecked(settings.auctionCut and true or false)
+        minimapButton:SetChecked(settings.minimapButton and true or false)
         lock:SetChecked(settings.panelLocked and true or false)
         catches:SetChecked(settings.panelCatches and true or false)
         kitCheck:SetChecked(settings.panelKit and true or false)

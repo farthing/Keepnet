@@ -60,6 +60,8 @@ local DEFAULTS = {
     hideMode = "off",     -- hide the game's interface while fishing: "off", "all" or "parts"
     hideAuto = true,      -- hide on a cast, bring back on moving (else only by the button)
     updates = true,       -- hear from other players' copies when a newer Keepnet is out (Updates.lua)
+    minimapButton = true, -- Keepnet's button on the minimap (Minimap.lua)
+    minimapAngle = 190,   -- where on the minimap's edge it sits: degrees, 0 at the right, towards the top
 }
 
 -- The sound for each kind of rare catch: green, blue, purple (and better), and "worth gold"
@@ -520,7 +522,7 @@ events:SetScript("OnEvent", function(_, event, arg1)
 end)
 
 -- ---------------------------------------------------------------------------------------------
--- Slash commands and the addon menu on the minimap
+-- Slash commands
 -- ---------------------------------------------------------------------------------------------
 SLASH_KEEPNET1 = "/keepnet"
 SLASH_KEEPNET2 = "/kn"
@@ -537,18 +539,20 @@ SlashCmdList["KEEPNET"] = function(message)
         if ns.Demo then ns.Demo.Toggle() end
     elseif command == "reset" then
         if ns.LivePanel then ns.LivePanel.ResetPosition() end
+    elseif command == "minimap" then
+        if ns.MinimapButton then
+            Util.Print(ns.MinimapButton.Toggle() and "The minimap button is back."
+                or "The minimap button is hidden. /kn minimap brings it back.")
+        end
     elseif command == "help" then
         Util.Print("/kn opens the window. /kn new starts a new session. /kn panel shows or "
             .. "hides the live panel. /kn reset puts the panel back in the middle at the size it "
             .. "started with. /kn ui hides "
-            .. "the game's interface or brings it back. /kn demo shows sample sessions, for trying "
+            .. "the game's interface or brings it back. /kn minimap shows or hides the minimap "
+            .. "button. /kn demo shows sample sessions, for trying "
             .. "the screens out, and /kn demo again brings your own back.")
     elseif ns.UI then
         ns.UI.Toggle()
     end
 end
-
--- Named in the TOC file as AddonCompartmentFunc
-function Keepnet_OnAddonCompartmentClick()
-    if ns.UI then ns.UI.Toggle() end
-end
+-- (What a click on Keepnet in the minimap's addon menu does is in Minimap.lua, with the button.)

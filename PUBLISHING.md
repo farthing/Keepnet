@@ -23,7 +23,10 @@ Sources are numbered at the end; "my reading" marks what a source doesn't state 
   requests [17].
 - **A logo:** 400x400, not a solid colour, no copyrighted imagery, not WebP [2]. Drawn
   2026-11-23: `media\logo.svg` (source) and `media\logo.png` (400x400). The in-game icon
-  (`INV_Misc_Net_01`) is the game's art and can't be the logo.
+  was one of the game's (`INV_Misc_Net_01`, the game's art, which can't be the logo) until
+  1.1.5. Since then it is Keepnet's own: `Keepnet\Media\Icon.tga`, the logo's picture drawn
+  again for the size an icon is seen at (thicker lines, coarser mesh, bigger fish) by
+  `tools\make_art.py`. The logo on the listing is unchanged.
 
 ## Decided for the listing (2026-11-23)
 

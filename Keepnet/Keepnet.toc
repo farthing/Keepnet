@@ -4,11 +4,13 @@
 ## Author: farthing
 ## X-License: MIT
 ## X-Curse-Project-ID: 1825443
-## Version: 1.1.4
-## IconTexture: Interface\Icons\INV_Misc_Net_01
+## Version: 1.1.5
+## IconTexture: Interface\AddOns\Keepnet\Media\Icon
 ## SavedVariables: KeepnetDB
 ## OptionalDeps: EllesmereUI, Auctionator, TradeSkillMaster, Auc-Advanced, aux-forever, RECrystallize, OribosExchange, KeepnetSounds
 ## AddonCompartmentFunc: Keepnet_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: Keepnet_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: Keepnet_OnAddonCompartmentLeave
 
 Util.lua
 Sessions.lua
@@ -28,6 +30,7 @@ HideUI.lua
 Sound.lua
 OneKey.lua
 Updates.lua
+Minimap.lua
 UI\Widgets.lua
 UI\Native.lua
 UI\Adopt.lua

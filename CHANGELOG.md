@@ -3,6 +3,17 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.1.5
+
+- Keepnet has a button on the minimap. A left click opens or closes the window, a right
+  click shows or hides the live panel, and you can drag it round the minimap. If a minimap
+  addon or a button collector tidies your other addons' buttons away, it takes Keepnet's
+  with them. Hide it on the Settings tab ("Show Keepnet's button on the minimap") or with
+  `/kn minimap`. Like every setting, each character has its own.
+- Keepnet has an icon of its own, the net with the fish, in place of one of the game's: on
+  the minimap button, in the addon list, and in the addon menu on the minimap, where
+  pointing at Keepnet now says what a click does.
+
 ## 1.1.4
 
 - The gear key really works in combat now. In 1.1.3 the game refused the change of weapon

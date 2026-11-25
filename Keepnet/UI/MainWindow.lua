@@ -1,4 +1,5 @@
--- Keepnet: the window (/keepnet, /kn, or the addon menu on the minimap) with its tabs:
+-- Keepnet: the window (/keepnet, /kn, the minimap button, or the addon menu on the minimap)
+-- with its tabs:
 -- Session, History, Zones, Settings. Each tab file adds itself with ns.UI.AddTab.
 local _, ns = ...
 local W = ns.Widgets

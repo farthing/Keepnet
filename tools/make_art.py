@@ -1,4 +1,5 @@
-"""Draws the pictures the "Keepnet rounded" look is put together from, into Keepnet\\Media.
+"""Draws the pictures the "Keepnet rounded" look is put together from, and Keepnet's icon,
+into Keepnet\\Media.
 
     .venv\\Scripts\\python tools\\make_art.py
 
@@ -20,8 +21,12 @@ window, 4 for a button); the border is one measure thick in both, which is why t
 are two pictures and not one drawn at two sizes. Edges are smoothed by measuring how much of
 each dot the shape covers.
 
+and the addon's icon, in its own colours (see "the icon" below):
+
+    Icon.tga           64 dots across: the addon list, the minimap button, the addon menu
+
 The files are 32-bit TGA, not compressed, which every version of the game reads. Nothing here
-is taken from anywhere: the shapes are circles.
+is taken from anywhere: the shapes are circles, and the icon is Keepnet's own logo.
 """
 import math
 import pathlib
@@ -86,6 +91,161 @@ def write_tga(path, rows):
     print(path.name, size, "x", size, len(header) + len(body), "bytes")
 
 
+# ------------------------------------------------------------------------------------- the icon
+# Keepnet's own icon: the picture of the logo (media\logo.svg: a landing net with a fish in
+# it), drawn again for the size an icon is seen at. On the minimap it is 18 dots across, where
+# the logo's thin mesh and hoop would be gone, so the lines here are two to three times as
+# thick, the mesh is coarser and the fish is bigger. The measures are the logo's (400 across).
+ICON_SIZE = 64
+ICON_SAMPLES = 6
+ICON_VIEW = (203, 214, 396)   # the part of the logo's square that is drawn: centre x, y, width
+ICON_TILT = 9                 # degrees the net leans back, as in the logo
+HOOP = (196, 150, 134, 46)    # centre x, y, half width, half height
+HOOP_LINE = 30
+BAG_LINE = 22
+MESH_STEP, MESH_LINE = 67, 10
+FISH_AT, FISH_TILT, FISH_SCALE = (187, 257), 24, 1.28
+FISH_EDGE = 9                 # the dark line round the fish
+HANDLE = ((322, 140), (398, 80))
+HANDLE_LINE = 30
+
+WATER_TOP, WATER_BOTTOM = (0x1D, 0x38, 0x50), (0x0A, 0x11, 0x18)
+GLOW = (0x4F, 0xC3, 0xF7)
+MESH = (0x4F, 0xC3, 0xF7)
+RIM = (0xD8, 0xF1, 0xFD)
+DEEP = (0x0C, 0x1A, 0x26)
+FISH = (0xFF, 0xD1, 0x00)
+WOOD, WOOD_LIGHT = (0xE7, 0xB5, 0x48), (0xF6, 0xD5, 0x81)
+
+
+def curve(p0, p1, p2, p3, steps=14):
+    """A curve between p0 and p3, pulled towards p1 and p2, as a row of points."""
+    points = []
+    for i in range(steps + 1):
+        t = i / steps
+        u = 1 - t
+        points.append((u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0],
+                       u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1]))
+    return points
+
+
+def inside(outline, x, y):
+    """Whether the point lies inside the closed outline."""
+    hit = False
+    xj, yj = outline[-1]
+    for xi, yi in outline:
+        if (yi > y) != (yj > y) and x < (xj - xi) * (y - yi) / (yj - yi) + xi:
+            hit = not hit
+        xj, yj = xi, yi
+    return hit
+
+
+def near(line, x, y, reach):
+    """Whether the point is within `reach` of the line through the points."""
+    limit = reach * reach
+    for (ax, ay), (bx, by) in zip(line, line[1:]):
+        dx, dy = bx - ax, by - ay
+        along = ((x - ax) * dx + (y - ay) * dy) / ((dx * dx + dy * dy) or 1)
+        along = 0 if along < 0 else 1 if along > 1 else along
+        px, py = ax + along * dx - x, ay + along * dy - y
+        if px * px + py * py <= limit:
+            return True
+    return False
+
+
+def turn(x, y, degrees, about=(0, 0)):
+    """The point turned clockwise on the screen (y runs down) about another."""
+    angle = math.radians(degrees)
+    x, y = x - about[0], y - about[1]
+    return (about[0] + x * math.cos(angle) - y * math.sin(angle),
+            about[1] + x * math.sin(angle) + y * math.cos(angle))
+
+
+def icon(size=ICON_SIZE, samples=ICON_SAMPLES):
+    """The icon as rows of (red, green, blue), top row first."""
+    cx, cy, rx, ry = HOOP
+    # The bag: down from the left of the hoop, round the bottom, up to the right, and back
+    # over the far side of the hoop
+    left = curve((cx - rx, cy), (cx - rx + 4, cy + 102), (cx - 68, cy + 188), (cx, cy + 202))
+    right = curve((cx, cy + 202), (cx + 68, cy + 188), (cx + rx - 4, cy + 102), (cx + rx, cy))
+    sides = left + right[1:]
+    far = [(cx + rx * math.cos(math.pi * i / 24), cy - ry * math.sin(math.pi * i / 24)) for i in range(1, 24)]
+    bag = sides + far
+    body = (curve((-62, 0), (-40, -34), (22, -34), (48, 0), 10)
+            + curve((48, 0), (22, 34), (-40, 34), (-62, 0), 10)[1:-1])
+    tail = [(40, 0), (82, -30), (74, 0), (82, 30)]
+    edge = body + [body[0]] + tail + [tail[0]]
+    shine = [(HANDLE[0][0] - 4, HANDLE[0][1] - 7), (HANDLE[1][0] - 4, HANDLE[1][1] - 7)]
+    half = MESH_STEP / 2
+
+    def colour(x, y):
+        # The water: darker downwards, with a little light behind the net
+        depth = min(1, max(0, y / 400))
+        back = [WATER_TOP[i] + (WATER_BOTTOM[i] - WATER_TOP[i]) * depth for i in range(3)]
+        light = 0.22 * max(0, 1 - math.hypot(x - 200, y - 168) / 240)
+        back = tuple(back[i] + (GLOW[i] - back[i]) * light for i in range(3))
+        # Everything else leans back with the net
+        x, y = turn(x, y, ICON_TILT, (200, 200))
+        ex, ey = (x - cx), (y - cy)
+        out = (ex / (rx + HOOP_LINE / 2)) ** 2 + (ey / (ry + HOOP_LINE / 2)) ** 2
+        if out <= 1 and (ex / (rx - HOOP_LINE / 2)) ** 2 + (ey / (ry - HOOP_LINE / 2)) ** 2 >= 1:
+            return RIM
+        if cy - 4 <= y <= cy + 220 and near(sides, x, y, BAG_LINE / 2):
+            return MESH
+        # The fish lies in front of the far side of the mesh, with a dark edge so that it
+        # stands clear of it at any size
+        fx, fy = turn((x - FISH_AT[0]) / FISH_SCALE, (y - FISH_AT[1]) / FISH_SCALE, FISH_TILT)
+        if -70 <= fx <= 90 and -42 <= fy <= 42:
+            if math.hypot(fx + 36, fy + 7) <= 7.5:
+                return DEEP
+            if inside(body, fx, fy) or inside(tail, fx, fy):
+                return FISH
+            if near(edge, fx, fy, FISH_EDGE / FISH_SCALE):
+                return DEEP
+        if cx - rx - 2 <= x <= cx + rx + 2 and cy - ry - 2 <= y <= cy + 206 and inside(bag, x, y):
+            mx, my = turn(x - cx, y - cy, -45)
+            if abs((mx + half) % MESH_STEP - half) <= MESH_LINE / 2 or abs((my + half) % MESH_STEP - half) <= MESH_LINE / 2:
+                return MESH
+        if out <= 1:
+            return DEEP  # the far side of the hoop, seen through the opening
+        if x > HANDLE[0][0] - HANDLE_LINE and y < HANDLE[0][1] + HANDLE_LINE:
+            if near(shine, x, y, HANDLE_LINE / 8):
+                return WOOD_LIGHT
+            if near(HANDLE, x, y, HANDLE_LINE / 2):
+                return WOOD
+        return back
+
+    vx, vy, span = ICON_VIEW
+    rows = []
+    for row in range(size):
+        line = []
+        for column in range(size):
+            total = [0.0, 0.0, 0.0]
+            for sy in range(samples):
+                for sx in range(samples):
+                    x = vx + ((column + (sx + 0.5) / samples) / size - 0.5) * span
+                    y = vy + ((row + (sy + 0.5) / samples) / size - 0.5) * span
+                    dot = colour(x, y)
+                    total[0] += dot[0]
+                    total[1] += dot[1]
+                    total[2] += dot[2]
+            line.append(tuple(round(value / (samples * samples)) for value in total))
+        rows.append(line)
+    return rows
+
+
+def write_picture(path, rows):
+    """A picture in its own colours, nothing of it see-through: `rows` of (red, green, blue)."""
+    size = len(rows)
+    header = struct.pack("<BBBHHBHHHHBB", 0, 0, 2, 0, 0, 0, 0, 0, size, size, 32, 8)
+    body = bytearray()
+    for row in reversed(rows):  # the file starts with the bottom row
+        for red, green, blue in row:
+            body += bytes((blue, green, red, 255))
+    path.write_bytes(header + bytes(body))
+    print(path.name, size, "x", size, len(header) + len(body), "bytes")
+
+
 def main():
     MEDIA.mkdir(exist_ok=True)
     # (measures across, dots across): four dots to a measure
@@ -94,6 +254,8 @@ def main():
         write_tga(MEDIA / ("RoundRing%d.tga" % measures), coverage(size, size - size / measures))
     # 8 measures of corner and 12 of shadow, 64 dots across
     write_tga(MEDIA / "GlassShadow8.tga", shadow(64, 8, 12))
+    # The addon's icon: the addon list, the minimap button, the addon menu
+    write_picture(MEDIA / "Icon.tga", icon())
 
 
 if __name__ == "__main__":
