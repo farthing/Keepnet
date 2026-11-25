@@ -73,10 +73,20 @@ needs the owner's word (`tools\install.ps1`), and a full restart, because files 
   (Alina Sava / FontsArena, a redrawing of that system's font, SIL Open Font License 1.1
   according to Fontsource). Fetching a file from the web needs the owner's yes, and its
   licence text has to be read and shipped with it.
-- **A font for the Keepnet look** (the owner: "a font that is not default that sort of fits
-  with the fishing theme ... the default for the keepnet theme"). Researched, nothing built
-  or fetched. No free text face has a real history at sea; the honest links are signs. In
-  order: **Overpass** (from American road-sign lettering; Latin and Cyrillic; OFL 1.1 with
+- **A font for the Keepnet look: built, with Overpass** (the owner: "a font that is not
+  default that sort of fits with the fishing theme ... the default for the keepnet theme",
+  then "i like overpass for the default font", and a yes to fetching its files).
+  `Keepnet\Media` holds `Overpass-Regular.ttf`, `Overpass-SemiBold.ttf` (headings) and the
+  licence text `Overpass-OFL.txt`, as published in the project's own repository. Keepnet's
+  two own looks are written in it; the Appearance tab has a "Font" list (Overpass, the
+  game's own; `settings.font`, changes at once). How: `W.FontObject` keeps a copy of each
+  game font the texts are made in and draws the copy from the chosen file, so sizes and
+  colours stay the game's. Used for the western languages and Russian; the others keep the
+  game's font, and so do the small numbers on item pictures. **Not seen in the game:**
+  whether the text sits in the middle of buttons and rows (this font is known for sitting a
+  little high or low), how its size compares, and that its digits are not all one width,
+  so changing numbers may shift a little. What the research said, for the record: no free
+  text face has a real history at sea; the honest links are signs. In order: **Overpass** (from American road-sign lettering; Latin and Cyrillic; OFL 1.1 with
   no reserved name; static files about 210 KB each in its own repository; its digits are
   probably not all one width, and text may sit a little off centre), **Signika Negative**
   (made for signs and for light text on dark, digits all one width; no Cyrillic; about 344
