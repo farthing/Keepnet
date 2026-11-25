@@ -4,6 +4,11 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**Seen in the game by the owner, 2026-11-25 about 19:05, on the development copy of 1.0.9:**
+"keybinds seem to work" (the gear key and recording key combinations, 1.0.4 and 1.0.5;
+which combination and how much of the gear swap was tried was not said). Buying lures was
+about to be tried ("will test lures"); the line's strip has not been reported on.
+
 **1.0.9 (2026-11-25, night): buying lures can't run away. Passes its offline tests,
 committed and tagged; not on CurseForge.** The owner asked: "this will not by accident buy
 like 500 baubles no?" Looked at for that, `Vendor.lua` had two ways to buy more than was
