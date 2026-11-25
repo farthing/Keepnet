@@ -20,8 +20,9 @@ having run in the real game**: the owner's game still held the build from before
 per-character half was seen there and "works well"). Where the entries below say 1.0.0 is
 not on CurseForge, or that the owner has not confirmed the number, that was before. Open:
 the owner's game needs `tools\install.ps1` and a full restart to get the notice; the first
-things to look at there are in the notice's own entry below ("Not seen in the game"); and
-the listing's description does not mention the notice or its hidden channel yet.
+things to look at there are in the notice's own entry below ("Not seen in the game"). The
+listing's description says what the notice does and how to turn it off since a few minutes
+after the upload (the owner: "add those details in there").
 
 **1.0.0, the update notice (2026-11-25): Keepnet tells the player that a newer version is
 out. It passes its offline tests and is in the repo. It is NOT yet in the owner's game: the

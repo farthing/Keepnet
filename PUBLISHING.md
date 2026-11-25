@@ -267,16 +267,25 @@ and while the upload form was open: "add bullet point about searchable character
   "Searchable sessions for each character: every character keeps its own session history,
   which you can search for a fish or item; a list switches to another character's sessions,
   or to all of them." Saved ("Changes saved successfully") and read back after a reload;
-  `media\curseforge-description.html` holds it. Nothing else in the description or the
-  gallery was touched: the update notice and its hidden channel are in the file's changelog,
-  not yet in the description (see the next section).
+  `media\curseforge-description.html` holds it.
+- **The description says what the update notice does**, added a few minutes later (offered
+  to the owner, who said "add those details in there"): a last line in the feature list,
+  "Tells you when a newer version is out, heard from other Keepnet players. You can turn it
+  off.", and a section "New versions" before "Commands" with five points: how it knows (the
+  hidden messages, the channel KeepersNet that Keepnet joins by itself, guild and group),
+  that nothing shows in chat and that it takes a channel place until logout, the two
+  announcers, how to turn it off, and that it works between copies of 1.0.0 or newer. Saved
+  ("Changes saved successfully") and read back. The gallery was not touched.
 - The upload form this time: the Chrome extension was not connected until Chrome was
   started; the zip went in the way described above (the form's own file field kept on the
   page by replacing `HTMLInputElement.prototype.click` for a moment).
 - **The source is public since that day**: https://github.com/farthing/Keepnet, one commit
   for 1.0.0. The listing's "Source" tab does not point at it yet.
 
-## For the next description (written 2026-11-25; one line of it is on the site, see above)
+## For the next description (written 2026-11-25; the update notice and the searchable sessions are on the site since, see above)
+
+Still not in the description: that every setting and the panel's place are kept per
+character, and new pictures of the History, Zones and Settings tabs.
 
 The description on the site stops at 0.9.9. When 1.0.0 goes up and the owner asks for the
 listing to be brought up to date, it should cover:
