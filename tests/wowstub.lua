@@ -978,9 +978,25 @@ function BuyMerchantItem(index, quantity)
         return
     end
     Stub.money = Stub.money - cost
-    Stub.bags[entry.id] = (Stub.bags[entry.id] or 0) + items
-    if entry.available then entry.available = entry.available - items end
+    -- Stub.slowDelivery: as in the game, what is bought reaches the bags a moment later
+    -- (Stub.deliver()), and the vendor's own count is as late
+    if Stub.slowDelivery then
+        Stub.undelivered = Stub.undelivered or {}
+        Stub.undelivered[#Stub.undelivered + 1] = { entry = entry, items = items }
+    else
+        Stub.bags[entry.id] = (Stub.bags[entry.id] or 0) + items
+        if entry.available then entry.available = entry.available - items end
+    end
     Stub.purchases[#Stub.purchases + 1] = { id = entry.id, count = items }
+    if not Stub.slowDelivery then Stub.fire("BAG_UPDATE_DELAYED") end
+end
+function Stub.deliver()
+    for _, order in ipairs(Stub.undelivered or {}) do
+        Stub.bags[order.entry.id] = (Stub.bags[order.entry.id] or 0) + order.items
+        if order.entry.available then order.entry.available = order.entry.available - order.items end
+    end
+    Stub.undelivered = nil
+    Stub.fire("BAG_UPDATE_DELAYED")
 end
 function Stub.openMerchant(list)
     Stub.merchant = list

@@ -3,6 +3,13 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.0.9
+
+- Buying lures is guarded against buying too many: what Keepnet has just bought counts as in
+  your bags at once, so a vendor's window that opens twice in a row buys nothing twice; and
+  of the Aquadynamic Fish Attractor it never buys more than 20 in one visit, whatever the
+  vendor says it has. The number of each lure was already limited to 200.
+
 ## 1.0.8
 
 - The gold limit for buying lures is now gold that is never spent: "Always keep ... gold",

@@ -14,6 +14,16 @@
 --                               or less nothing at all is bought, and with more, buying
 --                               stops before the money would go under it
 --
+-- What keeps it from buying far too many:
+--   * a lure is bought up to a number IN THE BAGS, never "that many each time", and the
+--     number can't be set above 200;
+--   * what has just been bought counts as in the bags at once, before the game has put it
+--     there (Have): the vendor's window being sent twice in a row, or a lure standing twice
+--     in a vendor's list, buys nothing twice;
+--   * of the Attractor, bought however many the vendor says it has, never more than 20 in
+--     one visit: vendors have one or two, so a bigger number is the game misreporting;
+--   * the gold the player keeps is never spent.
+--
 -- The numbers of the lures and which of them a vendor can sell on this client were checked
 -- against Mastercraft's list and two guides for this client; see CREDITS.md.
 local _, ns = ...
@@ -36,6 +46,37 @@ Vendor.ATTRACTOR = { id = 6533, name = "Aquadynamic Fish Attractor" }
 Vendor.DEFAULT_COUNT = 20
 Vendor.MOST = 200 -- the most the number can be set to
 Vendor.MOST_GOLD = 999999
+Vendor.MOST_ATTRACTORS = 20 -- the most Attractors bought in one visit, whatever the vendor says it has
+
+-- What was just bought and may not have reached the bags yet: [item] = { had, count, at }.
+-- The game puts a purchase in the bags a moment after it is asked for.
+local arriving = {}
+local ARRIVAL_SECONDS = 10
+
+-- How many of an item there are, counting what is on its way
+local function Have(id)
+    local have = Util.ItemCount(id)
+    local order = arriving[id]
+    if order then
+        local expected = order.had + order.count
+        if have >= expected or GetTime() - order.at > ARRIVAL_SECONDS then
+            arriving[id] = nil -- it has arrived, or it never will
+        else
+            have = expected
+        end
+    end
+    return have
+end
+
+-- had: how many were in the bags before this purchase was asked for
+local function OnItsWay(id, count, had)
+    local order = arriving[id]
+    if order then
+        order.count, order.at = order.count + count, GetTime()
+    else
+        arriving[id] = { had = had, count = count, at = GetTime() }
+    end
+end
 
 -- The gold that is never spent, as the player set it
 function Vendor.Floor()
@@ -84,15 +125,21 @@ end
 local function Wanted(item, settings)
     if item.id == Vendor.ATTRACTOR.id then
         if not settings.buyAttractors then return 0 end
-        -- Every one the vendor has. A vendor with no limit on them (none is known to have
-        -- that) is treated like the other lures: up to the number in the bags.
-        if item.available then return item.available end
-        return math.max(0, Vendor.Count() - Util.ItemCount(item.id))
+        -- Every one the vendor has, but never a number no vendor would have; and not
+        -- again while the last lot is still on its way. A vendor with no limit on them
+        -- (none is known to have that) is treated like the other lures: up to the number
+        -- in the bags.
+        if item.available then
+            Have(item.id) -- (forgets a lot that has arrived)
+            if arriving[item.id] then return 0 end
+            return math.min(item.available, Vendor.MOST_ATTRACTORS)
+        end
+        return math.max(0, Vendor.Count() - Have(item.id))
     end
     if not settings.buyLures or not (settings.buyLureItems and settings.buyLureItems[item.id]) then return 0 end
     for _, lure in ipairs(Vendor.LURES) do
         if lure.id == item.id then
-            local want = math.max(0, Vendor.Count() - Util.ItemCount(item.id))
+            local want = math.max(0, Vendor.Count() - Have(item.id))
             if item.available then want = math.min(want, item.available) end
             return want
         end
@@ -135,9 +182,12 @@ function Vendor.Shop()
                     purchases = math.max(0, canPay)
                 end
                 local got = 0
+                local had = Util.ItemCount(item.id)
                 while purchases > 0 do
                     -- (several at once only where a purchase is a single lure)
                     local now = item.batch > 1 and 1 or math.min(purchases, item.most)
+                    -- (noted as on its way before it is asked for: the bags may change at once)
+                    OnItsWay(item.id, now * item.batch, had)
                     BuyMerchantItem(index, now)
                     purchases = purchases - now
                     got = got + now * item.batch
@@ -159,8 +209,14 @@ end
 
 local events = CreateFrame("Frame")
 events:RegisterEvent("MERCHANT_SHOW")
-events:SetScript("OnEvent", function()
+events:RegisterEvent("BAG_UPDATE_DELAYED")
+events:SetScript("OnEvent", function(_, event)
     if not ns.db then return end
+    if event == "BAG_UPDATE_DELAYED" then
+        -- The bags changed: what has arrived is no longer on its way
+        for id in pairs(arriving) do Have(id) end
+        return
+    end
     local ok, err = pcall(Vendor.Shop)
     if not ok then Util.Print("Buying lures stopped on an error: " .. tostring(err)) end
 end)

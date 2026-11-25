@@ -158,6 +158,73 @@ function T.run(ns)
     Stub.openMerchant(Supplier())
     eq(Bought(ATTRACTOR), 0, "Attractors switched off: left on the shelf")
 
+    -- ------------------------------------------------------------ never far too many
+    -- What is bought reaches the bags a moment later. Until then it counts as there: the
+    -- vendor's window sent twice in a row buys nothing twice
+    settings.buyLures, settings.buyAttractors = true, true
+    settings.buyLureItems = { [BRIGHT] = true }
+    Stub.purchases = {}
+    Stub.bags = {}
+    Stub.slowDelivery = true
+    local shelf = Supplier()
+    Stub.openMerchant(shelf)
+    eq(Bought(BRIGHT), 20, "the lures are asked for")
+    eq(Stub.bags[BRIGHT], nil, "and are not in the bags yet")
+    Stub.fire("MERCHANT_SHOW")
+    Stub.fire("MERCHANT_SHOW")
+    eq(Bought(BRIGHT), 20, "the window sent again before they arrive: not bought again")
+    eq(Bought(ATTRACTOR), 2, "nor the Attractors")
+    Stub.deliver()
+    Stub.fire("MERCHANT_SHOW")
+    eq(Bought(BRIGHT), 20, "arrived: there are enough, nothing more")
+    -- Some used later: topped up as ever
+    Stub.bags[BRIGHT] = 15
+    Stub.fire("MERCHANT_SHOW")
+    Stub.deliver()
+    eq(Stub.bags[BRIGHT], 20, "five used later: five bought")
+    -- A purchase that never arrives is not waited for for ever
+    Stub.bags[BRIGHT] = 10
+    Stub.fire("MERCHANT_SHOW")
+    Stub.undelivered = nil -- lost
+    local before = Bought(BRIGHT)
+    Stub.fire("MERCHANT_SHOW")
+    eq(Bought(BRIGHT), before, "a purchase that hasn't arrived yet: still counted")
+    Stub.advance(11)
+    Stub.fire("MERCHANT_SHOW")
+    eq(Bought(BRIGHT), before + 10, "ten seconds on with nothing arrived: bought again")
+    Stub.deliver()
+    Stub.slowDelivery = nil
+
+    -- A lure standing twice in a vendor's list is bought once
+    Stub.purchases = {}
+    Stub.bags = {}
+    Stub.advance(11)
+    Stub.slowDelivery = true
+    Stub.openMerchant({ { id = BRIGHT, price = 250 }, { id = BRIGHT, price = 250 } })
+    eq(Bought(BRIGHT), 20, "a lure listed twice by one vendor: bought once")
+    Stub.deliver()
+    Stub.slowDelivery = nil
+
+    -- The number can't be more than 200, whatever is typed
+    settings.buyLureCount = 500
+    Stub.purchases = {}
+    Stub.bags = {}
+    Stub.advance(11)
+    Stub.openMerchant(Supplier())
+    eq(Stub.bags[BRIGHT], 200, "500 asked for: 200 is the most there is")
+    settings.buyLureCount = 20
+
+    -- A vendor that says it has hundreds of Attractors: never more than twenty in a visit
+    Stub.purchases = {}
+    Stub.bags = {}
+    Stub.advance(11)
+    Stub.openMerchant({ { id = ATTRACTOR, price = 5, available = 500 } })
+    eq(Bought(ATTRACTOR), 20, "a vendor claiming 500 Attractors: twenty are bought, no more")
+    Stub.advance(11)
+    Stub.purchases = {}
+    Stub.bags = {}
+    settings.buyAttractors = false
+
     -- With no more gold than the player set, nothing is bought at all
     eq(settings.buyLureFloor, 0, "no such limit to begin with")
     settings.buyLures, settings.buyAttractors = true, true

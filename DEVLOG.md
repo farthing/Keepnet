@@ -4,6 +4,25 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.0.9 (2026-11-25, night): buying lures can't run away. Passes its offline tests,
+committed and tagged; not on CurseForge.** The owner asked: "this will not by accident buy
+like 500 baubles no?" Looked at for that, `Vendor.lua` had two ways to buy more than was
+meant, both closed now (`Have`, `OnItsWay`, `MOST_ATTRACTORS`):
+
+- A purchase reaches the bags a moment after it is asked for. Anything that ran
+  `Vendor.Shop` twice inside that moment (the vendor's window sent twice, a lure listed
+  twice by one vendor) counted the bags as they were and bought again. What was just bought
+  now counts as in the bags at once, for ten seconds or until it is really there.
+- "Every Attractor a vendor has" took the vendor's word for how many. It is never more than
+  20 in one visit now.
+
+What limited it already: a lure is bought up to a number in the bags (not that many each
+time), the number is at most 200, and the gold that is kept is never spent. **Still true:
+nothing of this has bought anything in the real game.** Not known there: that
+`BuyMerchantItem(index, n)` buys n single lures on this client (it is how restocking addons
+call it), and what the vendor calls answer. The owner was told to try it first with a small
+number and gold kept.
+
 **1.0.8 (2026-11-25, night): the gold limit is gold that is never spent. Passes its offline
 tests, committed and tagged; not on CurseForge.** Offered the choice between a gate and a
 reserve, the owner: "never past the limit please". `Vendor.Shop` now spends only what lies
