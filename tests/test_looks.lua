@@ -1,5 +1,6 @@
 -- The looks Keepnet draws itself besides its flat one: Windows 95 (grey bevelled windows, dark
--- text, a title bar, colour schemes) and Keepnet rounded (the flat look with round corners).
+-- text, a title bar, colour schemes), Keepnet rounded (the flat look with round corners) and
+-- Glass (round panes you can see through).
 local T = {}
 
 local KEY = "F"
@@ -240,6 +241,87 @@ function T.run(ns)
 
     PokeEveryTab(ns)
 
+    -- ------------------------------------------------------------------------- Glass
+    settings.panelOpacity, settings.windowOpacity = 0.9, 0.8
+    settings.theme = "glass"
+    Stub.popup = nil
+    W.ApplyTheme()
+    eq(Stub.popup, "KEEPNET_RELOAD_FOR_THEME", "glass is drawn another way again: a reload")
+    ns = Stub.reload()
+    W = ns.Widgets
+    settings = ns.settings
+    eq(W.look, "glass", "after the reload the Glass look is built")
+    eq(W.glass, true, "its pieces are in use")
+    eq(W.round, true, "which are round ones")
+    eq(#W.Theme("glass").schemes, 5, "it comes in five colours")
+    eq(W.Scheme(W.Theme("glass")).name, "Smoked", "smoked from the start")
+    Stub.equip(Stub.POLE)
+    local glass = KeepnetPanel.keepnetSkin.round
+    check(glass ~= nil and glass.glass, "the live panel is a pane of glass")
+    -- The tint: 65 % dense unless the player says otherwise, whatever the other looks are set to
+    check(Close(glass.bands[1].__color[1], 0.085) and Close(glass.bands[1].__color[4], 0.65), "tinted, 65 % dense to begin with")
+    check(Close(glass.corners[1].__vertex[4], 0.65), "corners and all")
+    -- The rim of light: bright along the top, faint along the bottom, fading down the sides
+    check(Close(glass.lineTop.__color[1], 1) and Close(glass.lineTop.__color[4], 0.55), "a rim of light, bright along the top")
+    check(Close(glass.lineBottom.__color[4], 0.12), "faint along the bottom")
+    local side = glass.lineLeft.__gradient
+    check(side ~= nil and side[1] == "VERTICAL" and Close(side[2].a, 0.12) and Close(side[3].a, 0.55), "fading down the sides")
+    for _, corner in ipairs(glass.ringCorners) do
+        check(Close(corner.__vertex[4], corner.top and 0.55 or 0.12), "and round each corner to match")
+    end
+    -- The wash of light and the shadow
+    check(glass.wash ~= nil and Close(glass.wash.__gradient[3].a, 0.10) and glass.wash.__gradient[2].a == 0, "a wash of light fading down from the top")
+    eq(#glass.shadow, 8, "a soft shadow round it: four corners and four sides")
+    check(tostring(glass.shadow[1].__texture):find("GlassShadow8", 1, true), "from its own picture")
+    check(glass.shadow[1].__vertex[1] == 0 and glass.shadow[1].__vertex[4] > 0.5, "in black")
+
+    -- The small pieces: a button lightens the pane, what is set into it darkens it
+    local glassButton = KeepnetPanel.new.keepnetSkin.round
+    check(Close(glassButton.bands[1].__color[1], 1) and Close(glassButton.bands[1].__color[4], 0.09), "a button is a lighter patch of glass")
+    eq(glassButton.shadow, nil, "without a shadow of its own")
+    check(glassButton.wash ~= nil, "with the wash of light")
+    check(Close(glassButton.lineTop.__color[4], 0.55 * 0.6), "and a fainter rim")
+    KeepnetPanel.new:GetScript("OnEnter")(KeepnetPanel.new)
+    check(Close(glassButton.bands[1].__color[4], 0.20), "under the mouse it lights up")
+    KeepnetPanel.new:GetScript("OnLeave")(KeepnetPanel.new)
+    check(Close(glassButton.bands[1].__color[4], 0.09), "and goes back")
+    local bar = KeepnetPanel.skillBar.keepnetSkin.round
+    check(bar.bands[1].__color[1] == 0 and Close(bar.bands[1].__color[4], 0.32), "the skill bar is a darker channel in the pane")
+    eq(bar.wash, nil, "without the wash")
+
+    -- A frame pointed out by its border gets that colour all round, then its rim back
+    KeepnetPanel:SetBackdropBorderColor(1, 0, 0, 1)
+    check(Close(glass.lineTop.__color[2], 0) and Close(glass.lineBottom.__color[4], 1), "a border colour of its own goes all round the rim")
+    KeepnetPanel:SetBackdropBorderColor(W.BorderColor("panel"))
+    check(Close(glass.lineBottom.__color[4], 0.12) and Close(glass.lineTop.__color[2], 1), "and the rim of light comes back")
+
+    -- The tint is the player's to change: the two background sliders, kept apart from the
+    -- other looks' settings
+    eq(settings.panelOpacity, 0.9, "the other looks' setting is untouched")
+    settings.glassPanel = 0.3
+    W.ApplyTheme()
+    check(Close(glass.bands[1].__color[4], 0.3), "the live panel's tint follows its setting")
+    ns.UI.Show("appearance")
+    check(Close(KeepnetWindow.keepnetSkin.round.bands[1].__color[4], 0.65), "the window has its own, 65 % too")
+    settings.glassWindow = 0.8
+    W.ApplyTheme()
+    check(Close(KeepnetWindow.keepnetSkin.round.bands[1].__color[4], 0.8), "which follows its setting")
+    settings.borders = false
+    W.ApplyTheme()
+    eq(glass.lineTop.__color[4], 0, "borders switched off: the rim goes")
+    settings.borders = true
+
+    -- Other colours at once; a menu is nearly solid so it reads over what it covers
+    W.SetScheme(W.Theme("glass"), "water")
+    Stub.reloads = 0
+    W.ApplyTheme()
+    eq(Stub.reloads, 0, "other colours need no reload")
+    check(Close(glass.bands[1].__color[3], 0.14), "the pane takes the new tint")
+    check(Close(KeepnetPanel.menu.keepnetSkin.round.bands[1].__color[4], 0.93), "a menu is nearly solid")
+    check(Close(KeepnetPanel.menu.keepnetSkin.round.bands[1].__color[3], 0.14), "in the pane's tint")
+
+    PokeEveryTab(ns)
+
     -- Back to the square look: another way of drawing, so a reload
     settings.theme = "keepnet"
     Stub.popup = nil
@@ -250,6 +332,7 @@ function T.run(ns)
     Stub.equip(Stub.POLE)
     check(KeepnetPanel.__backdropFile ~= nil, "the live panel has its backdrop again")
     check(Close(KeepnetPanel.__backdrop[2], 0.08), "in the colours chosen for the rounded look")
+    check(Close(KeepnetPanel.__backdrop[4], 0.9), "and as solid as it was set for these looks")
 
     Stub.equip(nil)
     for _, err in ipairs(Stub.errors) do

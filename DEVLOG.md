@@ -55,7 +55,7 @@ What is built:
   for the nearest dark one of that screen's sixteen. All nineteen of that system's colour
   schemes are there with its own numbers (source in `CREDITS.md`). An accent of the
   player's own colours the title bar and the selection.
-- Tests: `tests\test_looks.lua` (100 checks), `tests\test_look_sounds.lua` changed for the
+- Tests: `tests\test_looks.lua` (all three drawn looks), `tests\test_look_sounds.lua` changed for the
   two choices. The stand-in game now remembers text and picture colours.
 
 **Not seen in the game: any of it.** The first things to look at: whether the bevel lines
@@ -119,10 +119,24 @@ needs the owner's word (`tools\install.ps1`), and a full restart, because files 
     grows upwards, a bright thin rim strongest along the top, round corners by a mask,
     and text with a solid dark shadow. For reading, the tint has to be dense (0.5 to 0.8);
     0.24 only where there is little text.
-  - Two ways open to Keepnet: carry LibGlass (MIT, with credit), or draw its own from the
-    same ingredients with pictures made by `tools\make_art.py`, beside the round corners
-    it already has (a shadow, a rim, perhaps a sheen). Either way with credit to LibGlass
-    for the method.
+  - Two ways were open: carry LibGlass (MIT, with credit), or draw its own from the same
+    ingredients. **The owner chose the second ("go with 1"), and it is built:** the look
+    "Glass" (`glass`, third in the list), in `UI\Round.lua` beside the rounded look, whose
+    pieces it uses. A pane is the round fill at the tint's density; the border is a rim of
+    light (0.55 along the top, fading down the sides to 0.12 along the bottom; fainter on
+    small pieces); panes and buttons get a wash of light over the top; the window and the
+    live panel get a soft shadow from one more picture (`Media\GlassShadow8.tga`). Buttons
+    are lighter patches (white at 0.09, 0.20 under the mouse), what is set into a pane
+    (bars, text boxes) darker ones (black at 0.32), menus and drop-down lists nearly solid
+    (0.93) so they read over what they cover. Five colours: Smoked, Deep water, Midnight,
+    Moss, Amber. **The tint is 65 % dense by default and the player's to change** (the
+    owner: "set the tint to default to 65%, but allow it to be changed"): in this look the
+    two "Backgrounds" sliders set `glassPanel` and `glassWindow`, kept apart from the other
+    looks' `panelOpacity` and `windowOpacity`. A scheme's colour may now carry a fourth
+    number, how solid it is. Text is the game's light text with its own shadow. No sheen.
+    **Not seen in the game:** all of it; first of all whether text reads at 65 % over a
+    bright scene, whether the sides' fading (a gradient) works on this client (if not they
+    are evenly faint), and whether the shadow's sides meet its corners without a seam.
   - Facts worth keeping, as LibGlass measured them on this client: a gradient ignores
     `SetAlpha` (the alpha goes in its colours); a mask only reaches textures of its own
     frame; a sliced mask fails on small boxes; `SetTextureSliceMargins` and

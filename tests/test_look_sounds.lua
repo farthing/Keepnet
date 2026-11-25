@@ -27,8 +27,9 @@ function T.run(ns)
     eq(settings.theme, "keepnet", "the default theme is Keepnet's own")
     eq(W.THEMES[1].name, "Keepnet", "listed first")
     eq(W.THEMES[2].name, "Keepnet rounded", "then the same with round corners")
-    eq(W.THEMES[3].name, "Windows 95", "then the grey one")
-    eq(W.THEMES[4].name, "Forever", "then the game's own look")
+    eq(W.THEMES[3].name, "Glass", "then the glass one")
+    eq(W.THEMES[4].name, "Windows 95", "then the grey one")
+    eq(W.THEMES[5].name, "Forever", "then the game's own look")
 
     -- Forever is another look altogether (the game's own windows and buttons): frames of the
     -- flat look are already on screen, so it can't be switched to in place

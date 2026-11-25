@@ -283,6 +283,8 @@ function Methods:SetColorTexture(r, g, b, a) self.__color = { r, g, b, a } end
 function Methods:SetTextColor(r, g, b, a) self.__textColor = { r, g, b, a } end
 function Methods:SetVertexColor(r, g, b, a) self.__vertex = { r, g, b, a } end
 function Methods:SetTexture(texture) self.__texture = texture end
+-- A texture that goes from one colour to another: { orientation, from, to }
+function Methods:SetGradient(orientation, from, to) self.__gradient = { orientation, from, to } end
 -- A font: the file it is drawn from, its size and its flags; and the font a text was given
 function Methods:SetFont(file, size, flags) self.__font = { file, size, flags } end
 function Methods:GetFont()
@@ -323,6 +325,8 @@ function CreateFont(name)
     _G[name] = font
     return font
 end
+-- A colour as the game hands them about
+function CreateColor(r, g, b, a) return { r = r, g = g, b = b, a = a } end
 -- The language of the client: a test names another in Stub.locale
 function GetLocale() return Stub.locale or "enUS" end
 -- The game's own fonts that the addon's texts are made in

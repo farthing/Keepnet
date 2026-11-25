@@ -114,7 +114,7 @@ local function Build(frame)
         GameTooltip:Show()
     end)
     swatch:SetScript("OnLeave", function() GameTooltip:Hide() end)
-    Note(frame, "Keepnet, Keepnet rounded and Windows 95 are drawn by Keepnet. Forever is the game's "
+    Note(frame, "Keepnet, Keepnet rounded, Glass and Windows 95 are drawn by Keepnet. Forever is the game's "
         .. "own windows; a look named after an interface suite lets that suite paint Keepnet. A "
         .. "look drawn another way reloads the interface.", left, y - 102)
 
@@ -126,7 +126,8 @@ local function Build(frame)
     local panelOpacity
     panelOpacity = W.Slider(frame, 170, 0, 100, 5, function(value)
         panelOpacity.value:SetText(("%d%%"):format(value))
-        settings.panelOpacity = value / 100
+        -- (the Glass look keeps its own two, so each look stays as it was set)
+        settings[W.glass and "glassPanel" or "panelOpacity"] = value / 100
         Apply()
     end)
     panelOpacity:SetPoint("TOPLEFT", right + 90, ry - 26)
@@ -135,7 +136,7 @@ local function Build(frame)
     local windowOpacity
     windowOpacity = W.Slider(frame, 170, 20, 100, 5, function(value)
         windowOpacity.value:SetText(("%d%%"):format(value))
-        settings.windowOpacity = value / 100
+        settings[W.glass and "glassWindow" or "windowOpacity"] = value / 100
         Apply()
     end)
     windowOpacity:SetPoint("TOPLEFT", right + 90, ry - 52)
@@ -182,6 +183,7 @@ local function Build(frame)
         settings.schemes = nil
         settings.font = W.FONTS[1].key
         settings.windowOpacity, settings.panelOpacity, settings.panelScale = 0.94, 0.94, 1
+        settings.glassWindow, settings.glassPanel = W.GLASS_TINT, W.GLASS_TINT
         settings.borders = true
         Apply()
     end)
@@ -274,10 +276,10 @@ local function Build(frame)
         for _, option in ipairs(ACCENT_MODES) do
             if option.value == (settings.accentMode or "theme") then accent:Set(option.value, option.text) end
         end
-        local panelPercent = math.floor((settings.panelOpacity or 0.94) * 100 + 0.5)
+        local panelPercent = math.floor(W.opacity.panel * 100 + 0.5)
         panelOpacity:Set(panelPercent)
         panelOpacity.value:SetText(("%d%%"):format(panelPercent))
-        local windowPercent = math.floor((settings.windowOpacity or 0.94) * 100 + 0.5)
+        local windowPercent = math.floor(W.opacity.window * 100 + 0.5)
         windowOpacity:Set(windowPercent)
         windowOpacity.value:SetText(("%d%%"):format(windowPercent))
         local scalePercent = math.floor((settings.panelScale or 1) * 100 + 0.5)

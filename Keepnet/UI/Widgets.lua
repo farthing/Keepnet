@@ -20,6 +20,8 @@ local MEDIA = "Interface\\AddOns\\" .. addonName .. "\\Media\\"
 -- A look is drawn in one of four ways:
 --   flat    (the default) plain coloured frames with thin borders, all drawn by Keepnet;
 --   round   (round = true) the same with round corners (UI\Round.lua);
+--   glass   (glass = true) round panes you can see through, with a rim of light (the same
+--           file); a colour of its schemes may carry a fourth number, how solid it is;
 --   retro   (retro = true) grey bevelled windows with dark text (UI\Retro.lua);
 --   native  (native = true) everything made from the game's own templates and art.
 -- Going from one way of drawing to another rebuilds every frame, which needs the interface
@@ -81,11 +83,32 @@ W.SCHEMES = {
     },
 }
 
+-- The colours of the Glass look. The background is the tint of the panes (how dense it is
+-- the player sets); the others say how solid they are themselves: what is set into a pane
+-- darkens it, a button lightens it. The border is the colour of the rim of light.
+local function Glass(key, name, tint, accent)
+    return {
+        key = key, name = name, background = tint, accent = accent,
+        header = { 0, 0, 0, 0.32 }, button = { 1, 1, 1, 0.09 }, buttonHover = { 1, 1, 1, 0.20 },
+        border = { 1, 1, 1 },
+    }
+end
+
+W.GLASS_SCHEMES = {
+    Glass("smoked", "Smoked", { 0.085, 0.095, 0.115 }, { 0.31, 0.76, 0.97 }),
+    Glass("water", "Deep water", { 0.03, 0.11, 0.14 }, { 0.35, 0.90, 0.80 }),
+    Glass("midnight", "Midnight", { 0.05, 0.06, 0.16 }, { 0.62, 0.70, 1.00 }),
+    Glass("moss", "Moss", { 0.05, 0.11, 0.06 }, { 0.60, 0.90, 0.45 }),
+    Glass("amber", "Amber", { 0.14, 0.09, 0.04 }, { 1.00, 0.70, 0.30 }),
+}
+
 W.THEMES = {
     -- Keepnet's own look: flat
     { key = "keepnet", name = "Keepnet", family = "keepnet", schemes = W.SCHEMES },
     -- The same with round corners (UI\Round.lua)
     { key = "rounded", name = "Keepnet rounded", round = true, family = "keepnet", schemes = W.SCHEMES },
+    -- Round panes of dark glass (UI\Round.lua)
+    { key = "glass", name = "Glass", glass = true, family = "glass", schemes = W.GLASS_SCHEMES },
     {
         -- Grey bevelled windows, a title bar, dark text (UI\Retro.lua, which adds its colour
         -- schemes to this entry; the colours here are only what stands in before it has)
@@ -129,6 +152,8 @@ W.COLORS = {
 
 -- How see-through the background of each kind of top-level frame is: "window" and "panel"
 W.opacity = { window = 0.94, panel = 0.94 }
+-- How dense the Glass look's tint is until the player says otherwise
+W.GLASS_TINT = 0.65
 
 local skinned = {} -- every frame given a backdrop: { frame, color, group }
 local accents = {} -- every texture drawn in the accent colour: { texture, alpha }
@@ -144,7 +169,7 @@ local function Paint(entry)
         return
     end
     local color = entry.color
-    local alpha = entry.group and W.opacity[entry.group] or 1
+    local alpha = entry.group and W.opacity[entry.group] or color[4] or 1
     -- The looks that draw a frame themselves, in place of its backdrop
     if W.retro and ns.Retro then
         ns.Retro.Paint(entry, alpha)
@@ -170,7 +195,9 @@ local function Paint(entry)
         local tint = activeTheme.artBorder or W.COLORS.border
         entry.frame:SetBackdropBorderColor(tint[1], tint[2], tint[3], W.COLORS.border[4] or 1)
     else
-        entry.frame:SetBackdropBorderColor(unpack(W.COLORS.border))
+        local border = W.COLORS.border
+        -- (in the Glass look the border colour is light: a square piece gets only a hint of it)
+        entry.frame:SetBackdropBorderColor(border[1], border[2], border[3], (border[4] or 1) * (W.glass and 0.15 or 1))
     end
 end
 
@@ -366,7 +393,7 @@ end
 -- is: in the other looks, for the small numbers on item pictures, and where the game has no
 -- font of that name
 function W.FontObject(name)
-    if W.native or W.retro then return nil end
+    if W.native or W.retro then return nil end -- (Keepnet, Keepnet rounded and Glass are its own)
     local entry = fonts[name]
     if entry == nil then
         entry = false
@@ -476,12 +503,14 @@ function W.ApplyTheme()
     Migrate(settings)
     local theme = W.Theme(settings.theme)
     -- How the look is drawn
-    local look = (theme.native and "native") or (theme.retro and "retro") or (theme.round and "round") or "flat"
+    local look = (theme.native and "native") or (theme.retro and "retro") or (theme.glass and "glass")
+        or (theme.round and "round") or "flat"
     local adopting = theme.adopt or false -- the suite's name
     if W.look == nil or not W.built then
         -- Nothing is on screen yet: the look is free to choose
         W.look, W.adopting = look, adopting
-        W.native, W.retro, W.round = look == "native", look == "retro", look == "round"
+        W.native, W.retro, W.glass = look == "native", look == "retro", look == "glass"
+        W.round = look == "round" or look == "glass" -- the pieces with round corners
     elseif look ~= W.look or adopting ~= W.adopting then
         -- Frames of the other look are already built. The choice is saved and takes effect
         -- at the next reload; until then everything stays as it is.
@@ -492,7 +521,7 @@ function W.ApplyTheme()
     local scheme = W.Scheme(theme)
     for _, name in ipairs({ "background", "header", "button", "buttonHover", "border" }) do
         local from, to = scheme[name], W.COLORS[name]
-        to[1], to[2], to[3], to[4] = from[1], from[2], from[3], 1
+        to[1], to[2], to[3], to[4] = from[1], from[2], from[3], from[4] or 1
     end
     -- (the border's fourth number is set below: borders can be turned off)
     local accent = scheme.accent
@@ -511,8 +540,15 @@ function W.ApplyTheme()
     WatchSharedFonts()
     W.COLORS.accent[1], W.COLORS.accent[2], W.COLORS.accent[3] = accent[1], accent[2], accent[3]
     W.COLORS.border[4] = (settings.borders == false) and 0 or 1
-    W.opacity.window = settings.windowOpacity or 0.94
-    W.opacity.panel = settings.panelOpacity or 0.94
+    -- How solid the window and the live panel are. Glass has settings of its own for it (how
+    -- dense its tint is), so that going to the Glass look and back leaves each as it was set.
+    if W.glass then
+        W.opacity.window = settings.glassWindow or W.GLASS_TINT
+        W.opacity.panel = settings.glassPanel or W.GLASS_TINT
+    else
+        W.opacity.window = settings.windowOpacity or 0.94
+        W.opacity.panel = settings.panelOpacity or 0.94
+    end
     for _, entry in ipairs(skinned) do
         Paint(entry)
     end
@@ -918,7 +954,8 @@ function W.Menu(width)
     local function PaintFill()
         -- (inside the frame's border: thicker in the game's art, and clear of round corners)
         local inset = (W.native or W.round) and 3 or (W.retro and 2 or 1)
-        local color = W.COLORS.header
+        -- (in the Glass look the header colour is a see-through dark: the pane's own tint)
+        local color = W.glass and W.COLORS.background or W.COLORS.header
         fill:ClearAllPoints()
         fill:SetPoint("TOPLEFT", inset, -inset)
         fill:SetPoint("BOTTOMRIGHT", -inset, inset)
