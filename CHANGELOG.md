@@ -3,6 +3,17 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.1.0
+
+- Buying lures reads more plainly on the Gear & food tab. You choose one lure from a list
+  (it was five tick boxes), and the number says what it does: "Keep ... in my bags at all
+  times". With fewer than that in your bags, a vendor visit buys what is missing. The gold
+  line reads "Never spend my last ... gold".
+- A "Maintain" tick box beside the number. Ticked, as it starts, the number is what to keep
+  in your bags. Unticked, that many are bought at every vendor visit, whatever you have.
+- The Aquadynamic Fish Attractor's tick box is written in the accent colour, so it stands
+  apart as the separate switch it is.
+
 ## 1.0.9
 
 - Buying lures is guarded against buying too many: what Keepnet has just bought counts as in

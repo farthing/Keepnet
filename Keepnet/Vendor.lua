@@ -6,9 +6,14 @@
 -- Everything here is off until the player turns it on (Gear & food tab), and it only ever
 -- buys the lures named below. What was bought and what it cost is said in chat.
 --
---   ns.settings.buyLures        the five basic lures are bought, those ticked
---   ns.settings.buyLureItems    which: { [item ID] = true }
---   ns.settings.buyLureCount    how many of each to have in the bags (20 unless changed)
+--   ns.settings.buyLures        one of the five basic lures is bought
+--   ns.settings.buyLureItems    which: { [item ID] = true }. The Gear & food tab offers one
+--                               at a time (Vendor.Choose); a table because more than one
+--                               could once be ticked, and still can be here
+--   ns.settings.buyLureCount    how many to keep in the bags: with fewer, a vendor visit
+--                               buys what is missing (20 unless changed)
+--   ns.settings.buyLureFlat     false (the default): maintain, as above. true: that many
+--                               are bought at every vendor visit, whatever is in the bags
 --   ns.settings.buyAttractors   every Aquadynamic Fish Attractor a vendor has
 --   ns.settings.buyLureFloor    gold that is never spent (0 unless changed): with this much
 --                               or less nothing at all is bought, and with more, buying
@@ -78,6 +83,22 @@ local function OnItsWay(id, count, had)
     end
 end
 
+-- The lure the player chose to have bought, one of Vendor.LURES, or nil. (Of several, from
+-- when more than one could be ticked, the strongest.)
+function Vendor.Chosen()
+    local items = ns.settings.buyLureItems or {}
+    local chosen
+    for _, lure in ipairs(Vendor.LURES) do
+        if items[lure.id] then chosen = lure end
+    end
+    return chosen
+end
+
+-- Chooses the one lure to buy (an item ID of Vendor.LURES), or none
+function Vendor.Choose(id)
+    ns.settings.buyLureItems = id and { [id] = true } or {}
+end
+
 -- The gold that is never spent, as the player set it
 function Vendor.Floor()
     local floor = tonumber(ns.settings.buyLureFloor) or 0
@@ -139,7 +160,16 @@ local function Wanted(item, settings)
     if not settings.buyLures or not (settings.buyLureItems and settings.buyLureItems[item.id]) then return 0 end
     for _, lure in ipairs(Vendor.LURES) do
         if lure.id == item.id then
-            local want = math.max(0, Vendor.Count() - Have(item.id))
+            local want
+            if settings.buyLureFlat then
+                -- That many every visit, whatever is in the bags; but not again while the
+                -- last lot is still on its way (the vendor's window sent twice)
+                Have(item.id)
+                want = arriving[item.id] and 0 or Vendor.Count()
+            else
+                -- Maintain: what is missing from that many in the bags
+                want = math.max(0, Vendor.Count() - Have(item.id))
+            end
             if item.available then want = math.min(want, item.available) end
             return want
         end

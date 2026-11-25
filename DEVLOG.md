@@ -4,6 +4,23 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.1.0 (2026-11-25, evening): the lure buying's tab section reworded. Passes its offline
+tests, committed and tagged; not on CurseForge.** The owner, before trying the buying: "the
+text is a bit ambigious, i also thought about it differently now. replace tick boxes with a
+drop down to select one. i want the auto buy option to be 'keep this many in my bag at all
+time' so if i have less than 20 say bright baubles, it will buy enought to make up what I am
+missing. change the colour of the text on the tick box for the attractor, to stand out more."
+One lure from a list (`Vendor.Choose`, `Vendor.Chosen`; the setting is still the table
+`buyLureItems`, holding one), "Keep [20] in my bags at all times" (what the number always
+did: buying what is missing), "Never spend my last [ ] gold", and the Attractor's box
+written in the accent colour and reworded "Also buy every ...". Then, the same hour: "maybe add
+a maintain tick box, and a flat, buy this X many option": a "Maintain" box beside the number
+(`settings.buyLureFlat` is its opposite, false by default). Unticked, that many are bought at
+every vendor visit whatever is in the bags (still at most 200, still never the kept gold,
+and the window sent twice in a row counts as one visit). The owner also confirmed the
+line's strip in the game that evening: the countdown ("the cast bar is awesome") and the
+catches listed under it.
+
 **Seen in the game by the owner, 2026-11-25 about 19:05, on the development copy of 1.0.9:**
 "keybinds seem to work" (the gear key and recording key combinations, 1.0.4 and 1.0.5;
 which combination and how much of the gear swap was tried was not said). Buying lures was

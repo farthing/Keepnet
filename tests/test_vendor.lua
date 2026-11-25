@@ -285,16 +285,32 @@ function T.run(ns)
     ns.UI.Refresh()
     local tab
     for _, frame in ipairs(Stub.frames) do
-        if frame.buyLureChecks then tab = frame end
+        if frame.buyLure then tab = frame end
     end
     check(tab ~= nil, "the Gear & food tab has the lure buying on it")
-    eq(#tab.buyLureChecks, 5, "a tick box for each of the five lures")
     eq(tab.buyLures:GetChecked(), true, "the switch shows it is on")
-    eq(tab.buyLureCount:GetText(), "20", "the number shows")
-    eq(tab.buyLureChecks[2]:GetChecked(), true, "the ticked lure is ticked")
-    eq(tab.buyLureChecks[1]:GetChecked(), false, "the others are not")
-    eq(tab.buyLureChecks[3].label:GetText(), "Aquadynamic Fish Lens", "each named")
+    eq(tab.buyLureCount:GetText(), "20", "the number to keep shows")
+    eq(tab.buyLure.value, CRAWLERS, "the list shows the lure that is chosen")
+    eq(tab.buyLure.label:GetText(), "Nightcrawlers", "by name")
     eq(tab.buyAttractors:GetChecked(), false, "the Attractor's box is its own")
+    check(math.abs(tab.buyAttractors.label.__textColor[1] - ns.Widgets.COLORS.accent[1]) < 0.01
+        and math.abs(tab.buyAttractors.label.__textColor[3] - ns.Widgets.COLORS.accent[3]) < 0.01,
+        "and is written in the accent colour, to stand apart")
+    -- One lure at a time: choosing another takes the first one's place
+    tab.buyLure.onSelect(BRIGHT)
+    eq(settings.buyLureItems[BRIGHT], true, "a lure chosen from the list is the lure to buy")
+    eq(settings.buyLureItems[CRAWLERS], nil, "and the one before it no longer is")
+    eq(Vendor.Chosen().name, "Bright Baubles", "one lure is chosen")
+    eq(tab.buyLure.label:GetText(), "Bright Baubles", "and shown")
+    Vendor.Choose(nil)
+    ns.UI.Refresh()
+    eq(Vendor.Chosen(), nil, "none chosen")
+    eq(tab.buyLure.label:GetText(), "Choose a lure", "the list says to choose one")
+    -- Several from before, when more than one could be ticked: the strongest shows
+    settings.buyLureItems = { [BAUBLE] = true, [BRIGHT] = true }
+    eq(Vendor.Chosen().name, "Bright Baubles", "of several ticked before, the strongest is the one shown")
+    Vendor.Choose(CRAWLERS)
+    ns.UI.Refresh()
     -- Typing a number
     tab.buyLureCount:SetText("35")
     tab.buyLureCount:GetScript("OnTextChanged")(tab.buyLureCount)
@@ -306,10 +322,35 @@ function T.run(ns)
     tab.buyLureFloor:SetText("250")
     tab.buyLureFloor:GetScript("OnTextChanged")(tab.buyLureFloor)
     eq(settings.buyLureFloor, 250, "gold typed in is the limit")
-    -- Ticking
-    tab.buyLureChecks[4]:SetChecked(true)
-    tab.buyLureChecks[4]:GetScript("OnClick")(tab.buyLureChecks[4])
-    eq(settings.buyLureItems[BRIGHT], true, "ticking a lure's box ticks the lure")
+    -- Maintain, or a flat number every visit
+    eq(tab.buyLureMaintain:GetChecked(), true, "Maintain is ticked to begin with")
+    eq(tab.buyLureCountLabel:GetText(), "in my bags at all times", "and the number is what to keep")
+    tab.buyLureMaintain:SetChecked(false)
+    tab.buyLureMaintain:GetScript("OnClick")(tab.buyLureMaintain)
+    eq(settings.buyLureFlat, true, "unticked: a flat number")
+    eq(tab.buyLureCountLabel:GetText(), "at every vendor visit", "and the number says so")
+    settings.buyLureCount, settings.buyLureFloor, settings.buyAttractors = 5, 0, false
+    Vendor.Choose(BRIGHT)
+    Stub.purchases = {}
+    Stub.bags = { [BRIGHT] = 50 }
+    Stub.money = 100000
+    Stub.advance(11)
+    Stub.openMerchant(Supplier())
+    eq(Bought(BRIGHT), 5, "flat: that many are bought whatever is in the bags")
+    Stub.openMerchant(Supplier())
+    eq(Bought(BRIGHT), 10, "and again at the next visit")
+    Stub.slowDelivery = true
+    Stub.openMerchant(Supplier())
+    Stub.fire("MERCHANT_SHOW")
+    eq(Bought(BRIGHT), 15, "but the window sent twice in a row is one visit")
+    Stub.deliver()
+    Stub.slowDelivery = nil
+    tab.buyLureMaintain:SetChecked(true)
+    tab.buyLureMaintain:GetScript("OnClick")(tab.buyLureMaintain)
+    eq(settings.buyLureFlat, false, "ticked again: maintain")
+    Stub.openMerchant(Supplier())
+    eq(Bought(BRIGHT), 15, "with more than the number in the bags, maintain buys nothing")
+    -- Ticking the Attractor's box
     tab.buyAttractors:SetChecked(true)
     tab.buyAttractors:GetScript("OnClick")(tab.buyAttractors)
     eq(settings.buyAttractors, true, "and the Attractor's box its own setting")

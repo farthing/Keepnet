@@ -79,31 +79,60 @@ local function Build(frame)
     status:SetJustifyH("LEFT")
 
     -- --------------------------------------------------------------- lures from vendors
-    -- Bought when a vendor's window opens (Vendor.lua): the ticked ones of the five basic
-    -- lures up to a number in the bags, and, as a choice of its own, every Aquadynamic Fish
-    -- Attractor the vendor has
+    -- Bought when a vendor's window opens (Vendor.lua): one of the five basic lures, chosen
+    -- from a list, kept at a number in the bags; and, as a choice of its own, every
+    -- Aquadynamic Fish Attractor the vendor has
     y = y - 82
     Heading(frame, "Lures from vendors", left, y)
-    local buy = W.Check(frame, "Buy lures when a vendor has them", function(checked)
+    local buy = W.Check(frame, "Buy a lure for me when a vendor sells it", function(checked)
         settings.buyLures = checked
         Changed()
         UI.Refresh()
     end)
     buy:SetPoint("TOPLEFT", left, y - 22)
+    -- Which lure: one of the five
+    local NO_LURE = "Choose a lure"
+    local lureLabel = W.Text(frame, "GameFontHighlightSmall", "Lure")
+    lureLabel:SetPoint("TOPLEFT", left + 22, y - 49)
+    local lure = W.Dropdown(frame, 200, function()
+        local options = {}
+        for _, entry in ipairs(Vendor.LURES) do
+            options[#options + 1] = { value = entry.id, text = Util.ItemInfo(entry.id) or entry.name }
+        end
+        return options
+    end, function(value)
+        Vendor.Choose(value)
+        Changed()
+        UI.Refresh()
+    end)
+    lure:SetPoint("TOPLEFT", left + 60, y - 45)
+    -- How many: the bags are kept at this number
+    local countBefore = W.Text(frame, "GameFontHighlightSmall", "Keep")
+    countBefore:SetPoint("TOPLEFT", left + 22, y - 75)
     local count = W.EditBox(frame, 44, nil, function(text)
         local number = tonumber(text)
         if number then
             settings.buyLureCount = math.max(1, math.min(Vendor.MOST, math.floor(number)))
         end
     end)
-    count:SetPoint("TOPLEFT", left + 22, y - 43)
+    count:SetPoint("LEFT", countBefore, "RIGHT", 6, 0)
     count:SetMaxLetters(3)
-    local countLabel = W.Text(frame, "GameFontHighlightSmall", "of each in my bags")
+    local countLabel = W.Text(frame, "GameFontHighlightSmall", "in my bags at all times")
     countLabel:SetPoint("LEFT", count, "RIGHT", 8, 0)
+    count.tooltipText = "Maintain ticked: with fewer than this in your bags, a vendor visit buys what is missing. "
+        .. "Maintain unticked: this many are bought at every vendor visit, whatever you have."
+    -- Maintain (keep the bags at the number) or, unticked, a flat number every visit
+    local maintain = W.Check(frame, "Maintain", function(checked)
+        settings.buyLureFlat = not checked
+        Changed()
+        UI.Refresh()
+    end)
+    maintain:SetPoint("TOPLEFT", left + 280, y - 73)
+    frame.buyLureMaintain, frame.buyLureCountLabel = maintain, countLabel
     -- Gold that is never spent on lures: with this much or less nothing is bought, and with
     -- more, buying stops before the money would go under it
-    local floorLabel = W.Text(frame, "GameFontHighlightSmall", "Always keep")
-    floorLabel:SetPoint("TOPLEFT", left + 190, y - 47)
+    local floorLabel = W.Text(frame, "GameFontHighlightSmall", "Never spend my last")
+    floorLabel:SetPoint("TOPLEFT", left + 22, y - 99)
     local floor = W.EditBox(frame, 56, nil, function(text)
         local number = tonumber(text)
         if number then
@@ -115,31 +144,23 @@ local function Build(frame)
     local floorAfter = W.Text(frame, "GameFontHighlightSmall", "gold")
     floorAfter:SetPoint("LEFT", floor, "RIGHT", 6, 0)
     floor.tooltipText = "Buying lures never takes your money under this. With this much gold or less, nothing is bought."
-    floor:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_TOP")
-        GameTooltip:SetText(self.tooltipText, 1, 1, 1, 1, true)
-        GameTooltip:Show()
-    end)
-    floor:SetScript("OnLeave", function() GameTooltip:Hide() end)
-    frame.buyLureFloor = floor
-    -- Three on the first line, the two long names on the second
-    local LURE_PLACES = { { 22, 68 }, { 132, 68 }, { 250, 68 }, { 22, 88 }, { 190, 88 } }
-    local lureChecks = {}
-    for index, lure in ipairs(Vendor.LURES) do
-        local check = W.Check(frame, lure.name, function(checked)
-            settings.buyLureItems[lure.id] = checked or nil
-            Changed()
+    for _, box in ipairs({ count, floor }) do
+        box:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_TOP")
+            GameTooltip:SetText(self.tooltipText, 1, 1, 1, 1, true)
+            GameTooltip:Show()
         end)
-        check:SetPoint("TOPLEFT", left + LURE_PLACES[index][1], y - LURE_PLACES[index][2])
-        check.lure = lure
-        lureChecks[index] = check
+        box:SetScript("OnLeave", function() GameTooltip:Hide() end)
     end
-    local attractors = W.Check(frame, "Buy every " .. Vendor.ATTRACTOR.name .. " a vendor has", function(checked)
+    frame.buyLureFloor = floor
+    -- The Attractor's own switch, written in the accent colour so it isn't taken for part
+    -- of the above
+    local attractors = W.Check(frame, "Also buy every " .. Vendor.ATTRACTOR.name .. " a vendor has", function(checked)
         settings.buyAttractors = checked
         Changed()
     end)
-    attractors:SetPoint("TOPLEFT", left, y - 112)
-    frame.buyLures, frame.buyLureCount, frame.buyLureChecks, frame.buyAttractors = buy, count, lureChecks, attractors
+    attractors:SetPoint("TOPLEFT", left, y - 122)
+    frame.buyLures, frame.buyLureCount, frame.buyLure, frame.buyAttractors = buy, count, lure, attractors
 
     -- ----------------------------------------------------------------------------- food
     local ry = UI.TOP - 2
@@ -240,13 +261,19 @@ local function Build(frame)
         if not (floor.HasFocus and floor:HasFocus()) then
             floor:SetText(tostring(Vendor.Floor()))
         end
-        for _, check in ipairs(lureChecks) do
-            -- (the item's name in the game's own language, once the game has told it)
-            check.label:SetText(Util.ItemInfo(check.lure.id) or check.lure.name)
-            check:SetChecked(settings.buyLureItems[check.lure.id] and true or false)
-            check:SetAlpha(buying and 1 or 0.45)
+        local flat = settings.buyLureFlat and true or false
+        maintain:SetChecked(not flat)
+        maintain:SetAlpha(buying and 1 or 0.45)
+        countBefore:SetText(flat and "Buy" or "Keep")
+        countLabel:SetText(flat and "at every vendor visit" or "in my bags at all times")
+        local chosen = Vendor.Chosen()
+        -- (the item's name in the game's own language, once the game has told it)
+        lure:Set(chosen and chosen.id or false, chosen and (Util.ItemInfo(chosen.id) or chosen.name) or NO_LURE)
+        for _, piece in ipairs({ lure, lureLabel, countBefore, floorLabel, floor, floorAfter }) do
+            piece:SetAlpha(buying and 1 or 0.45)
         end
         attractors:SetChecked(settings.buyAttractors and true or false)
+        attractors.label:SetTextColor(unpack(W.COLORS.accent))
 
         -- Food
         for _, option in ipairs(FOOD_MODES) do

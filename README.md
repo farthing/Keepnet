@@ -9,11 +9,12 @@ the net an angler keeps the catch in.
   lure you choose). With no lure on the pole, the next press applies it and the press after casts.
 - **Lures bought for you.** Turn it on in the Gear & food tab and Keepnet buys lures whenever
   you open a vendor that sells them:
-  - *What:* tick any of the five basic lures (Shiny Bauble, Nightcrawlers, Aquadynamic Fish
-    Lens, Bright Baubles, Flesh Eating Worm). A tick box of its own buys every Aquadynamic
-    Fish Attractor a vendor has, since vendors only ever have a few.
-  - *How many:* enough to have the number you set in your bags (20 unless you change it), so
-    a second visit doesn't buy a second lot.
+  - *What:* choose one of the five basic lures from a list (Shiny Bauble, Nightcrawlers,
+    Aquadynamic Fish Lens, Bright Baubles, Flesh Eating Worm). A tick box of its own also
+    buys every Aquadynamic Fish Attractor a vendor has, since vendors only ever have a few.
+  - *How many:* with "Maintain" ticked, enough to keep the number you set in your bags (20
+    unless you change it): have fewer, and a vendor visit buys what is missing. Unticked,
+    that many are bought at every visit.
   - *The gold you keep:* set an amount and buying lures never takes you under it. With that
     much gold or less, nothing is bought at all.
   Chat says what was bought and what it cost. Off until you turn it on.
