@@ -314,6 +314,17 @@ understand versions of three parts.
 - The source on GitHub is at the same commit, tagged `v1.0.1`.
 - **"Approved"** within about twenty minutes (seen on the Media tab's file list).
 
+### Waiting for the next upload (written 2026-11-25, night)
+
+`media\curseforge-description.html` is ahead of the site: it has what 1.0.2 to 1.0.8 add
+(lines in the feature list for buying lures, the gear key, and the line's countdown and
+catch list; a section "Lures bought for you"; a line each under "One key does the fishing"
+and "Out of your way"), and it no longer says "Theming is a work in progress", which the
+site still does. The owner asked for the lure buying "added as a feature, the auto buy, the
+selection, the gate". **The site was not touched**: it describes the file players can
+download, which is 1.0.1. Put the description on the site with the upload that brings these
+versions, and bring its opening note ("New in 1.0.1: looks") up to date then.
+
 ### Four pictures for the looks (the same evening)
 
 The owner set each screen up and said when it showed ("i think we only need a single image

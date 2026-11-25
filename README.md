@@ -7,9 +7,23 @@ the net an angler keeps the catch in.
   in and reels in when it's out. One press does one thing.
 - **Lures.** Off, Auto (the strongest lure in your bags that your skill allows) or Specific (one
   lure you choose). With no lure on the pole, the next press applies it and the press after casts.
+- **Lures bought for you.** Turn it on in the Gear & food tab and Keepnet buys lures whenever
+  you open a vendor that sells them:
+  - *What:* tick any of the five basic lures (Shiny Bauble, Nightcrawlers, Aquadynamic Fish
+    Lens, Bright Baubles, Flesh Eating Worm). A tick box of its own buys every Aquadynamic
+    Fish Attractor a vendor has, since vendors only ever have a few.
+  - *How many:* enough to have the number you set in your bags (20 unless you change it), so
+    a second visit doesn't buy a second lot.
+  - *The gold you keep:* set an amount and buying lures never takes you under it. With that
+    much gold or less, nothing is bought at all.
+  Chat says what was bought and what it cost. Off until you turn it on.
 - **Fishing gear.** While the pole is equipped, clothing in your bags that raises Fishing (a
   fishing hat, boots, gloves with a fishing enchant) is put on, and what it replaced is put back
   when the pole comes off. On by default.
+- **A gear key.** A key of its own, apart from the fishing key: one press puts your fishing
+  pole on (and the fishing clothing with it), the next press puts back what you held in both
+  hands and your own clothing. It can be a combination, such as Ctrl and F. None until you
+  set one in the Settings tab.
 - **Food and other buff items.** Fishing food (Off, Auto or Specific) and any other item you put
   on the list (a coin, a toy, a trinket) are used through the same key when their buff is
   missing, before the lure and the cast. Off until you turn them on.
@@ -63,6 +77,9 @@ the net an angler keeps the catch in.
 - **Hide the game's interface while fishing.** Either everything except the live panel, with
   nothing left behind, or only the parts you tick (action bars, unit frames, buffs, minimap,
   chat, quest tracker) plus anything you pick on screen with the mouse. Off by default.
+- **The line's time and what it brought up.** While the interface is hidden, a strip under
+  the live panel shows a bar running down with the seconds the line has left, and for a few
+  seconds what each cast brought up. It can also be shown always, or never.
 - **Fishing sound.** While the pole is equipped: sound effects at full volume so the splash is
   loud; music, ambience and dialog off; sound keeps playing with the game in the background.
   Your own sound settings come back when the pole comes off.
