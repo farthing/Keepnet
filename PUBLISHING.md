@@ -282,9 +282,39 @@ and while the upload form was open: "add bullet point about searchable character
 - **The source is public since that day**: https://github.com/farthing/Keepnet, one commit
   for 1.0.0. The listing's "Source" tab does not point at it yet.
 
+## Four pictures redone for 1.0.0 (2026-11-25, evening)
+
+The owner set each screen up with `/kn demo` on and said when it showed; each was taken with
+`tools\capture.ps1` and cut with `tools\cut.ps1 -Frame window`, and looked at before it went
+anywhere (only "Vale" on them). In `media\screens` under their old names, in the gallery as
+new pictures with the old titles and stars, and in the description in place of the old ones:
+
+- `03-history.png`, "History: one row per session" (`2271/920`, not featured): the list of
+  characters at the top left.
+- `04-zones.png`, "Zones: the skill each one asks for, and your sessions there" (`2271/921`,
+  featured): the list of characters at the top right. Taken on a character with Fishing 10,
+  so most skill numbers are red or yellow.
+- `08-settings.png`, "Settings" (`2271/922`, not featured): the "New versions" block. Taken
+  on the copy from the CurseForge app: a development copy adds a sentence there that no
+  player sees, so a picture of Settings must come from a released copy. Cut with
+  `-Margin 0`, because the live panel's corner showed in the margin.
+- `09-find-a-fish.png`, "History: where a fish was caught" (`2271/923`, featured).
+
+**The four old pictures are still in the gallery** (`2265/894`, `2265/895`, `2267/304`,
+`2265/899`), under the same titles, and the new ones stand last in the order: deleting the
+old ones and putting the order back waits for the owner's yes. Nothing in the description
+uses the old ones any more.
+
+What the edit form taught this time: whether a picture is featured can be read from its
+star in the form (the pencil): the star's path is filled orange (`#F16436`) when it is, and
+only an outline (`fill="none"`) when it is not. The star is the icon in the box before the
+words "Feature Media"; that box takes the click. Several pictures can be given to "Add
+media" at once.
+
 ## For the next description (written 2026-11-25; the update notice and the searchable sessions are on the site since, see above)
 
-Still not on the site: new pictures of the History, Zones and Settings tabs. That every
+The new pictures of the History, Zones and Settings tabs are on the site since that evening
+(see the section above). That every
 setting and the panel's place are kept per character stays out of the description on the
 owner's word (2026-11-25: "the kept per character is actually sort of a given in any
 addon"): don't offer it again.
