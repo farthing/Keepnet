@@ -40,6 +40,9 @@ local DEFAULTS = {
     rareGold = 0,         -- alert for a catch worth at least this much gold each (0 off)
     rareSound = true,     -- play a sound with the alert
     gearKey = nil,        -- the key that changes into fishing gear and back (Gear.lua), or none
+    buyLures = false,     -- buy the ticked lures when a vendor has them (Vendor.lua)
+    buyLureCount = 20,    -- how many of each to have in the bags
+    buyAttractors = false, -- buy every Aquadynamic Fish Attractor a vendor has
     theme = "keepnet",    -- the look (see W.THEMES)
     schemes = nil,        -- the colours chosen for each family of looks: { keepnet = "slate", ... }
     accentMode = "theme", -- the accent colour: "theme" (the colours' own), "class" or "custom"
@@ -167,6 +170,8 @@ local function Fill(settings)
     end
     -- Other items the key uses when their buff is missing (a coin, a toy ...): item IDs
     settings.extraItems = settings.extraItems or {}
+    -- Which of the basic lures are bought from vendors: { [item ID] = true } (Vendor.lua)
+    settings.buyLureItems = settings.buyLureItems or {}
     -- What "parts" hides: the ticked parts, and frames picked with the mouse, by name
     settings.hideParts = settings.hideParts or
         { actionbars = true, unitframes = true, buffs = true, minimap = true, chat = false, tracker = true }

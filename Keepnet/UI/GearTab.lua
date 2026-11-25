@@ -1,7 +1,8 @@
--- Keepnet: the "Gear & food" tab: fishing gear worn while the pole is on, fishing food, and
--- other items the fishing key uses when their buff is missing.
+-- Keepnet: the "Gear & food" tab: fishing gear worn while the pole is on, lures bought from
+-- vendors, fishing food, and other items the fishing key uses when their buff is missing.
 local _, ns = ...
 local Util, Gear, Buffs, Skill, W, UI = ns.Util, ns.Gear, ns.Buffs, ns.Skill, ns.Widgets, ns.UI
+local Vendor = ns.Vendor
 
 local FOOD_MODES = {
     { value = "off", text = "Off: no food" },
@@ -70,12 +71,53 @@ local function Build(frame)
     gearList:SetJustifyH("LEFT")
 
     -- ------------------------------------------------------------------ skill and buffs
-    y = y - 236
+    y = y - 166
     Heading(frame, "Fishing skill now", left, y)
     local status = W.Text(frame, "GameFontHighlightSmall")
     status:SetPoint("TOPLEFT", left, y - 22)
     status:SetWidth(360)
     status:SetJustifyH("LEFT")
+
+    -- --------------------------------------------------------------- lures from vendors
+    -- Bought when a vendor's window opens (Vendor.lua): the ticked ones of the five basic
+    -- lures up to a number in the bags, and, as a choice of its own, every Aquadynamic Fish
+    -- Attractor the vendor has
+    y = y - 82
+    Heading(frame, "Lures from vendors", left, y)
+    local buy = W.Check(frame, "Buy lures when a vendor has them", function(checked)
+        settings.buyLures = checked
+        Changed()
+        UI.Refresh()
+    end)
+    buy:SetPoint("TOPLEFT", left, y - 22)
+    local count = W.EditBox(frame, 44, nil, function(text)
+        local number = tonumber(text)
+        if number then
+            settings.buyLureCount = math.max(1, math.min(Vendor.MOST, math.floor(number)))
+        end
+    end)
+    count:SetPoint("TOPLEFT", left + 22, y - 43)
+    count:SetMaxLetters(3)
+    local countLabel = W.Text(frame, "GameFontHighlightSmall", "of each in my bags: buy up to that many")
+    countLabel:SetPoint("LEFT", count, "RIGHT", 8, 0)
+    -- Three on the first line, the two long names on the second
+    local LURE_PLACES = { { 22, 68 }, { 132, 68 }, { 250, 68 }, { 22, 88 }, { 190, 88 } }
+    local lureChecks = {}
+    for index, lure in ipairs(Vendor.LURES) do
+        local check = W.Check(frame, lure.name, function(checked)
+            settings.buyLureItems[lure.id] = checked or nil
+            Changed()
+        end)
+        check:SetPoint("TOPLEFT", left + LURE_PLACES[index][1], y - LURE_PLACES[index][2])
+        check.lure = lure
+        lureChecks[index] = check
+    end
+    local attractors = W.Check(frame, "Buy every " .. Vendor.ATTRACTOR.name .. " a vendor has", function(checked)
+        settings.buyAttractors = checked
+        Changed()
+    end)
+    attractors:SetPoint("TOPLEFT", left, y - 112)
+    frame.buyLures, frame.buyLureCount, frame.buyLureChecks, frame.buyAttractors = buy, count, lureChecks, attractors
 
     -- ----------------------------------------------------------------------------- food
     local ry = UI.TOP - 2
@@ -148,7 +190,7 @@ local function Build(frame)
         if #lines == 0 then
             lines[1] = "|cff9d9d9dNo fishing gear in your bags that beats what you're wearing.|r"
         end
-        gearList:SetText(table.concat(lines, "\n", 1, math.min(#lines, 9)))
+        gearList:SetText(table.concat(lines, "\n", 1, math.min(#lines, 5)))
 
         -- Skill and buffs
         local parts = {}
@@ -163,7 +205,23 @@ local function Build(frame)
             parts[#parts + 1] = ("%s%s%s"):format(buff.name, buff.bonus and ("  +" .. buff.bonus) or "",
                 buff.left and ("  |cff9d9d9d" .. Util.MinutesSeconds(buff.left) .. " left|r") or "")
         end
-        status:SetText(table.concat(parts, "\n"))
+        status:SetText(table.concat(parts, "\n", 1, math.min(#parts, 5)))
+
+        -- Lures from vendors
+        local buying = settings.buyLures and true or false
+        buy:SetChecked(buying)
+        if not (count.HasFocus and count:HasFocus()) then
+            count:SetText(tostring(Vendor.Count()))
+        end
+        count:SetAlpha(buying and 1 or 0.45)
+        countLabel:SetAlpha(buying and 1 or 0.45)
+        for _, check in ipairs(lureChecks) do
+            -- (the item's name in the game's own language, once the game has told it)
+            check.label:SetText(Util.ItemInfo(check.lure.id) or check.lure.name)
+            check:SetChecked(settings.buyLureItems[check.lure.id] and true or false)
+            check:SetAlpha(buying and 1 or 0.45)
+        end
+        attractors:SetChecked(settings.buyAttractors and true or false)
 
         -- Food
         for _, option in ipairs(FOOD_MODES) do

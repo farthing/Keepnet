@@ -184,7 +184,7 @@ for name in ([[
     SetObeyStepOnDrag SetHitRectInsets SetOwner AddLine SetHyperlink SetItemByID
     SetAutoFocus SetTextInsets SetMaxLetters ClearFocus SetPropagateKeyboardInput
     SetTexCoord SetBlendMode GenerateMenu
-    SetShadowColor SetShadowOffset SetClipsChildren SetHighlightColor GetFrameStrata
+    SetShadowColor SetShadowOffset SetClipsChildren SetHighlightColor GetFrameStrata HasFocus
 ]]):gmatch("%S+") do
     QUIET[name] = true
 end
@@ -938,6 +938,54 @@ function GetLootSourceInfo()
     return Stub.lootSource
 end
 function GetMoney() return Stub.money end
+
+-- ------------------------------------------------------------------------------------ a vendor
+-- Stub.merchant is what the open vendor sells: { { id, price (for one), available (nil: no
+-- limit), batch (how many a purchase gives), extended (true: not for coins), maxStack } }.
+-- Stub.openMerchant(list) opens the window. What was bought is in Stub.purchases.
+Stub.purchases = {}
+function GetMerchantNumItems() return Stub.merchant and #Stub.merchant or 0 end
+function GetMerchantItemID(index)
+    local entry = Stub.merchant and Stub.merchant[index]
+    return entry and entry.id or nil
+end
+C_MerchantFrame = {}
+function C_MerchantFrame.GetItemInfo(index)
+    local entry = Stub.merchant[index]
+    return {
+        name = Stub.items[entry.id] and Stub.items[entry.id][1] or "?",
+        price = entry.price * (entry.batch or 1), stackCount = entry.batch or 1,
+        numAvailable = entry.available or -1, hasExtendedCost = entry.extended or false,
+        isPurchasable = true,
+    }
+end
+function GetMerchantItemMaxStack(index) return Stub.merchant[index].maxStack or 20 end
+function BuyMerchantItem(index, quantity)
+    local entry = Stub.merchant[index]
+    quantity = quantity or 1
+    if quantity > (entry.maxStack or 20) then
+        Stub.errors[#Stub.errors + 1] = "more than a stack bought at once"
+        return
+    end
+    local items = quantity * (entry.batch or 1)
+    if entry.available and entry.available < items then
+        Stub.errors[#Stub.errors + 1] = "more bought than the vendor has"
+        return
+    end
+    local cost = items * entry.price
+    if Stub.money < cost then
+        Stub.errors[#Stub.errors + 1] = "bought without the money for it"
+        return
+    end
+    Stub.money = Stub.money - cost
+    Stub.bags[entry.id] = (Stub.bags[entry.id] or 0) + items
+    if entry.available then entry.available = entry.available - items end
+    Stub.purchases[#Stub.purchases + 1] = { id = entry.id, count = items }
+end
+function Stub.openMerchant(list)
+    Stub.merchant = list
+    Stub.fire("MERCHANT_SHOW")
+end
 function C_Item.GetItemLinkByGUID(guid)
     local id = (not Stub.guidSilent) and Stub.guidItems[guid]
     return id and Stub.link(id) or nil

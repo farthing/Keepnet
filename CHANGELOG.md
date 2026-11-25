@@ -3,6 +3,18 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.0.6
+
+- Keepnet can buy your lures. On the Gear & food tab, "Lures from vendors": turn on "Buy
+  lures when a vendor has them", tick which of the five basic lures you want (Shiny Bauble,
+  Nightcrawlers, Aquadynamic Fish Lens, Bright Baubles, Flesh Eating Worm) and set a number.
+  When you open a vendor that sells a ticked lure, Keepnet buys enough to have that many in
+  your bags (20 unless you change it), and says in chat what it bought and what it cost.
+- A choice of its own: "Buy every Aquadynamic Fish Attractor a vendor has". Vendors only ever
+  have a few of those, and with this ticked Keepnet takes all of them every time.
+- Both are off until you turn them on, and nothing but these lures is ever bought. If your
+  money doesn't reach, it buys what it can and tells you.
+
 ## 1.0.5
 
 - The gear key and the fishing key can be combinations: hold any of Alt, Ctrl and Shift and

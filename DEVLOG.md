@@ -4,6 +4,40 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.0.6 (2026-11-25, night): buying lures. Passes its offline tests, committed and tagged;
+not on CurseForge (the changelog for the next upload starts after 1.0.1). A file was added
+(`Vendor.lua`), so the game needs a full restart after `tools/install.ps1`, not a
+`/reload`.** The owner: "under the gear and food tab, i want a setting that can be turned on
+and off which is automatically buy lures, when lures are available. i want it to have a
+number, so if i say yes buy automatically, and buy 20. the addon automatically buys the
+lures when it sees them. add the three basic lure options. add an extra option to always buy
+Aquadynamic Fish Attractor, as many as are available at the vendor. automatically.", then
+"correction, there are 5 basic lures, look up the names".
+
+- The five, as looked up (Mastercraft's list in the owner's game and two guides for this
+  client; in `CREDITS.md`): Shiny Bauble 6529, Nightcrawlers 6530, Aquadynamic Fish Lens
+  6811, Bright Baubles 6532, Flesh Eating Worm 7307. The sixth lure of this client is the
+  Aquadynamic Fish Attractor 6533, which has the rule of its own. One of the guides says
+  vendors sell only the Bauble, the Nightcrawlers, the Bright Baubles and (a few of) the
+  Attractor; the Lens and the Worm are offered anyway, as asked, and are simply never
+  bought where no vendor has them.
+- `Vendor.lua`: at `MERCHANT_SHOW` the vendor's list is gone through once. A ticked lure is
+  bought up to the number **in the bags** (so opening a vendor twice does not buy twice;
+  my reading of "buy 20"), a stack at a time, no more than the vendor has, no more than the
+  money pays for (then a line in chat). With "Buy every Aquadynamic Fish Attractor a vendor
+  has" ticked, all the vendor has are bought, whatever is in the bags. Things not sold for
+  coins are left. What was bought and its cost is said in chat.
+- Settings (per character): `buyLures` (off), `buyLureItems` ({ [item] = true }, none
+  ticked), `buyLureCount` (20, at most 200), `buyAttractors` (off).
+- Gear & food tab, left column: "Lures from vendors" under "Fishing skill now", which moved
+  up (the gear list shows five lines at most now, the skill lines five). A switch, a box
+  for the number, five tick boxes, the Attractor's tick box.
+- Tests: `tests\test_vendor.lua`. The stand-in game has a vendor.
+- **Not seen in the game:** all of it. In particular what the vendor calls answer on this
+  client (`C_MerchantFrame.GetItemInfo` is used where it exists, the older
+  `GetMerchantItemInfo` otherwise), that `BuyMerchantItem` takes a count up to a stack, and
+  the new section's place on the tab.
+
 **1.0.5 (2026-11-25, night): key combinations can be recorded. Passes its offline tests,
 committed and tagged; not on CurseForge.** The owner, with 1.0.4 in the game: "i cannot
 record something like CTRL and F for the gear key. we will need key combos. whether that is

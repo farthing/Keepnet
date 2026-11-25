@@ -4,7 +4,7 @@
 ## Author: farthing
 ## X-License: MIT
 ## X-Curse-Project-ID: 1825443
-## Version: 1.0.5
+## Version: 1.0.6
 ## IconTexture: Interface\Icons\INV_Misc_Net_01
 ## SavedVariables: KeepnetDB
 ## OptionalDeps: EllesmereUI, Auctionator, TradeSkillMaster, Auc-Advanced, aux-forever, RECrystallize, OribosExchange, KeepnetSounds
@@ -19,6 +19,7 @@ Core.lua
 Demo.lua
 Fishing.lua
 Lures.lua
+Vendor.lua
 Buffs.lua
 Gear.lua
 Skill.lua

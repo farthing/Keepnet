@@ -300,6 +300,8 @@ and runs:
   a pole put on by hand, no pole, the two keys kept apart.
 - `test_line_strip.lua`: the strip under the live panel: the line's time running down, what
   each cast brought up, and when it shows.
+- `test_vendor.lua`: buying lures from a vendor: the number, the ticked lures, the Attractor's
+  own rule, too little money, things not sold for coins.
 - `test_look_sounds.lua`: looks, colours, font, accent, opacity and size; a sound per kind of rare catch;
   your own files (and names that try to leave the sounds folder); shared sounds.
 - `test_gear_food.lua`: gear on and off with the pole (also through a reload and combat), eating
