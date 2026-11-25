@@ -4,6 +4,15 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.0.8 (2026-11-25, night): the gold limit is gold that is never spent. Passes its offline
+tests, committed and tagged; not on CurseForge.** Offered the choice between a gate and a
+reserve, the owner: "never past the limit please". `Vendor.Shop` now spends only what lies
+above `buyLureFloor`: with that much or less nothing is bought (as in 1.0.7, with its line
+in chat), and with more, each lure is bought only as far as the money above it reaches,
+lures sold several at a time included (a purchase that would go under it is not made). When
+that leaves a wanted lure short, chat says "Not enough money above the ... you keep". The
+tab's line reads "Always keep [ ] gold", with a tooltip on the box. Not seen in the game.
+
 **1.0.7 (2026-11-25, night): a gold limit for buying lures. Passes its offline tests,
 committed and tagged; not on CurseForge.** The owner: "maybe add a field, where someone can
 set a 'if i have less than this amount of money, don't buy anything' option and then if the

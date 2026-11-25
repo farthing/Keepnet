@@ -3,11 +3,18 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.0.8
+
+- The gold limit for buying lures is now gold that is never spent: "Always keep ... gold",
+  beside the number on the Gear & food tab. With that much gold or less Keepnet buys
+  nothing, and with more it buys only what the money above it pays for, so buying lures
+  never takes you under it.
+
 ## 1.0.7
 
-- Buying lures has a limit you can set: "Not with ... gold or less", beside the number on the
-  Gear & food tab. While you have that much gold or less, Keepnet buys nothing at all, not the
-  lures and not the Attractors, and says so in chat. It is 0 unless you change it.
+- Buying lures has a limit you can set, beside the number on the Gear & food tab. While you
+  have that much gold or less, Keepnet buys nothing at all, not the lures and not the
+  Attractors, and says so in chat. It is 0 unless you change it.
 
 ## 1.0.6
 

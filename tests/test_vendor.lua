@@ -178,11 +178,34 @@ function T.run(ns)
     Stub.chat = {}
     Stub.openMerchant({ { id = BREAD, price = 25 } })
     check(not Said("No lures bought"), "a vendor with nothing wanted: no word about it")
-    -- More than that: bought as usual
+    -- More than that: only what lies above it is spent
     Stub.money = 100001
+    Stub.chat = {}
     Stub.openMerchant(Supplier())
-    eq(Stub.bags[BRIGHT], 20, "a copper more than was set: the lures are bought")
+    eq(#Stub.purchases, 0, "a copper more than is kept: not enough above it for one lure")
+    check(Said("Not enough money above the 10"), "and the player is told the money above it didn't reach")
+    Stub.money = 100000 + 3 * 250 + 100
+    Stub.openMerchant(Supplier())
+    eq(Stub.bags[BRIGHT], 3, "enough above it for three: three are bought")
+    eq(Bought(ATTRACTOR), 0, "and no Attractor, which would take the money under what is kept")
+    eq(Stub.money, 100100, "the gold that is kept is not touched")
+    -- Plenty above it: everything, and still not under it
+    Stub.purchases = {}
+    Stub.bags = {}
+    Stub.money = 200000
+    Stub.openMerchant(Supplier())
+    eq(Stub.bags[BRIGHT], 20, "plenty above it: the lures are bought")
     eq(Stub.bags[ATTRACTOR], 2, "and the Attractors")
+    check(Stub.money >= 100000, "with the kept gold still there")
+    -- Sold several at a time: no purchase that would go under it
+    Stub.purchases = {}
+    Stub.bags = {}
+    Stub.money = 100000 + 2 * 5 * 250 + 1000
+    settings.buyAttractors = false
+    Stub.openMerchant({ { id = BRIGHT, price = 250, batch = 5 } })
+    eq(Stub.bags[BRIGHT], 10, "sold five at a time, money above it for two purchases: two")
+    eq(Stub.money, 101000, "not a third that would go under it")
+    settings.buyAttractors = true
     settings.buyLureFloor = "nonsense"
     eq(Vendor.Floor(), 0, "a limit that isn't a number is none")
     settings.buyLureFloor = 0

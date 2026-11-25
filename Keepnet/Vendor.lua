@@ -10,8 +10,9 @@
 --   ns.settings.buyLureItems    which: { [item ID] = true }
 --   ns.settings.buyLureCount    how many of each to have in the bags (20 unless changed)
 --   ns.settings.buyAttractors   every Aquadynamic Fish Attractor a vendor has
---   ns.settings.buyLureFloor    nothing at all is bought while the character has this much
---                               gold or less (0 unless changed)
+--   ns.settings.buyLureFloor    gold that is never spent (0 unless changed): with this much
+--                               or less nothing at all is bought, and with more, buying
+--                               stops before the money would go under it
 --
 -- The numbers of the lures and which of them a vendor can sell on this client were checked
 -- against Mastercraft's list and two guides for this client; see CREDITS.md.
@@ -36,7 +37,7 @@ Vendor.DEFAULT_COUNT = 20
 Vendor.MOST = 200 -- the most the number can be set to
 Vendor.MOST_GOLD = 999999
 
--- The gold at or under which nothing is bought, as the player set it
+-- The gold that is never spent, as the player set it
 function Vendor.Floor()
     local floor = tonumber(ns.settings.buyLureFloor) or 0
     return math.max(0, math.min(Vendor.MOST_GOLD, math.floor(floor)))
@@ -107,39 +108,40 @@ function Vendor.Shop()
     if not (GetMerchantNumItems and BuyMerchantItem) then return 0 end
     local money = Number(GetMoney and GetMoney())
     if not money then return 0 end
-    -- With this much or less the player wants nothing bought at all
-    local floor = Vendor.Floor()
-    local held = floor > 0 and money <= floor * 10000
+    -- The gold the player keeps is never spent: what there is to spend is what lies above
+    -- it. With that much or less, nothing is bought at all.
+    local floor = Vendor.Floor() * 10000
+    local budget = money - floor
     local bought, spent, short = {}, 0, {}
     for index = 1, Number(GetMerchantNumItems()) or 0 do
         local ok, item = pcall(ItemAt, index)
         if ok and item then
             local want = Wanted(item, settings)
-            if want > 0 and held then
+            if want > 0 and floor > 0 and money <= floor then
                 -- Said once, and only where there was something to buy
-                Util.Print(("No lures bought: you have %s, and that is not more than the %s you set."):format(
-                    Util.Money(money), Util.Money(floor * 10000)))
+                Util.Print(("No lures bought: you have %s, and that is not more than the %s you keep."):format(
+                    Util.Money(money), Util.Money(floor)))
                 return 0
             end
             if want > 0 then
                 local name = Util.ItemInfo(item.id) or ("item " .. item.id)
-                -- What the money left will pay for
-                local canPay = item.price > 0 and math.floor(money / item.price) or want
-                if canPay < want then short[#short + 1] = name end
-                local left = math.min(want, canPay)
+                -- A purchase gives one lure, or several where they are sold several at a
+                -- time (then the last purchase may give a few more than were wanted)
+                local each = item.price * item.batch
+                local purchases = math.ceil(want / item.batch)
+                local canPay = each > 0 and math.floor(budget / each) or purchases
+                if canPay < purchases then
+                    short[#short + 1] = name
+                    purchases = math.max(0, canPay)
+                end
                 local got = 0
-                while left > 0 do
-                    local amount
-                    if item.batch > 1 then
-                        -- Sold several at a time: one purchase, which may give a few too many
-                        amount = item.batch
-                        BuyMerchantItem(index, 1)
-                    else
-                        amount = math.min(left, item.most)
-                        BuyMerchantItem(index, amount)
-                    end
-                    got, left = got + amount, left - amount
-                    money, spent = money - amount * item.price, spent + amount * item.price
+                while purchases > 0 do
+                    -- (several at once only where a purchase is a single lure)
+                    local now = item.batch > 1 and 1 or math.min(purchases, item.most)
+                    BuyMerchantItem(index, now)
+                    purchases = purchases - now
+                    got = got + now * item.batch
+                    budget, spent = budget - now * each, spent + now * each
                 end
                 if got > 0 then bought[#bought + 1] = ("%d %s"):format(got, name) end
             end
@@ -149,7 +151,8 @@ function Vendor.Shop()
         Util.Print(("Bought %s for %s."):format(table.concat(bought, ", "), Util.Money(spent)))
     end
     if #short > 0 then
-        Util.Print("Not enough money for all the lures: " .. table.concat(short, ", "))
+        Util.Print((floor > 0 and ("Not enough money above the %s you keep for all the lures: "):format(Util.Money(floor))
+            or "Not enough money for all the lures: ") .. table.concat(short, ", "))
     end
     return #bought
 end

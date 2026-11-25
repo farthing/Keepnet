@@ -100,9 +100,10 @@ local function Build(frame)
     count:SetMaxLetters(3)
     local countLabel = W.Text(frame, "GameFontHighlightSmall", "of each in my bags")
     countLabel:SetPoint("LEFT", count, "RIGHT", 8, 0)
-    -- With this much gold or less, nothing is bought: not the lures, not the Attractors
-    local floorLabel = W.Text(frame, "GameFontHighlightSmall", "Not with")
-    floorLabel:SetPoint("TOPLEFT", left + 176, y - 47)
+    -- Gold that is never spent on lures: with this much or less nothing is bought, and with
+    -- more, buying stops before the money would go under it
+    local floorLabel = W.Text(frame, "GameFontHighlightSmall", "Always keep")
+    floorLabel:SetPoint("TOPLEFT", left + 190, y - 47)
     local floor = W.EditBox(frame, 56, nil, function(text)
         local number = tonumber(text)
         if number then
@@ -111,8 +112,15 @@ local function Build(frame)
     end)
     floor:SetPoint("LEFT", floorLabel, "RIGHT", 6, 0)
     floor:SetMaxLetters(6)
-    local floorAfter = W.Text(frame, "GameFontHighlightSmall", "gold or less")
+    local floorAfter = W.Text(frame, "GameFontHighlightSmall", "gold")
     floorAfter:SetPoint("LEFT", floor, "RIGHT", 6, 0)
+    floor.tooltipText = "Buying lures never takes your money under this. With this much gold or less, nothing is bought."
+    floor:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_TOP")
+        GameTooltip:SetText(self.tooltipText, 1, 1, 1, 1, true)
+        GameTooltip:Show()
+    end)
+    floor:SetScript("OnLeave", function() GameTooltip:Hide() end)
     frame.buyLureFloor = floor
     -- Three on the first line, the two long names on the second
     local LURE_PLACES = { { 22, 68 }, { 132, 68 }, { 250, 68 }, { 22, 88 }, { 190, 88 } }
