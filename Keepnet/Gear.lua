@@ -551,7 +551,9 @@ function Gear.UpdateKey()
     if key == "" or key == ns.settings.key then key = nil end
     if key == keyBound then return end
     ClearOverrideBindings(keyOwner)
-    if key then SetOverrideBindingClick(keyOwner, false, key, KEY_BUTTON) end
+    -- (with the same standing as the fishing key's binding, so that "CTRL-F" is this key
+    -- and not the fishing key "F" with Ctrl held)
+    if key then SetOverrideBindingClick(keyOwner, true, key, KEY_BUTTON) end
     keyBound = key
 end
 

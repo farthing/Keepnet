@@ -4,6 +4,32 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.0.5 (2026-11-25, night): key combinations can be recorded. Passes its offline tests,
+committed and tagged; not on CurseForge.** The owner, with 1.0.4 in the game: "i cannot
+record something like CTRL and F for the gear key. we will need key combos. whether that is
+ctrl and something, alt and something, or even three or four keys".
+
+- **Why it failed is not known**: what the owner saw on the button was not said, and the
+  screen at the time showed another tab. The recording had never been tested offline (the
+  stand-in game always answered "no key is held"), and it took the held keys only from the
+  game's own `IsAltKeyDown`, `IsControlKeyDown`, `IsShiftKeyDown` at the moment the last
+  key went down. My guesses, none checked: those answers are not usable on this client;
+  another addon's frame took the key first; or the combination was recorded but its
+  binding lost to the fishing key's, which had the higher standing.
+- So all three were dealt with (`KeyButton` in `UI\SettingsTab.lua`). The held keys are
+  followed key by key (`OnKeyDown` and `OnKeyUp` of the button: "LCTRL" and "RCTRL" are
+  CTRL, and so on for ALT, SHIFT, META), and the game is asked as well, guarded: either is
+  enough. The button shows what is held as it is held ("CTRL-SHIFT-...") and takes the
+  combination when a key that is not one of the four goes down, written in the game's own
+  order (ALT-CTRL-SHIFT-META-key). While it listens the button is in the topmost layer.
+  The gear key's binding has the same standing as the fishing key's.
+- A combination is up to those four held keys and one more key or mouse side button: that
+  is what the game can bind. Two ordinary keys at once is not something it can.
+- Tests: the second half of `tests\test_gear_key.lua`. The stand-in game can be told which
+  keys are held, or to keep it to itself.
+- **Not seen in the game.** If it still fails, the button's text while the keys are held
+  says how far the game's key events got: ask the owner what it showed.
+
 **1.0.4 (2026-11-25, night): the gear key. Passes its offline tests, committed and tagged;
 NOT in the owner's game and NOT on CurseForge (the changelog for the next upload starts
 after 1.0.1).** The owner: "i want a configurable hot key or set of keys, for equiping

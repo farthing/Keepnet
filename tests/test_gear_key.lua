@@ -144,9 +144,107 @@ function T.run(ns)
     eq(Gear.Key(), nil, "no key set: none bound")
     eq(Stub.binding("BUTTON4"), nil, "and the last one is let go")
 
-    -- The Settings tab has a button for it
+    -- ------------------------------------------------------------- recording a key
+    -- The Settings tab has a button for each key: click, then press the key or the keys
     ns.UI.Show("settings")
     ns.UI.Refresh()
+    local button = ns.SettingsKeys.gear
+    local function Down(key) button:GetScript("OnKeyDown")(button, key) end
+    local function Up(key) button:GetScript("OnKeyUp")(button, key) end
+    local function Click(which) button:GetScript("OnClick")(button, which or "LeftButton") end
+    eq(button.label:GetText(), "none", "no gear key: the button says so")
+
+    -- Ctrl and F, the game saying nothing about what is held: the keys themselves are followed
+    Click()
+    eq(button.label:GetText(), "Press the key or keys (Esc cancels)", "clicked: it asks for the keys")
+    Down("LCTRL")
+    eq(button.label:GetText(), "CTRL-...", "Ctrl held: it shows on the button, and nothing is taken yet")
+    eq(settings.gearKey, nil, "a held key by itself is not a key")
+    Down("F")
+    eq(settings.gearKey, "CTRL-F", "then F: Ctrl and F is the key")
+    eq(button.label:GetText(), "CTRL-F", "shown on the button")
+    eq(Gear.Key(), "CTRL-F", "and bound")
+    Up("F")
+    Up("LCTRL")
+    eq(settings.gearKey, "CTRL-F", "letting go changes nothing")
+
+    -- Three and four keys, in the order the game writes them whatever order they went down in
+    Click()
+    Down("RSHIFT")
+    Down("LALT")
+    eq(button.label:GetText(), "ALT-SHIFT-...", "two held")
+    Down("LCTRL")
+    eq(button.label:GetText(), "ALT-CTRL-SHIFT-...", "three held")
+    Down("G")
+    eq(settings.gearKey, "ALT-CTRL-SHIFT-G", "four keys make one combination")
+    Up("G")
+    Up("LCTRL")
+    Up("LALT")
+    Up("RSHIFT")
+
+    -- A held key let go again before the last key is not part of it
+    Click()
+    Down("LSHIFT")
+    Up("LSHIFT")
+    eq(button.label:GetText(), "Press the key or keys (Esc cancels)", "let go: back to asking")
+    Down("H")
+    eq(settings.gearKey, "H", "a key pressed alone is that key alone")
+
+    -- The game saying what is held is enough too (a key held before the click)
+    Stub.heldKeys = { CTRL = true }
+    Click()
+    eq(button.label:GetText(), "CTRL-...", "Ctrl held since before the click: seen")
+    Down("J")
+    eq(settings.gearKey, "CTRL-J", "and counted")
+    Stub.heldKeys = nil
+
+    -- A game that keeps what is held to itself breaks nothing
+    Stub.heldKeysHidden = true
+    Click()
+    Down("LALT")
+    Down("K")
+    eq(settings.gearKey, "ALT-K", "the game keeps it to itself: the keys seen still count")
+    Stub.heldKeysHidden = nil
+    Up("LALT")
+
+    -- A side button of the mouse, with a key held
+    Click()
+    Down("LCTRL")
+    Click("Button4")
+    eq(settings.gearKey, "CTRL-BUTTON4", "a side button of the mouse with Ctrl held")
+    Up("LCTRL")
+
+    -- Escape cancels; a right click clears
+    Click()
+    Down("ESCAPE")
+    eq(settings.gearKey, "CTRL-BUTTON4", "Escape leaves the key as it was")
+    eq(button.label:GetText(), "CTRL-BUTTON4", "and shows it again")
+    Click("RightButton")
+    eq(settings.gearKey, nil, "a right click sets no key")
+    eq(button.label:GetText(), "none", "and the button says so")
+
+    -- The fishing key's own key is refused, but that key with another held is a key of its own
+    Click()
+    Down(settings.key)
+    eq(settings.gearKey, nil, "the fishing key itself is refused")
+    Click()
+    Down("LCTRL")
+    Down(settings.key)
+    Up("LCTRL")
+    eq(settings.gearKey, "CTRL-" .. settings.key, "the fishing key with Ctrl held is another key")
+    eq(Gear.Key(), "CTRL-" .. settings.key, "and is bound")
+    -- The fishing key's button takes combinations the same way
+    local fishing = ns.SettingsKeys.fishing
+    fishing:GetScript("OnClick")(fishing, "LeftButton")
+    fishing:GetScript("OnKeyDown")(fishing, "LSHIFT")
+    fishing:GetScript("OnKeyDown")(fishing, "F")
+    eq(settings.key, "SHIFT-F", "the fishing key can be a combination too")
+    fishing:GetScript("OnKeyUp")(fishing, "LSHIFT")
+    fishing:GetScript("OnClick")(fishing, "LeftButton")
+    fishing:GetScript("OnKeyDown")(fishing, "F")
+    eq(settings.key, "F", "and a single key again")
+    settings.gearKey = nil
+    ns.Fire("SETTINGS")
 
     for _, err in ipairs(Stub.errors) do
         check(false, "error caught: " .. err)

@@ -8,10 +8,28 @@ local LURE_MODES = {
     { value = "off", text = "Off: no lures" },
 }
 
-local MODIFIER_KEYS = {
-    LSHIFT = true, RSHIFT = true, LCTRL = true, RCTRL = true,
-    LALT = true, RALT = true, LMETA = true, RMETA = true, UNKNOWN = true,
-}
+-- The keys that are held with another key: which of the four a key is ("LCTRL" and "RCTRL"
+-- are both CTRL), or nil for an ordinary key. The order is the one the game writes a
+-- combination in: ALT-CTRL-SHIFT-META-key.
+local MODIFIERS = { "ALT", "CTRL", "SHIFT", "META" }
+
+local function ModifierOf(key)
+    if type(key) ~= "string" then return nil end
+    for _, name in ipairs(MODIFIERS) do
+        if key == name or key == "L" .. name or key == "R" .. name then return name end
+    end
+end
+
+-- What the game itself says is held, where it says (it may keep the answer to itself)
+local HELD_NOW = { ALT = "IsAltKeyDown", CTRL = "IsControlKeyDown", SHIFT = "IsShiftKeyDown", META = "IsMetaKeyDown" }
+
+local function GameSaysHeld(name)
+    local ask = _G[HELD_NOW[name]]
+    if type(ask) ~= "function" then return false end
+    local ok, held = pcall(ask)
+    return ok and not Util.Hidden(held) and held and true or false
+end
+
 local MOUSE_KEYS = { MiddleButton = "BUTTON3", Button4 = "BUTTON4", Button5 = "BUTTON5" }
 
 local MAX_LURE_BUTTONS = 8
@@ -43,18 +61,37 @@ local function Build(frame)
     local y = UI.TOP - 2
 
     -- ------------------------------------------------------------------ the keys
-    -- A button that takes a key: click it, then press the key (with Alt, Ctrl or Shift held,
-    -- if wanted) or a side button of the mouse. get() is the key now; set(key) takes the new
-    -- one and returns false when it won't do; a right click on a button that can be cleared
-    -- sets no key. button:Sync() shows the key again.
+    -- A button that takes a key or a combination of keys: click it, hold any of Alt, Ctrl,
+    -- Shift (and the Windows key) and press a key, or a side button of the mouse. The
+    -- combination shows on the button as it is held ("CTRL-SHIFT-..."), and is taken when the
+    -- last key, the one that isn't one of those four, goes down: "CTRL-F", "ALT-CTRL-SHIFT-F".
+    -- Which of the four are held is followed here, key by key, and the game is asked as
+    -- well: either saying so is enough.
+    -- get() is the key now; set(key) takes the new one, or refuses it; a right click on a
+    -- button that can be cleared sets no key. button:Sync() shows the key again.
     local keysTop = y
     local function KeyButton(x, get, set, clearable)
         local capturing = false
+        local held = {}
         local button = W.Button(frame, "", 150, 22)
         button:SetPoint("TOPLEFT", x, keysTop - 20)
+        local function Prefix()
+            local prefix = ""
+            for _, name in ipairs(MODIFIERS) do
+                if held[name] or GameSaysHeld(name) then prefix = prefix .. name .. "-" end
+            end
+            return prefix
+        end
+        local function Prompt()
+            local prefix = Prefix()
+            button.label:SetText(prefix ~= "" and (prefix .. "...") or "Press the key or keys (Esc cancels)")
+        end
         local function Stop()
             capturing = false
+            held = {}
             button:EnableKeyboard(false)
+            -- Back among the window's own frames
+            button:SetFrameStrata(frame:GetFrameStrata() or "HIGH")
             button.label:SetText(get() or "none")
         end
         local function Take(key)
@@ -65,7 +102,7 @@ local function Build(frame)
         button:RegisterForClicks("AnyUp")
         button:SetScript("OnClick", function(_, mouseButton)
             if capturing and MOUSE_KEYS[mouseButton] then
-                Take(MOUSE_KEYS[mouseButton])
+                Take(Prefix() .. MOUSE_KEYS[mouseButton])
             elseif capturing then
                 Stop()
             elseif InCombatLockdown() then
@@ -74,19 +111,36 @@ local function Build(frame)
                 Take(nil)
             elseif mouseButton == "LeftButton" then
                 capturing = true
-                button.label:SetText("Press a key (Esc cancels)")
+                held = {}
                 button:EnableKeyboard(true)
+                -- In front of everything while it listens, so that no other addon's frame
+                -- takes the keys first
+                button:SetFrameStrata("TOOLTIP")
+                Prompt()
             end
         end)
         button:SetScript("OnKeyDown", function(_, key)
-            if not capturing or MODIFIER_KEYS[key] then return end
-            if key == "ESCAPE" then
+            if not capturing or Util.Hidden(key) or key == "UNKNOWN" then return end
+            local modifier = ModifierOf(key)
+            if modifier then
+                held[modifier] = true
+                Prompt()
+                return
+            end
+            local prefix = Prefix()
+            if key == "ESCAPE" and prefix == "" then
                 Stop()
                 return
             end
-            local prefix = (IsAltKeyDown() and "ALT-" or "") .. (IsControlKeyDown() and "CTRL-" or "")
-                .. (IsShiftKeyDown() and "SHIFT-" or "")
             Take(prefix .. key)
+        end)
+        button:SetScript("OnKeyUp", function(_, key)
+            if not capturing then return end
+            local modifier = ModifierOf(key)
+            if modifier then
+                held[modifier] = nil
+                Prompt()
+            end
         end)
         button:SetScript("OnHide", Stop)
         function button:Sync()
@@ -112,7 +166,11 @@ local function Build(frame)
         end
         settings.gearKey = key
     end, true)
-    gearKeyButton.tooltip = "Click, then press the key. Right click: no key."
+    gearKeyButton.tooltip = "Click, then press the key, with Alt, Ctrl or Shift held if you like. Right click: no key."
+    keyButton.tooltip = "Click, then press the key, with Alt, Ctrl or Shift held if you like."
+    -- (for the tests, and for anything else that wants to press them)
+    frame.keyButton, frame.gearKeyButton = keyButton, gearKeyButton
+    ns.SettingsKeys = { fishing = keyButton, gear = gearKeyButton }
     local keyNote = W.Text(frame, "GameFontDisableSmall",
         "Fishing key: casts, and reels in while the line is out; only with a pole equipped. "
         .. "Gear key: puts your fishing pole and gear on, and your own back on the next press.")

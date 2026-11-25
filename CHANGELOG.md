@@ -3,6 +3,14 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.0.5
+
+- The gear key and the fishing key can be combinations: hold any of Alt, Ctrl and Shift and
+  press a key, or a side button of the mouse (Ctrl and F, Alt, Ctrl, Shift and G ...). The
+  button shows the combination as you hold it, and takes it when the last key goes down.
+  Recording Ctrl and a key did not work before.
+- Ctrl and F as the gear key with F as the fishing key are two different keys.
+
 ## 1.0.4
 
 - A gear key: a key of its own, apart from the fishing key, that changes you into fishing

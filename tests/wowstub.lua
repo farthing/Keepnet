@@ -184,7 +184,7 @@ for name in ([[
     SetObeyStepOnDrag SetHitRectInsets SetOwner AddLine SetHyperlink SetItemByID
     SetAutoFocus SetTextInsets SetMaxLetters ClearFocus SetPropagateKeyboardInput
     SetTexCoord SetBlendMode GenerateMenu
-    SetShadowColor SetShadowOffset SetClipsChildren SetHighlightColor
+    SetShadowColor SetShadowOffset SetClipsChildren SetHighlightColor GetFrameStrata
 ]]):gmatch("%S+") do
     QUIET[name] = true
 end
@@ -457,9 +457,15 @@ function geterrorhandler()
 end
 
 function issecretvalue(value) return value == Stub.SECRET end
-function IsAltKeyDown() return false end
-function IsControlKeyDown() return false end
-function IsShiftKeyDown() return false end
+-- What the game says is held: a test names the keys in Stub.heldKeys ({ CTRL = true }), or
+-- sets Stub.heldKeysHidden for a game that keeps the answer to itself
+local function HeldKey(name)
+    if Stub.heldKeysHidden then return Stub.SECRET end
+    return (Stub.heldKeys and Stub.heldKeys[name]) and true or false
+end
+function IsAltKeyDown() return HeldKey("ALT") end
+function IsControlKeyDown() return HeldKey("CTRL") end
+function IsShiftKeyDown() return HeldKey("SHIFT") end
 -- The mouse: where a test puts it (in screen measure), and whether its left button is held
 Stub.cursor = { 0, 0 }
 Stub.mouseDown = false
