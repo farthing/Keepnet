@@ -24,6 +24,14 @@ things to look at there are in the notice's own entry below ("Not seen in the ga
 listing's description says what the notice does and how to turn it off since a few minutes
 after the upload (the owner: "add those details in there").
 
+**The development copy is out of the owner's game since later on 2026-11-25**
+(`install.ps1 -Remove`, on the owner's "remove dev copy so i can install the curse
+version"; `KeepnetSounds\` and the saved data were left alone). The game is to get Keepnet
+from the CurseForge app from here on, so ask before running `tools\install.ps1` again: it
+would put a development copy over the app's install. **CurseForge shows 1.0.0 as
+"Approved"** (seen about 25 minutes after the upload), so the app offers it. A copy from
+the app is a released one: it announces its version like any player's.
+
 **Seen in the game later on 2026-11-25, in captures taken for new pictures** (the owner set
 the screens up, sample sessions on): the History tab's top row (list of characters, zone
 list, "Today's prices", totals) and the Zones tab's (hint, heading, list of characters) fit
