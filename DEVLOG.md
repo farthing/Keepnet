@@ -4,6 +4,12 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**The owner's game holds the development copy of the `looks` branch since 2026-11-25,
+about 17:50** (installed over the CurseForge copy when the owner asked whether it had to
+be; the game was running, so it needs a full restart to load the new files). It is
+marked as a development build and never announces its version. Going back to the
+released copy: `tools/install.ps1 -Remove`, then the CurseForge app.
+
 **On the branch `looks` only (2026-11-25, evening): more looks, as an experiment. Not on
 `main`, not pushed, no version number of its own, not for CurseForge.** The owner: "for now,
 the tinkering with these themes and stuff is purely development, i am not sure if it will see
