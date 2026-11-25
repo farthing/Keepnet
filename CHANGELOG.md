@@ -3,6 +3,33 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.0.1
+
+Looks. Keepnet can be dressed several ways now, each in colours of its own, and it has a
+font of its own.
+
+- The Appearance tab has two lists where it had one list of themes: "Look", and "Colours"
+  for the colours that look comes in. A colour theme you had chosen carries over as the
+  Keepnet look in those colours.
+- New look, Keepnet rounded: the Keepnet look with round corners, in the same six colours.
+- New look, Glass: round panes you can see the game through, with a rim of light and a soft
+  shadow. Five colours: Smoked, Deep water, Midnight, Moss, Amber. The glass is 65% dense to
+  begin with; in this look the two "Backgrounds" sliders set how dense it is, for the live
+  panel and for the window, and what you set there is kept apart from the other looks.
+- New look, for fun, Windows 95: grey bevelled windows with a title bar, tabs, tick boxes
+  and dark text, in the nineteen colour schemes of that system under their own names
+  (Windows Standard, Rainy Day, Desert, Rose, High Contrast Black and the rest). It is
+  drawn by Keepnet; nothing of Windows is in it.
+- A font for Keepnet's own looks (Keepnet, Keepnet rounded and Glass): Overpass, which is
+  the default from now on. The new "Font" list on the Appearance tab also has the game's
+  own font, as it was until now, and every font that another addon you have installed
+  shares (interface suites and font packs do). Overpass is used for the western languages
+  and Russian; the other languages keep the game's font.
+- A look that is drawn another way asks to reload the interface. Colours and fonts change
+  at once.
+- The ElvUI look is gone. Without that suite it was the Forever look, and that is what it
+  becomes if you had it chosen.
+
 ## 1.0.0
 
 Two things. Every character is its own: until now an account's characters shared one running

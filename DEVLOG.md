@@ -4,14 +4,20 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
-**The owner's game holds the development copy of the `looks` branch since 2026-11-25,
-about 17:50** (installed over the CurseForge copy when the owner asked whether it had to
-be; the game was running, so it needs a full restart to load the new files). It is
-marked as a development build and never announces its version. Going back to the
-released copy: `tools/install.ps1 -Remove`, then the CurseForge app.
+**1.0.1 (2026-11-25, evening): the looks are released.** The owner, an hour after calling
+them an experiment that might never see the light of day, with the Glass look in their game:
+"publish to curse as 1.0.0.1, add a not early on that the themes are in and there is a
+gimmick one (windows 95)", "also git it all". The number is 1.0.1: asked, because copies of
+1.0.0 only understand versions of three parts and would never have told their players about
+a "1.0.0.1", the owner chose 1.0.1 ("sorry i added an extra zero by mistake"). The branch
+`looks` was merged into `main`. What the owner had seen in the game by then: the Glass look
+in Amber with Overpass (their saved settings said so, and the error log held nothing from
+Keepnet). **Not known to have been looked at in the game: Windows 95, Keepnet rounded, the
+other colours, the Font list with shared fonts, the Appearance tab's new rows.** Everything
+below about "the branch only" was true until this release.
 
-**On the branch `looks` only (2026-11-25, evening): more looks, as an experiment. Not on
-`main`, not pushed, no version number of its own, not for CurseForge.** The owner: "for now,
+**What the looks are (written while they were an experiment on the branch `looks`, before
+the release above):** The owner: "for now,
 the tinkering with these themes and stuff is purely development, i am not sure if it will see
 the light of day. depends on how much of what we can take from other ui's". `main` is still
 the released 1.0.0. Everything in this entry passes its offline tests and has never run in

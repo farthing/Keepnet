@@ -43,15 +43,22 @@ the net an angler keeps the catch in.
   trunks; you tick which kinds), or at least the item quality you chose, or worth at least the
   gold you chose. Green, blue, purple and worth-gold catches each have their own sound: one of the game's,
   one of your own files, or one another addon shares through LibSharedMedia.
-- **Themes.** Three kinds of look, chosen in the Appearance tab:
-  - **Keepnet** (the default) and five colour variants of it: Keepnet's own flat look.
+- **Looks.** Chosen in the Appearance tab, each with the colours it comes in:
+  - **Keepnet** (the default): Keepnet's own flat look, in six colours.
+  - **Keepnet rounded**: the same with round corners.
+  - **Glass**: round panes you can see the game through, with a rim of light and a soft
+    shadow, in five colours. How dense the glass is, is yours to set (65% to begin with).
+  - **Windows 95**, for fun: grey bevelled windows, a title bar, tick boxes and dark text,
+    in that system's nineteen colour schemes. Drawn by Keepnet; nothing of Windows is in it.
   - **Forever**: built entirely from the game's own windows, buttons, tick boxes, sliders,
     drop-downs and tabs, so it looks like the rest of the game.
   - **EllesmereUI**: if that is the interface suite you use, Keepnet hands its pieces to it
     to paint like the rest of your interface, accent colour included.
-  Changing between these kinds reloads the interface (you are asked); colour variants switch at
-  once. Also: an accent colour (the theme's, your class colour or one you pick), how solid the
-  backgrounds are, borders on or off, and the size of the live panel.
+  A look that is drawn another way reloads the interface (you are asked); colours switch at
+  once. Keepnet's own three looks are written in the Overpass font; the game's own font and
+  any font another installed addon shares can be chosen in its place. Also: an accent colour
+  (the colours' own, your class colour or one you pick), how solid the backgrounds are,
+  borders on or off, and the size of the live panel.
 - **Hide the game's interface while fishing.** Either everything except the live panel, with
   nothing left behind, or only the parts you tick (action bars, unit frames, buffs, minimap,
   chat, quest tracker) plus anything you pick on screen with the mouse. Off by default.
@@ -286,7 +293,9 @@ and runs:
   game's own drop-down menu and tabs work, a missing template falls back to the flat piece.
 - `test_adopt.lua`: the interface suite look, against a stand-in for EllesmereUI's skinning
   interface.
-- `test_look_sounds.lua`: themes, accent, opacity and size; a sound per kind of rare catch;
+- `test_looks.lua`: the looks Keepnet draws itself besides its flat one: Windows 95, Keepnet
+  rounded and Glass.
+- `test_look_sounds.lua`: looks, colours, font, accent, opacity and size; a sound per kind of rare catch;
   your own files (and names that try to leave the sounds folder); shared sounds.
 - `test_gear_food.lua`: gear on and off with the pole (also through a reload and combat), eating
   and waiting, a coin, a toy, an item that can't be used, a worn lure hat, rare-catch alerts.
