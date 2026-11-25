@@ -3,6 +3,11 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.1.2
+
+- The money that buying lures never spends is set in gold and silver now: "Never spend my
+  last ... gold ... silver".
+
 ## 1.1.1
 
 - The "Maintain" tick box of 1.1.0 is gone again, and with it buying a flat number at every

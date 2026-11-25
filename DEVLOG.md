@@ -4,6 +4,11 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.1.2 (2026-11-25, evening): the kept money in gold and silver.** The owner: "need to
+seperate gold and silver, in the never spend my last section". A second box, silver (0 to
+99, `settings.buyLureFloorSilver`); `Vendor.FloorCopper()` is the two together and is what
+`Vendor.Shop` keeps. Offline tests only.
+
 **1.1.1 (2026-11-25, evening): the Maintain box and the flat number are out again.** The
 owner: "so the everytime i open a vendor in flat mode, can end up being multiple purchases.
 i think we need to reduce this logic. so let's remove the maintain tickbox. let's assume,

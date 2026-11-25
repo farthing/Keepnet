@@ -13,6 +13,7 @@
 --   ns.settings.buyLureCount    how many to keep in the bags: with fewer, a vendor visit
 --                               buys what is missing (20 unless changed)
 --   ns.settings.buyAttractors   every Aquadynamic Fish Attractor a vendor has
+--   ns.settings.buyLureFloorSilver  silver on top of that gold (0 to 99)
 --   ns.settings.buyLureFloor    gold that is never spent (0 unless changed): with this much
 --                               or less nothing at all is bought, and with more, buying
 --                               stops before the money would go under it
@@ -103,6 +104,16 @@ function Vendor.Floor()
     return math.max(0, math.min(Vendor.MOST_GOLD, math.floor(floor)))
 end
 
+-- The silver that goes with it (0 to 99), and the two together in copper
+function Vendor.FloorSilver()
+    local silver = tonumber(ns.settings.buyLureFloorSilver) or 0
+    return math.max(0, math.min(99, math.floor(silver)))
+end
+
+function Vendor.FloorCopper()
+    return Vendor.Floor() * 10000 + Vendor.FloorSilver() * 100
+end
+
 -- The number the player set, kept within reason
 function Vendor.Count()
     local count = tonumber(ns.settings.buyLureCount) or Vendor.DEFAULT_COUNT
@@ -177,7 +188,7 @@ function Vendor.Shop()
     if not money then return 0 end
     -- The gold the player keeps is never spent: what there is to spend is what lies above
     -- it. With that much or less, nothing is bought at all.
-    local floor = Vendor.Floor() * 10000
+    local floor = Vendor.FloorCopper()
     local budget = money - floor
     local bought, spent, short = {}, 0, {}
     for index = 1, Number(GetMerchantNumItems()) or 0 do

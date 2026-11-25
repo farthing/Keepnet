@@ -42,6 +42,7 @@ local DEFAULTS = {
     gearKey = nil,        -- the key that changes into fishing gear and back (Gear.lua), or none
     buyLures = false,     -- buy the ticked lures when a vendor has them (Vendor.lua)
     buyLureCount = 20,    -- how many of each to have in the bags
+    buyLureFloorSilver = 0, -- and this much silver on top of that gold
     buyLureFloor = 0,     -- gold that buying lures never spends: it stops before going under it
     buyAttractors = false, -- buy every Aquadynamic Fish Attractor a vendor has
     theme = "keepnet",    -- the look (see W.THEMES)

@@ -275,6 +275,26 @@ function T.run(ns)
     settings.buyAttractors = true
     settings.buyLureFloor = "nonsense"
     eq(Vendor.Floor(), 0, "a limit that isn't a number is none")
+    -- Silver on top of the gold, for a character that counts in silver
+    settings.buyLureFloor, settings.buyLureFloorSilver = 0, 50
+    eq(Vendor.FloorCopper(), 5000, "fifty silver kept is 5000 copper")
+    Stub.purchases = {}
+    Stub.bags = {}
+    Stub.money = 5000
+    Stub.openMerchant(Supplier())
+    eq(#Stub.purchases, 0, "exactly the silver that is kept: nothing is bought")
+    Stub.money = 5000 + 2 * 250 + 10
+    Stub.openMerchant(Supplier())
+    eq(Stub.bags[BRIGHT], 2, "money above it for two lures: two")
+    eq(Stub.money, 5010, "the kept silver is not touched")
+    settings.buyLureFloor, settings.buyLureFloorSilver = 3, 25
+    eq(Vendor.FloorCopper(), 32500, "gold and silver together")
+    settings.buyLureFloorSilver = 250
+    eq(Vendor.FloorSilver(), 99, "silver is 99 at most")
+    settings.buyLureFloor, settings.buyLureFloorSilver = 0, 0
+    Stub.purchases = {}
+    Stub.bags = {}
+    Stub.advance(11)
     settings.buyLureFloor = 0
     settings.buyAttractors = false
     Stub.money = 100000
@@ -319,6 +339,11 @@ function T.run(ns)
     tab.buyLureCount:GetScript("OnTextChanged")(tab.buyLureCount)
     eq(settings.buyLureCount, 35, "an empty box changes nothing")
     eq(tab.buyLureFloor:GetText(), "0", "the gold limit shows")
+    eq(tab.buyLureFloorSilver:GetText(), "0", "and the silver beside it")
+    tab.buyLureFloorSilver:SetText("40")
+    tab.buyLureFloorSilver:GetScript("OnTextChanged")(tab.buyLureFloorSilver)
+    eq(settings.buyLureFloorSilver, 40, "silver typed in is kept too")
+    settings.buyLureFloorSilver = 0
     tab.buyLureFloor:SetText("250")
     tab.buyLureFloor:GetScript("OnTextChanged")(tab.buyLureFloor)
     eq(settings.buyLureFloor, 250, "gold typed in is the limit")

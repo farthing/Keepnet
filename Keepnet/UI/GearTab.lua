@@ -134,8 +134,21 @@ local function Build(frame)
     floor:SetMaxLetters(6)
     local floorAfter = W.Text(frame, "GameFontHighlightSmall", "gold")
     floorAfter:SetPoint("LEFT", floor, "RIGHT", 6, 0)
-    floor.tooltipText = "Buying lures never takes your money under this. With this much gold or less, nothing is bought."
-    for _, box in ipairs({ count, floor }) do
+    -- and silver, for a character that counts in silver
+    local silver = W.EditBox(frame, 36, nil, function(text)
+        local number = tonumber(text)
+        if number then
+            settings.buyLureFloorSilver = math.max(0, math.min(99, math.floor(number)))
+        end
+    end)
+    silver:SetPoint("LEFT", floorAfter, "RIGHT", 8, 0)
+    silver:SetMaxLetters(2)
+    local silverAfter = W.Text(frame, "GameFontHighlightSmall", "silver")
+    silverAfter:SetPoint("LEFT", silver, "RIGHT", 6, 0)
+    frame.buyLureFloorSilver = silver
+    floor.tooltipText = "Buying lures never takes your money under this much gold and silver. With that much or less, nothing is bought."
+    silver.tooltipText = floor.tooltipText
+    for _, box in ipairs({ count, floor, silver }) do
         box:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_TOP")
             GameTooltip:SetText(self.tooltipText, 1, 1, 1, 1, true)
@@ -252,6 +265,11 @@ local function Build(frame)
         if not (floor.HasFocus and floor:HasFocus()) then
             floor:SetText(tostring(Vendor.Floor()))
         end
+        if not (silver.HasFocus and silver:HasFocus()) then
+            silver:SetText(tostring(Vendor.FloorSilver()))
+        end
+        silver:SetAlpha(buying and 1 or 0.45)
+        silverAfter:SetAlpha(buying and 1 or 0.45)
         local chosen = Vendor.Chosen()
         -- (the item's name in the game's own language, once the game has told it)
         lure:Set(chosen and chosen.id or false, chosen and (Util.ItemInfo(chosen.id) or chosen.name) or NO_LURE)
