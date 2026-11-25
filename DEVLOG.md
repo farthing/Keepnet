@@ -51,11 +51,15 @@ CurseForge app):** "i saw no joined channel message, nor did I see a chat tab". 
 channel prints nothing and sits on no chat window, on a copy that announces. Read after
 the owner quit the game: `!BugGrabber.lua` holds no error that names Keepnet (its newest
 error of any addon is six game sessions old), and `KeepnetDB.updates.heard` is empty, as it
-must be while no version newer than 1.0.0 exists. **Still not known: that the channel is
-really joined.** Nothing on screen tells a hidden channel from one never joined. The check
-is one line typed in the game a minute after login: `/dump GetChannelName("KeepersNet")`
-prints a number above 0 when it is joined. Announcing and being told can only be seen once
-a version after 1.0.0 is out and two players run it.
+must be while no version newer than 1.0.0 exists. **The channel is joined:** another addon
+the owner runs keeps a log of the game's channel notices in its saved data, and it holds
+the game's own "you joined" notice (`YOU_CHANGED`) for `KeepersNet` as channel 7, twice
+that afternoon, each a few seconds after a login. So `JoinTemporaryChannel` is allowed from
+a timer here, the channel takes a number after the game's own, and the notice the game
+sends about it is kept out of chat by Keepnet's filter. (The owner can also ask the game:
+`/dump GetChannelName("KeepersNet")` prints the number.) **Still not seen:** announcing and
+being told, which needs a version after 1.0.0 and two players running it; what
+`SendAddonMessage` answers; and leaving the channel from the switch in Settings.
 
 **1.0.0, the update notice (2026-11-25): Keepnet tells the player that a newer version is
 out. It passes its offline tests and is in the repo. It is NOT yet in the owner's game: the
