@@ -47,9 +47,8 @@ the net an angler keeps the catch in.
   - **Keepnet** (the default) and five colour variants of it: Keepnet's own flat look.
   - **Forever**: built entirely from the game's own windows, buttons, tick boxes, sliders,
     drop-downs and tabs, so it looks like the rest of the game.
-  - **EllesmereUI**, **ElvUI**: pick the interface suite you use and Keepnet hands its pieces
-    to that suite to paint like the rest of your interface, accent colour included. More
-    suites to come.
+  - **EllesmereUI**: if that is the interface suite you use, Keepnet hands its pieces to it
+    to paint like the rest of your interface, accent colour included.
   Changing between these kinds reloads the interface (you are asked); colour variants switch at
   once. Also: an accent colour (the theme's, your class colour or one you pick), how solid the
   backgrounds are, borders on or off, and the size of the live panel.
@@ -285,8 +284,8 @@ and runs:
   picking a frame with the mouse.
 - `test_native.lua`: the Forever theme: every piece comes from the game's templates, the
   game's own drop-down menu and tabs work, a missing template falls back to the flat piece.
-- `test_adopt.lua`: the interface suite themes, against stand-ins for EllesmereUI's skinning
-  interface and ElvUI's Skins module.
+- `test_adopt.lua`: the interface suite look, against a stand-in for EllesmereUI's skinning
+  interface.
 - `test_look_sounds.lua`: themes, accent, opacity and size; a sound per kind of rare catch;
   your own files (and names that try to leave the sounds folder); shared sounds.
 - `test_gear_food.lua`: gear on and off with the pole (also through a reload and combat), eating

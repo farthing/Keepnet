@@ -1,6 +1,6 @@
--- Keepnet: the themes named after an interface suite ("EllesmereUI", "ElvUI"). The player picks
--- the suite they use; Keepnet is then built from the game's own templates (as in the Forever
--- theme) and each piece is handed to that suite to paint like the rest of their interface.
+-- Keepnet: the looks named after an interface suite ("EllesmereUI"). The player picks the
+-- suite they use; Keepnet is then built from the game's own templates (as in the Forever
+-- look) and each piece is handed to that suite to paint like the rest of their interface.
 --
 -- There is no one way to do this for every suite: each has its own interface for other addons.
 -- So each suite has an adapter, below, and a theme entry in Widgets.lua. Adding a suite is
@@ -9,9 +9,9 @@
 --   EllesmereUI  through its published skinning interface for addons (EllesmereUI.RegisterSkin
 --                and the primitives it hands over; its SKINNING_API.md). The player can turn
 --                this off per addon in EllesmereUI's own options.
---   ElvUI        through its Skins module (HandleFrame, HandleButton ...), the way addons skin
---                themselves for ElvUI. Written from that module's interface and not run
---                against ElvUI: every call is guarded, so the worst case is the Forever look.
+--
+-- (There was an adapter for ElvUI too, written from its Skins module's interface and never run
+-- against it. It was taken out: a saved choice of it becomes the Forever look.)
 --
 -- The other themes (Keepnet's own flat look and its colour variants, and Forever) never come
 -- through here. See CREDITS.md.
@@ -87,51 +87,6 @@ if ADAPTERS.EllesmereUI.installed() then
         Adopt.Flush()
     end)
 end
-
--- ---------------------------------------------------------------------------------------------
--- ElvUI
--- ---------------------------------------------------------------------------------------------
-local function ElvSkins()
-    if type(ElvUI) ~= "table" then return nil end
-    local E = ElvUI[1]
-    local S = type(E) == "table" and Try(E.GetModule, E, "Skins", true)
-    return S, E
-end
-
-ADAPTERS.ElvUI = {
-    installed = function() return ElvSkins() ~= nil end,
-    ready = function() return ElvSkins() ~= nil end,
-    apply = function(kind, frame)
-        local S = ElvSkins()
-        if not S then return end
-        if kind == "window" then
-            Try(S.HandleFrame, S, frame, true)
-            if frame.CloseButton then Try(S.HandleCloseButton, S, frame.CloseButton) end
-        elseif kind == "panel" then
-            Try(S.HandleFrame, S, frame, true)
-        elseif kind == "button" then
-            Try(S.HandleButton, S, frame)
-        elseif kind == "check" then
-            Try(S.HandleCheckBox, S, frame)
-        elseif kind == "editbox" then
-            Try(S.HandleEditBox, S, frame)
-        elseif kind == "slider" then
-            Try(S.HandleSliderFrame, S, frame)
-        elseif kind == "dropdown" then
-            Try(S.HandleDropDownBox, S, frame)
-        elseif kind == "tab" then
-            Try(S.HandleTab, S, frame)
-        end
-    end,
-    accent = function()
-        local _, E = ElvSkins()
-        local color = type(E) == "table" and type(E.media) == "table" and E.media.rgbvaluecolor
-        if type(color) == "table" then
-            local r, g, b = color.r or color[1], color.g or color[2], color.b or color[3]
-            if type(r) == "number" then return { r, g, b } end
-        end
-    end,
-}
 
 -- ---------------------------------------------------------------------------------------------
 -- Handing pieces over

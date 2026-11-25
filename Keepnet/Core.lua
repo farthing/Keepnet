@@ -40,6 +40,7 @@ local DEFAULTS = {
     theme = "keepnet",    -- the look (see W.THEMES)
     schemes = nil,        -- the colours chosen for each family of looks: { keepnet = "slate", ... }
     accentMode = "theme", -- the accent colour: "theme" (the colours' own), "class" or "custom"
+    font = "overpass",    -- the font of Keepnet's own looks: "overpass" or "game" (see W.FONTS)
     accentColor = nil,    -- { r, g, b } for "custom"
     windowOpacity = 0.94, -- how solid the window's background is, 0.2 to 1
     panelOpacity = 0.94,  -- the same for the live panel

@@ -23,7 +23,9 @@ What is built:
 
 - **Look and colours are two choices** (Appearance tab: "Look", "Colours", then the accent).
   The setting `theme` now names the look: `keepnet`, `rounded`, `win95`, `forever`,
-  `ellesmereui`, `elvui`. The colours are in `settings.schemes[family]` (`keepnet` for both
+  `ellesmereui`. (**The ElvUI look is gone**, on this branch: the owner, "remove elvui as it
+  just does the forever look anyway". Its adapter in `UI\Adopt.lua` was never run against
+  that suite. A saved `elvui` becomes `forever`; `main`, the released 1.0.0, still has it.) The colours are in `settings.schemes[family]` (`keepnet` for both
   Keepnet looks, which share the six sets that used to be themes; `win95` for its own). A
   saved theme that was one of the old colours (`slate`, `forest`, `ember`, `dusk`, `black`)
   becomes the Keepnet look in those colours the first time it is applied. Forever and the

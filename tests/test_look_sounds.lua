@@ -84,6 +84,38 @@ function T.run(ns)
     W.ApplyTheme()
     check(Close(W.COLORS.accent[2], 0.4), "a colour of the player's own")
 
+    -- ---------------------------------------------------------------------------- font
+    -- Keepnet's own looks are written in Overpass: each of the game's fonts has a copy that
+    -- is drawn from that file, and the texts are given the copy
+    eq(settings.font, "overpass", "the default font is Overpass")
+    local small, heading = KeepnetGameFontHighlightSmall, KeepnetGameFontNormal
+    check(small ~= nil and heading ~= nil, "the game's fonts have copies of Keepnet's own")
+    eq(KeepnetPanel.casts.__fontObject, small, "a text is given the copy")
+    check(tostring(small.__font[1]):find("Media\\Overpass-Regular.ttf", 1, true), "drawn from the Overpass file")
+    eq(small.__font[2], 10, "at the size the game's font has")
+    check(tostring(heading.__font[1]):find("Media\\Overpass-SemiBold.ttf", 1, true), "a heading from the heavier one")
+    eq(GameFontHighlightSmall.__font[1], "Fonts\\FRIZQT__.TTF", "the game's own font is not touched")
+    eq(W.FontObject("NumberFontNormalSmall"), nil, "the small numbers on item pictures stay the game's")
+    settings.font = "game"
+    W.ApplyTheme()
+    eq(small.__font[1], "Fonts\\FRIZQT__.TTF", "the game's own font chosen: every text follows at once")
+    eq(heading.__font[1], "Fonts\\FRIZQT__.TTF", "headings too")
+    settings.font = "overpass"
+    W.ApplyTheme()
+    check(tostring(small.__font[1]):find("Overpass", 1, true), "and back")
+    -- A language the file has no letters for keeps the game's font
+    Stub.locale = "koKR"
+    W.ApplyTheme()
+    eq(small.__font[1], "Fonts\\FRIZQT__.TTF", "Korean: the game's own font")
+    Stub.locale = "ruRU"
+    W.ApplyTheme()
+    check(tostring(small.__font[1]):find("Overpass", 1, true), "Russian: Overpass has the letters")
+    Stub.locale = nil
+    settings.font = "no such font"
+    W.ApplyTheme()
+    check(tostring(small.__font[1]):find("Overpass", 1, true), "an unknown font is the default")
+    settings.font = "overpass"
+
     -- The colour picker: dragging applies, Cancel puts the old colour back
     local seen
     W.PickColor(0.2, 0.4, 0.6, function(r, g, b) seen = { r, g, b } end)

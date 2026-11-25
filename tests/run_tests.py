@@ -32,13 +32,17 @@ ALLOWED_GLOBALS = {
     "KeepnetWindow",
     "KeepnetPicker",
     "KeepnetRetroFont",  # the Windows 95 look's font: the game names every font an addon makes
+    # Keepnet's copies of the game's fonts, for the font of its own looks
+    "KeepnetGameFontHighlightSmall", "KeepnetGameFontNormalSmall", "KeepnetGameFontDisableSmall",
+    "KeepnetGameFontNormal", "KeepnetGameFontHighlight", "KeepnetGameFontDisable",
+    "KeepnetGameFontNormalLarge",
     "KeepnetWindowTab1", "KeepnetWindowTab2", "KeepnetWindowTab3", "KeepnetWindowTab4",
     "KeepnetWindowTab5", "KeepnetWindowTab6", "KeepnetWindowTab7",
 }
 
 # Globals the tests themselves create and remove (stand-ins for other addons)
 TEST_GLOBALS = {"TSM_API", "AucAdvanced", "RECrystallize_PriceCheck", "OEMarketInfo", "AuxForeverAPI",
-                "EllesmereUI", "ElvUI"}
+                "EllesmereUI"}
 
 
 def toc_files():

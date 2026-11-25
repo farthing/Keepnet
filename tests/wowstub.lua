@@ -182,9 +182,9 @@ for name in ([[
     StopMovingOrSizing SetJustifyH SetWordWrap
     SetDesaturated SetCheckedTexture SetThumbTexture SetOrientation SetMinMaxValues SetValueStep
     SetObeyStepOnDrag SetHitRectInsets SetOwner AddLine SetHyperlink SetItemByID
-    SetFontObject SetAutoFocus SetTextInsets SetMaxLetters ClearFocus SetPropagateKeyboardInput
+    SetAutoFocus SetTextInsets SetMaxLetters ClearFocus SetPropagateKeyboardInput CopyFontObject
     SetTexCoord SetBlendMode GenerateMenu
-    SetFont SetShadowColor SetShadowOffset SetClipsChildren SetHighlightColor
+    SetShadowColor SetShadowOffset SetClipsChildren SetHighlightColor
 ]]):gmatch("%S+") do
     QUIET[name] = true
 end
@@ -283,6 +283,13 @@ function Methods:SetColorTexture(r, g, b, a) self.__color = { r, g, b, a } end
 function Methods:SetTextColor(r, g, b, a) self.__textColor = { r, g, b, a } end
 function Methods:SetVertexColor(r, g, b, a) self.__vertex = { r, g, b, a } end
 function Methods:SetTexture(texture) self.__texture = texture end
+-- A font: the file it is drawn from, its size and its flags; and the font a text was given
+function Methods:SetFont(file, size, flags) self.__font = { file, size, flags } end
+function Methods:GetFont()
+    local font = self.__font or {}
+    return font[1], font[2], font[3]
+end
+function Methods:SetFontObject(font) self.__fontObject = font end
 function Methods:SetScale(scale) self.__scale = scale end
 function Methods:GetLeft() return 400 end
 function Methods:GetTop() return 600 end
@@ -318,6 +325,15 @@ function CreateFont(name)
 end
 -- The language of the client: a test names another in Stub.locale
 function GetLocale() return Stub.locale or "enUS" end
+-- The game's own fonts that the addon's texts are made in
+for name, size in pairs({
+    GameFontHighlightSmall = 10, GameFontNormalSmall = 10, GameFontDisableSmall = 10,
+    GameFontNormal = 12, GameFontHighlight = 12, GameFontDisable = 12, GameFontNormalLarge = 16,
+}) do
+    local font = Mock("Font", name)
+    font.__font = { "Fonts\\FRIZQT__.TTF", size, "" }
+    _G[name] = font
+end
 
 function CreateFrame(kind, name, parent, template)
     if template and not Stub.templates[template] then

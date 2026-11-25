@@ -3,13 +3,14 @@
 -- drawn in. Built from plain frames so they don't depend on game templates that differ
 -- between client versions.
 --   "THEME"  the colours changed; screens redraw what they coloured themselves
-local _, ns = ...
+local addonName, ns = ...
 local Util = ns.Util
 
 local W = {}
 ns.Widgets = W
 
 local FLAT = "Interface\\Buttons\\WHITE8x8"
+local MEDIA = "Interface\\AddOns\\" .. addonName .. "\\Media\\"
 
 -- ---------------------------------------------------------------------------------------------
 -- Looks and colours. The player chooses a look (W.THEMES; the setting is still called
@@ -109,15 +110,6 @@ W.THEMES = {
         -- (UI\\Adopt.lua). The accent is that suite's own. Without EllesmereUI installed it is the
         -- Forever look.
         key = "ellesmereui", name = "EllesmereUI", native = true, adopt = "EllesmereUI",
-        background = { 0.05, 0.05, 0.08 }, header = { 0.10, 0.10, 0.11 }, button = { 0.08, 0.08, 0.08 },
-        buttonHover = { 0.20, 0.20, 0.20 }, border = { 0, 0, 0 }, accent = { 1.00, 0.82, 0.00 },
-        art = NATIVE_ART, smallArt = NATIVE_SMALL_ART, artBorder = { 0.8, 0.8, 0.8 },
-    },
-    {
-        -- ElvUI: built like Forever, then every piece is handed to ElvUI to paint
-        -- (UI\\Adopt.lua). The accent is that suite's own. Without ElvUI installed it is the
-        -- Forever look.
-        key = "elvui", name = "ElvUI", native = true, adopt = "ElvUI",
         background = { 0.05, 0.05, 0.08 }, header = { 0.10, 0.10, 0.11 }, button = { 0.08, 0.08, 0.08 },
         buttonHover = { 0.20, 0.20, 0.20 }, border = { 0, 0, 0 }, accent = { 1.00, 0.82, 0.00 },
         art = NATIVE_ART, smallArt = NATIVE_SMALL_ART, artBorder = { 0.8, 0.8, 0.8 },
@@ -229,6 +221,77 @@ function W.Faint(texture, alpha)
     texture:SetColorTexture(shade, shade, shade, alpha)
 end
 
+-- ---------------------------------------------------------------------------------------------
+-- The font of Keepnet's own looks (the flat one and the rounded one): Overpass, unless the
+-- player would rather have the game's own. The other looks have theirs: the game's, the
+-- suite's, the retro look's.
+--
+-- Every text is made in one of the game's fonts (W.Text), which decides its size and colour.
+-- For each of those Keepnet keeps a copy of its own (W.FontObject) and gives the texts that
+-- copy; changing the font is changing the file the copies are drawn from, so every text
+-- follows at once. A file is only used for the languages it has letters for, and a file that
+-- isn't there leaves the game's font in place.
+-- ---------------------------------------------------------------------------------------------
+local WESTERN = {
+    enUS = true, enGB = true, deDE = true, frFR = true, esES = true, esMX = true, itIT = true,
+    ptBR = true, ruRU = true,
+}
+
+-- The first is the default
+W.FONTS = {
+    {
+        key = "overpass", name = "Overpass",
+        regular = MEDIA .. "Overpass-Regular.ttf", bold = MEDIA .. "Overpass-SemiBold.ttf",
+        locales = WESTERN,
+    },
+    { key = "game", name = "The game's own" },
+}
+
+function W.Font(key)
+    for _, font in ipairs(W.FONTS) do
+        if font.key == key then return font end
+    end
+    return W.FONTS[1]
+end
+
+-- The game's fonts that stand for a heading: these get the heavier file
+local HEADING_FONTS = { GameFontNormal = true, GameFontNormalLarge = true }
+
+local fonts = {} -- by the game font's name: { object, file, size, flags, heading }, or false
+
+local function SetFontFile(entry)
+    local choice = W.Font(ns.settings and ns.settings.font)
+    -- The game's own first: it stays when the file asked for next isn't there
+    entry.object:SetFont(entry.file, entry.size, entry.flags)
+    if choice.regular and choice.locales[GetLocale and GetLocale() or "enUS"] then
+        pcall(entry.object.SetFont, entry.object, entry.heading and choice.bold or choice.regular,
+            entry.size, entry.flags)
+    end
+end
+
+-- Keepnet's copy of one of the game's fonts, or nil where the game's own is to be used as it
+-- is: in the other looks, for the small numbers on item pictures, and where the game has no
+-- font of that name
+function W.FontObject(name)
+    if W.native or W.retro then return nil end
+    local entry = fonts[name]
+    if entry == nil then
+        entry = false
+        local source = _G[name]
+        if CreateFont and type(source) == "table" and source.GetFont and not name:find("^NumberFont") then
+            local file, size, flags = source:GetFont()
+            if file and size then
+                local object = CreateFont("Keepnet" .. name)
+                object:CopyFontObject(source)
+                entry = { object = object, file = file, size = size, flags = flags or "", heading = HEADING_FONTS[name] }
+                SetFontFile(entry)
+            end
+        end
+        fonts[name] = entry
+    end
+    return entry and entry.object or nil
+end
+
 -- A bar's filling in the accent colour: flat, or the game's status bar art in a native theme
 local BAR_ART = "Interface\\TargetingFrame\\UI-StatusBar"
 function W.BarFill(texture, alpha)
@@ -289,6 +352,10 @@ local function Migrate(settings)
         settings.schemes = settings.schemes or {}
         settings.schemes.keepnet = settings.theme
         settings.theme = "keepnet"
+    elseif settings.theme == "elvui" then
+        -- There was an ElvUI look. It was the Forever look unless that suite was installed,
+        -- and it was never tried against the suite; it is gone.
+        settings.theme = "forever"
     end
 end
 
@@ -347,6 +414,9 @@ function W.ApplyTheme()
     end
     accent = own or accent
     if W.retro and ns.Retro then ns.Retro.Apply(scheme, own) end
+    for _, entry in pairs(fonts) do
+        if entry then SetFontFile(entry) end
+    end
     W.COLORS.accent[1], W.COLORS.accent[2], W.COLORS.accent[3] = accent[1], accent[2], accent[3]
     W.COLORS.border[4] = (settings.borders == false) and 0 or 1
     W.opacity.window = settings.windowOpacity or 0.94
@@ -402,7 +472,12 @@ end
 
 function W.Text(parent, font, text)
     local fontString = parent:CreateFontString(nil, "OVERLAY", font or "GameFontHighlightSmall")
-    if W.retro and ns.Retro then ns.Retro.Dress(fontString, font or "GameFontHighlightSmall") end
+    if W.retro and ns.Retro then
+        ns.Retro.Dress(fontString, font or "GameFontHighlightSmall")
+    else
+        local own = W.FontObject(font or "GameFontHighlightSmall")
+        if own then fontString:SetFontObject(own) end
+    end
     fontString:SetText(text or "")
     if ns.Adopt then ns.Adopt.Apply("text", fontString) end
     return fontString
@@ -537,7 +612,7 @@ function W.EditBox(parent, width, onEnter, onChange)
     if W.retro and ns.Retro then
         ns.Retro.Edit(box)
     else
-        box:SetFontObject("GameFontHighlightSmall")
+        box:SetFontObject(W.FontObject("GameFontHighlightSmall") or "GameFontHighlightSmall")
     end
     box:SetAutoFocus(false)
     box:SetTextInsets(6, 6, 0, 0)

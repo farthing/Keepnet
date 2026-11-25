@@ -7,7 +7,7 @@
 ## Version: 1.0.0
 ## IconTexture: Interface\Icons\INV_Misc_Net_01
 ## SavedVariables: KeepnetDB
-## OptionalDeps: EllesmereUI, ElvUI, Auctionator, TradeSkillMaster, Auc-Advanced, aux-forever, RECrystallize, OribosExchange, KeepnetSounds
+## OptionalDeps: EllesmereUI, Auctionator, TradeSkillMaster, Auc-Advanced, aux-forever, RECrystallize, OribosExchange, KeepnetSounds
 ## AddonCompartmentFunc: Keepnet_OnAddonCompartmentClick
 
 Util.lua

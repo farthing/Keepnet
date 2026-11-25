@@ -161,14 +161,30 @@ local function Build(frame)
     end)
     borders:SetPoint("TOPLEFT", right, ry - 54)
 
+    -- The font of Keepnet's own looks
+    local fontLabel = W.Text(frame, "GameFontHighlightSmall", "Font")
+    fontLabel:SetPoint("TOPLEFT", right, ry - 84)
+    local font = W.Dropdown(frame, 170, function()
+        local options = {}
+        for _, entry in ipairs(W.FONTS) do
+            options[#options + 1] = { value = entry.key, text = entry.name }
+        end
+        return options
+    end, function(value)
+        settings.font = value
+        Apply()
+    end)
+    font:SetPoint("TOPLEFT", right + 90, ry - 80)
+
     local reset = W.Button(frame, "Look, colours, backgrounds and size back to the defaults", 320, 22, function()
         settings.theme, settings.accentMode, settings.accentColor = "keepnet", "theme", nil
         settings.schemes = nil
+        settings.font = W.FONTS[1].key
         settings.windowOpacity, settings.panelOpacity, settings.panelScale = 0.94, 0.94, 1
         settings.borders = true
         Apply()
     end)
-    reset:SetPoint("TOPLEFT", right, ry - 86)
+    reset:SetPoint("TOPLEFT", right, ry - 114)
 
     -- ------------------------------------------------- hiding the game's interface
     y = y - 144
@@ -250,6 +266,10 @@ local function Build(frame)
             scheme:Set(false, OWN)
         end
         scheme:SetAlpha(current.schemes and 1 or 0.45)
+        -- The font is a matter of Keepnet's own looks: the others bring theirs
+        local chosenFont = W.Font(settings.font)
+        font:Set(chosenFont.key, chosenFont.name)
+        font:SetAlpha((W.native or W.retro) and 0.45 or 1)
         for _, option in ipairs(ACCENT_MODES) do
             if option.value == (settings.accentMode or "theme") then accent:Set(option.value, option.text) end
         end
