@@ -4,6 +4,24 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.1.4 (2026-11-25, evening): the gear key on a protected button.** The owner tried 1.1.3
+in a fight: "tried, first bug grabbed by the addon". Seen on their screen: "Back in your
+hands: ..." and "Your clothing changes when combat ends", the pole still on, then three
+times "Keepnet didn't put this pole on". So **an addon's own equip call is refused in combat
+on this client** (the error itself was not read; the error log is only written at a reload),
+and 1.1.3 had already said it was done and dropped its note of the hands.
+
+Now `KeepnetGearButton` is a `SecureActionButtonTemplate` whose macro does the change
+(`/equipslot 16 item:<id>`, and `/equipslot 17 ...` for the other hand), the way the game
+lets weapons be changed in combat. A macro can only be written out of combat, so it is
+written ahead whenever what it should do changes (`Prepare`: at "MODE", "GEAR", "COMBAT"
+end, "SETTINGS", "CHARACTER", "WORLD"). The press (`PreClick`) only writes down the hands
+and talks; "Fishing pole on" and "Back in your hands" are said when the pole has really gone
+on or come off ("MODE"), and the note of the hands is only dropped then. A press the game
+did not act on drops its note after three seconds. Clothing still goes through the addon's
+own equip calls, out of combat only. **Not seen in the game.** The stand-in game now refuses
+an addon's equip call in combat for every slot, and a protected button's attributes too.
+
 **1.1.3 (2026-11-25, evening): the gear key works in combat.** The owner: "one bug, the gear
 swap combo, does not work when in combat. but i can equip my weapon in combat". `Gear.Toggle`
 no longer refuses in combat: the hands are changed at once (the game allows that), the

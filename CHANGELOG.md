@@ -3,6 +3,13 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.1.4
+
+- The gear key really works in combat now. In 1.1.3 the game refused the change of weapon
+  there, and Keepnet said "Back in your hands" all the same and then forgot what you had
+  held. The key now changes your weapon the one way the game allows in combat, and only
+  says it is back once it is.
+
 ## 1.1.3
 
 - The gear key works in combat. Attacked while fishing, one press puts your weapon back in

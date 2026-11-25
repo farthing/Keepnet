@@ -429,7 +429,8 @@ ns.On("CHARACTER", function() plan = nil end)
 --                pole coming off turns fishing mode off, which puts the clothing back.
 -- The key is bound for as long as it is set, pole or no pole; while it is, the game's own
 -- use of that key is out of reach. It works in combat too, for the hands: the game lets a
--- weapon be changed there. The clothing waits for combat to end.
+-- weapon be changed there, by a protected button's macro. The clothing waits for combat to
+-- end.
 --
 -- A pole the player put on by hand has nothing written down to go back to. Keepnet says so
 -- instead of guessing.
@@ -469,78 +470,95 @@ local function HeldIn(slot)
     return link
 end
 
-local function PoleOn()
-    local pole = PoleInBags()
-    if not pole then
+-- The key clicks a button of the game's protected kind, which changes what is held by a
+-- macro ("/equipslot 16 item:..."). That is the only way the game lets a weapon be changed
+-- in combat: an addon's own equip call is refused there (it was tried, in 1.1.3). The macro
+-- can only be written out of combat, so it is written ahead, every time what it should do
+-- changes (Prepare): the pole to put on while no pole is on, the weapons to put back while
+-- one is. The press itself (PreClick) only writes down what the hands hold and talks to the
+-- player; what happened is seen afterwards, when the pole has gone on or come off.
+--
+-- No parent: the key must keep working while the game's interface is hidden (HideUI.lua)
+local keyButton = CreateFrame("Button", KEY_BUTTON, nil, "SecureActionButtonTemplate")
+-- The game acts on key down or key up depending on a player setting; take both
+keyButton:RegisterForClicks("AnyUp", "AnyDown")
+keyButton:SetAttribute("type", "macro")
+
+local planned -- what the macro will do: "on" (a pole), "off" (the weapons back) or nil (nothing)
+
+local function InBags(link)
+    local id = ItemID(link)
+    return id ~= nil and Util.ItemCount(id) > 0
+end
+
+-- Writes the macro for the next press. In combat it stays as it was written before.
+local function Prepare()
+    if not ns.db or not ns.char or InCombatLockdown() then return end
+    local text, plan = "", nil
+    if ns.fishing then
+        local hands = ns.char.hands
+        if hands and hands.main and InBags(hands.main) then
+            text, plan = "/equipslot " .. MAIN_HAND .. " item:" .. ItemID(hands.main), "off"
+            -- A pole takes both hands: what the other hand held goes back after the main hand
+            if hands.off and InBags(hands.off) then
+                text = text .. "\n/equipslot " .. OFF_HAND .. " item:" .. ItemID(hands.off)
+            end
+        end
+    else
+        local pole = PoleInBags()
+        if pole then
+            text, plan = "/equipslot " .. MAIN_HAND .. " item:" .. pole.id, "on"
+        end
+    end
+    keyButton:SetAttribute("macrotext", text)
+    planned = plan
+end
+Gear.PrepareKey = Prepare
+
+local lastPress = -PRESS_GAP
+local pressedAt -- when the key last asked for a change, to tell its doing from the player's own
+
+-- The press: nothing here changes what is held (the macro does), so it is safe in combat
+keyButton:SetScript("PreClick", function()
+    if not ns.db or not ns.char then return end
+    local now = GetTime()
+    if now - lastPress < PRESS_GAP then return end -- the same press, let go
+    lastPress = now
+    if ns.fishing then
+        local hands = ns.char.hands
+        if not hands then
+            Util.Print("Keepnet didn't put this pole on, so it doesn't know what you held before it: "
+                .. "equip your own weapon to stop fishing.")
+        elseif not hands.main then
+            Util.Print("You held nothing before the pole: take it off yourself to stop fishing.")
+        elseif planned ~= "off" then
+            Util.Print(LinkName(hands.main) .. " isn't in your bags any more: equip a weapon yourself to stop fishing.")
+        else
+            pressedAt = now
+        end
+        return
+    end
+    if planned ~= "on" then
         Util.Print("There is no fishing pole in your bags to put on.")
-        return false
+        return
     end
     -- Written down before the swap, so it can be undone whatever happens next
     ns.char.hands = { main = HeldIn(MAIN_HAND), off = HeldIn(OFF_HAND) }
-    EquipCall(pole.link, MAIN_HAND)
-    Util.Print("Fishing pole on: " .. LinkName(pole.link))
-    return true
-end
+    pressedAt = now
+    -- A press the game didn't act on (the pole is gone, the bags are locked) leaves a note
+    -- that isn't true: it is dropped unless the pole is on a moment later
+    C_Timer.After(3, function()
+        if not ns.fishing and ns.char and pressedAt == now then
+            ns.char.hands = nil
+            Prepare()
+        end
+    end)
+end)
 
-local function PoleOff()
-    local hands = ns.char.hands
-    if not hands then
-        Util.Print("Keepnet didn't put this pole on, so it doesn't know what you held before it: "
-            .. "equip your own weapon to stop fishing.")
-        return false
-    end
-    if not hands.main then
-        Util.Print("You held nothing before the pole: take it off yourself to stop fishing.")
-        return false
-    end
-    if Util.ItemCount(ItemID(hands.main)) <= 0 then
-        Util.Print(LinkName(hands.main) .. " isn't in your bags any more: equip a weapon yourself to stop fishing.")
-        ns.char.hands = nil
-        return false
-    end
-    local off = hands.off
-    ns.char.hands = nil
-    EquipCall(hands.main, MAIN_HAND)
-    local names = { LinkName(hands.main) }
-    -- A pole takes both hands: what the other hand held went to the bags, and goes back a
-    -- moment after the main hand, since the game can refuse a swap while another is in flight
-    if off and GetInventoryItemID("player", OFF_HAND) ~= ItemID(off) and Util.ItemCount(ItemID(off)) > 0 then
-        names[#names + 1] = LinkName(off)
-        C_Timer.After(PRESS_GAP, function()
-            if ns.fishing then return end
-            if GetInventoryItemID("player", OFF_HAND) ~= ItemID(off) then EquipCall(off, OFF_HAND) end
-        end)
-    end
-    Util.Print("Back in your hands: " .. table.concat(names, ", "))
-    return true
-end
-
-local lastPress = -PRESS_GAP
-
--- What the gear key does: into fishing gear, or out of it
+-- Kept for the tests and for anything else that wants to press the key: what a press does
 function Gear.Toggle()
-    if not ns.db or not ns.char then return end
-    local now = GetTime()
-    if now - lastPress < PRESS_GAP then return end
-    lastPress = now
-    -- What is held in the hands can be changed in combat, so the key works there too: the
-    -- weapon is back at once. Clothing can't be: it follows when combat ends, as it always
-    -- did (the "COMBAT" listener further up).
-    local changed
-    if ns.fishing then
-        changed = PoleOff()
-    else
-        changed = PoleOn()
-    end
-    if changed and (InCombatLockdown() or ns.inCombat) then
-        Util.Print("Your clothing changes when combat ends.")
-    end
+    keyButton:GetScript("PreClick")(keyButton, "LeftButton", true)
 end
-
--- No parent: the key must keep working while the game's interface is hidden (HideUI.lua)
-local keyButton = CreateFrame("Button", KEY_BUTTON)
-keyButton:RegisterForClicks("AnyUp", "AnyDown")
-keyButton:SetScript("OnClick", function() Gear.Toggle() end)
 
 local keyOwner = CreateFrame("Frame") -- owns the override binding
 local keyBound
@@ -565,17 +583,40 @@ function Gear.Key()
     return keyBound
 end
 
-ns.On("WORLD", Gear.UpdateKey)
-ns.On("SETTINGS", Gear.UpdateKey)
-ns.On("CHARACTER", Gear.UpdateKey)
+local function Refresh()
+    Gear.UpdateKey()
+    Prepare()
+end
+
+ns.On("WORLD", Refresh)
+ns.On("SETTINGS", Refresh)
+ns.On("CHARACTER", Refresh)
+ns.On("GEAR", Prepare) -- the bags or what is worn changed
 ns.On("COMBAT", function(inCombat)
-    if not inCombat then Gear.UpdateKey() end
+    if not inCombat then Refresh() end
 end)
 ns.On("MODE", function(on)
-    Gear.UpdateKey()
-    -- The pole is off: what was written down for the hands has been used, or the player
-    -- changed weapons by hand and it no longer holds
-    if not on and ns.char then ns.char.hands = nil end
+    local hands = ns.char and ns.char.hands
+    local byKey = pressedAt and GetTime() - pressedAt < 5
+    pressedAt = nil
+    if on then
+        if hands and byKey then
+            Util.Print("Fishing pole on: " .. LinkName(HeldIn(MAIN_HAND) or "your pole"))
+        end
+    elseif hands then
+        -- The pole is off: what was written down for the hands has been used, or the player
+        -- changed weapons by hand and it no longer holds
+        if byKey and hands.main then
+            local names = { LinkName(hands.main) }
+            if hands.off then names[#names + 1] = LinkName(hands.off) end
+            Util.Print("Back in your hands: " .. table.concat(names, ", "))
+        end
+        ns.char.hands = nil
+    end
+    if byKey and (InCombatLockdown() or ns.inCombat) then
+        Util.Print("Your clothing changes when combat ends.")
+    end
+    Refresh()
 end)
 ns.On("LOGOUT", function()
     if InCombatLockdown() then return end

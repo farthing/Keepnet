@@ -259,7 +259,14 @@ function Methods:IsShown() return self.__shown end
 function Methods:SetText(text) self.__text = text end
 function Methods:GetText() return self.__text end
 function Methods:GetStringWidth() return #tostring(self.__text or "") * 6 end
-function Methods:SetAttribute(key, value) self.__attrs[key] = value end
+function Methods:SetAttribute(key, value)
+    -- A protected button can't be rewritten in combat
+    if Stub.lockdown and self.__template == "SecureActionButtonTemplate" then
+        Stub.errors[#Stub.errors + 1] = "a protected button changed in combat: " .. tostring(key)
+        return
+    end
+    self.__attrs[key] = value
+end
 function Methods:GetAttribute(key) return self.__attrs[key] end
 function Methods:SetChecked(checked) self.__checked = checked end
 function Methods:GetChecked() return self.__checked end
@@ -648,9 +655,10 @@ end
 -- Swaps a bag item into a slot; what was there goes to the bags
 function C_Item.EquipItemByName(item, slot)
     local id = ItemID(item)
-    -- (what is held in the two hands can be changed in combat; clothing can't)
-    if Stub.lockdown and slot ~= 16 and slot ~= 17 then
-        Stub.errors[#Stub.errors + 1] = "clothing changed in combat"
+    -- An addon's own equip call is refused in combat, whatever the slot. (The game's macro
+    -- command for it is not, for the two hands: see SecureAction.)
+    if Stub.lockdown and not Stub.fromMacro then
+        Stub.errors[#Stub.errors + 1] = "an addon's equip call in combat"
         return
     end
     if not id or (Stub.bags[id] or 0) <= 0 then return end
@@ -899,6 +907,15 @@ local function SecureAction(button)
         return "spell:" .. tostring(button.__attrs.spell)
     elseif kind == "macro" then
         local text = button.__attrs.macrotext or ""
+        -- "/equipslot 16 item:123": what is held changes, in combat too
+        if text:find("/equipslot", 1, true) then
+            for slot, id in text:gmatch("/equipslot (%d+) item:(%d+)") do
+                Stub.fromMacro = true
+                C_Item.EquipItemByName("item:" .. id, tonumber(slot))
+                Stub.fromMacro = nil
+            end
+            return "equip"
+        end
         local id = tonumber(text:match("/use item:(%d+)"))
         if id and text:match("/use 16") then
             -- Using clothing from the bags puts it on instead of firing its effect

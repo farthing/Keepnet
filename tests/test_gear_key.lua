@@ -39,6 +39,7 @@ function T.run(ns)
     ns.Fire("SETTINGS")
     eq(Gear.Key(), GEAR_KEY, "the key that is set is bound")
     eq(Stub.binding(GEAR_KEY).button, "KeepnetGearButton", "to a button of its own")
+    eq(KeepnetGearButton.__template, "SecureActionButtonTemplate", "of the game's protected kind, the only kind that changes weapons in combat")
     eq(Stub.binding(FISH_KEY), nil, "the fishing key is still only for when a pole is on")
 
     -- First press: the pole goes on, and the clothing follows
@@ -74,6 +75,7 @@ function T.run(ns)
     -- The pole last fished with is the one reached for, whatever its bonus
     eq(ns.char.pole, STRONG_POLE, "the pole fished with is remembered")
     ns.char.pole = Stub.POLE
+    Stub.fire("BAG_UPDATE_DELAYED") -- (the key's next press is written whenever the bags change)
     Stub.press(GEAR_KEY)
     Stub.advance(1.5)
     eq(Stub.mainHand, Stub.POLE, "the pole last fished with is preferred")
@@ -141,6 +143,7 @@ function T.run(ns)
     -- No pole in the bags
     local poles = { [Stub.POLE] = Stub.bags[Stub.POLE], [STRONG_POLE] = Stub.bags[STRONG_POLE] }
     Stub.bags[Stub.POLE], Stub.bags[STRONG_POLE] = nil, nil
+    Stub.fire("BAG_UPDATE_DELAYED")
     Stub.chat = {}
     Stub.advance(1)
     Stub.press(GEAR_KEY)
@@ -148,6 +151,7 @@ function T.run(ns)
     eq(Stub.mainHand, DAGGER, "with no pole in the bags nothing changes")
     check(Said("no fishing pole in your bags"), "and the player is told")
     Stub.bags[Stub.POLE], Stub.bags[STRONG_POLE] = poles[Stub.POLE], poles[STRONG_POLE]
+    Stub.fire("BAG_UPDATE_DELAYED")
 
     -- The two keys can't be one: the fishing key is the fishing key
     settings.gearKey = settings.key
