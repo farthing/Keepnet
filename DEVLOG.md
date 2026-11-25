@@ -56,8 +56,9 @@ the owner runs keeps a log of the game's channel notices in its saved data, and 
 the game's own "you joined" notice (`YOU_CHANGED`) for `KeepersNet` as channel 7, twice
 that afternoon, each a few seconds after a login. So `JoinTemporaryChannel` is allowed from
 a timer here, the channel takes a number after the game's own, and the notice the game
-sends about it is kept out of chat by Keepnet's filter. (The owner can also ask the game:
-`/dump GetChannelName("KeepersNet")` prints the number.) **Still not seen:** announcing and
+sends about it is kept out of chat by Keepnet's filter. The owner then asked the game itself on the released copy, on another character:
+`/dump GetChannelName("KeepersNet")` printed `7, "KeepersNet", 0, false` (the number, the
+name, no instance, not a community channel), with the chat tabs still only the usual four. **Still not seen:** announcing and
 being told, which needs a version after 1.0.0 and two players running it; what
 `SendAddonMessage` answers; and leaving the channel from the switch in Settings.
 
