@@ -3,6 +3,19 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.0.4
+
+- A gear key: a key of its own, apart from the fishing key, that changes you into fishing
+  gear and back. One press puts your fishing pole on (the one you fished with last, or the
+  one that raises Fishing most), and your fishing clothing with it as before. The next press
+  puts back what you held in both hands, and your own clothing.
+- Set it on the Settings tab, beside the fishing key: click the button, then press the key,
+  with Alt, Ctrl or Shift held if you like. A right click on the button sets no key again.
+  While it is set, that key does only this.
+- Gear can't be changed in combat: the key tells you to press again afterwards. A pole you
+  put on by hand is left to you to take off, since Keepnet doesn't know what you held
+  before it.
+
 ## 1.0.3
 
 - With the game's interface hidden you could not see how long the line had left, or what it

@@ -4,6 +4,41 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.0.4 (2026-11-25, night): the gear key. Passes its offline tests, committed and tagged;
+NOT in the owner's game and NOT on CurseForge (the changelog for the next upload starts
+after 1.0.1).** The owner: "i want a configurable hot key or set of keys, for equiping
+fishing gear (as configured by the player) and then swapping back to whatever gear they
+had before, once they are done fishing", then "this keybind should be outside of the cast
+and real button".
+
+- `settings.gearKey` (none by default; per character like every setting). Settings tab,
+  beside the fishing key, a second button "Gear key": click, press a key (with Alt, Ctrl,
+  Shift, or a side button of the mouse); a right click sets none. The two keys can't be the
+  same: each button refuses the other's key, and `Gear.UpdateKey` never binds the fishing
+  key as the gear key. The capture code of the two buttons is one function now
+  (`KeyButton` in `UI\SettingsTab.lua`).
+- The key is bound for as long as it is set, pole or no pole (an override binding on a plain
+  button, `KeepnetGearButton`, with no parent, so it works with the interface hidden). While
+  it is set, the game's own use of that key is out of reach: the changelog says so.
+- What a press does (`Gear.Toggle`, second half of `Gear.lua`). No pole on: the pole in the
+  bags goes into the main hand, the one last fished with (`ns.char.pole`, noted whenever a
+  pole goes on) or else the one that raises Fishing most; what the two hands held is written
+  to `ns.char.hands` first. The pole going on turns fishing mode on, which puts the fishing
+  clothing on as it always did: "as configured by the player" is the gear choices that were
+  already there. Pole on: the main hand's weapon goes back, the off hand's half a second
+  later; the pole coming off turns fishing mode off, which puts the clothing back.
+- Left to the player, with a line in chat saying why: a pole put on by hand (nothing written
+  down), hands that were empty before the pole, a weapon no longer in the bags, combat
+  ("press the gear key again afterwards"), no pole in the bags.
+- A press arrives as key down and key up: a second call within half a second is ignored.
+- Tests: `tests\test_gear_key.lua`. The stand-in game's main hand can be equipped into, a
+  pole empties the off hand, and a plain button's click script is run by a key.
+- **Not seen in the game:** all of it. In particular that a plain button bound with
+  `SetOverrideBindingClick` gets its click from the key on this client, that equipping into
+  the main hand by name puts a two-handed pole on and sends the off hand to the bags, that
+  the off hand goes back half a second later, and the Settings tab's top row with two
+  buttons and a longer note.
+
 **1.0.3 (2026-11-25, night): the line's strip. Passes its offline tests, committed and
 tagged; NOT in the owner's game and NOT on CurseForge (the changelog for the next upload
 starts after 1.0.1).** The owner: "i know the ui is hidden. but we need some sort of either

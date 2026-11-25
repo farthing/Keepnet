@@ -42,54 +42,83 @@ local function Build(frame)
     local left, right = UI.LEFT, UI.LEFT + 390
     local y = UI.TOP - 2
 
-    -- ------------------------------------------------------------------ the key
+    -- ------------------------------------------------------------------ the keys
+    -- A button that takes a key: click it, then press the key (with Alt, Ctrl or Shift held,
+    -- if wanted) or a side button of the mouse. get() is the key now; set(key) takes the new
+    -- one and returns false when it won't do; a right click on a button that can be cleared
+    -- sets no key. button:Sync() shows the key again.
+    local keysTop = y
+    local function KeyButton(x, get, set, clearable)
+        local capturing = false
+        local button = W.Button(frame, "", 150, 22)
+        button:SetPoint("TOPLEFT", x, keysTop - 20)
+        local function Stop()
+            capturing = false
+            button:EnableKeyboard(false)
+            button.label:SetText(get() or "none")
+        end
+        local function Take(key)
+            set(key)
+            Stop()
+            Changed()
+        end
+        button:RegisterForClicks("AnyUp")
+        button:SetScript("OnClick", function(_, mouseButton)
+            if capturing and MOUSE_KEYS[mouseButton] then
+                Take(MOUSE_KEYS[mouseButton])
+            elseif capturing then
+                Stop()
+            elseif InCombatLockdown() then
+                Util.Print("The key can't be changed in combat.")
+            elseif mouseButton == "RightButton" and clearable then
+                Take(nil)
+            elseif mouseButton == "LeftButton" then
+                capturing = true
+                button.label:SetText("Press a key (Esc cancels)")
+                button:EnableKeyboard(true)
+            end
+        end)
+        button:SetScript("OnKeyDown", function(_, key)
+            if not capturing or MODIFIER_KEYS[key] then return end
+            if key == "ESCAPE" then
+                Stop()
+                return
+            end
+            local prefix = (IsAltKeyDown() and "ALT-" or "") .. (IsControlKeyDown() and "CTRL-" or "")
+                .. (IsShiftKeyDown() and "SHIFT-" or "")
+            Take(prefix .. key)
+        end)
+        button:SetScript("OnHide", Stop)
+        function button:Sync()
+            if not capturing then self.label:SetText(get() or "none") end
+        end
+        return button
+    end
+
     Heading(frame, "Fishing key", left, y)
+    local keyButton = KeyButton(left, function() return settings.key end, function(key)
+        if key == settings.gearKey then
+            Util.Print("That is the gear key: the fishing key needs one of its own.")
+            return false
+        end
+        settings.key = key
+    end)
+    -- The gear key: fishing pole and gear on, and off again
+    Heading(frame, "Gear key", left + 190, y)
+    local gearKeyButton = KeyButton(left + 190, function() return settings.gearKey end, function(key)
+        if key and key == settings.key then
+            Util.Print("That is the fishing key: the gear key needs one of its own.")
+            return false
+        end
+        settings.gearKey = key
+    end, true)
+    gearKeyButton.tooltip = "Click, then press the key. Right click: no key."
     local keyNote = W.Text(frame, "GameFontDisableSmall",
-        "Casts when the line is in, reels in when it's out. Only while a fishing pole is equipped.")
+        "Fishing key: casts, and reels in while the line is out; only with a pole equipped. "
+        .. "Gear key: puts your fishing pole and gear on, and your own back on the next press.")
     keyNote:SetPoint("TOPLEFT", left, y - 46)
     keyNote:SetWidth(350)
     keyNote:SetJustifyH("LEFT")
-
-    local capturing = false
-    local keyButton = W.Button(frame, "", 150, 22)
-    keyButton:SetPoint("TOPLEFT", left, y - 20)
-    local function StopCapture()
-        capturing = false
-        keyButton:EnableKeyboard(false)
-        keyButton.label:SetText(settings.key or "none")
-    end
-    local function SetKey(key)
-        settings.key = key
-        StopCapture()
-        Changed()
-    end
-    keyButton:RegisterForClicks("AnyUp")
-    keyButton:SetScript("OnClick", function(_, mouseButton)
-        if capturing and MOUSE_KEYS[mouseButton] then
-            SetKey(MOUSE_KEYS[mouseButton])
-        elseif capturing then
-            StopCapture()
-        elseif mouseButton == "LeftButton" then
-            if InCombatLockdown() then
-                Util.Print("The key can't be changed in combat.")
-                return
-            end
-            capturing = true
-            keyButton.label:SetText("Press a key (Esc cancels)")
-            keyButton:EnableKeyboard(true)
-        end
-    end)
-    keyButton:SetScript("OnKeyDown", function(_, key)
-        if not capturing or MODIFIER_KEYS[key] then return end
-        if key == "ESCAPE" then
-            StopCapture()
-            return
-        end
-        local prefix = (IsAltKeyDown() and "ALT-" or "") .. (IsControlKeyDown() and "CTRL-" or "")
-            .. (IsShiftKeyDown() and "SHIFT-" or "")
-        SetKey(prefix .. key)
-    end)
-    keyButton:SetScript("OnHide", StopCapture)
 
     -- ------------------------------------------------------------------ lures
     y = y - 84
@@ -285,7 +314,8 @@ local function Build(frame)
     return function()
         updates:SetChecked(settings.updates and true or false)
         updatesNote:SetText(ns.Updates and ns.Updates.Describe() or "")
-        if not capturing then keyButton.label:SetText(settings.key or "none") end
+        keyButton:Sync()
+        gearKeyButton:Sync()
 
         for _, option in ipairs(LURE_MODES) do
             if option.value == settings.lureMode then mode:Set(option.value, option.text) end

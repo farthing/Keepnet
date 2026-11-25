@@ -5,7 +5,11 @@
 --
 -- An item's bonus is read from its own tooltip ("Equip: Increased Fishing +5.", "Fishing +2"),
 -- so enchants count and items new to this client are found without a list. The pole itself is
--- never swapped: equipping it is what turns fishing mode on.
+-- never swapped by that: equipping it is what turns fishing mode on.
+--
+-- The gear key (second half of the file) is a key of its own, apart from the fishing key: one
+-- press puts the fishing pole on, which brings the clothing with it, and the next press puts
+-- back what the character held, which takes the clothing off again.
 --
 -- What was replaced is written to the saved data before anything is equipped, so it can still
 -- be put back after a /reload, a logout or a crash. Clothing can't be changed in combat; both
@@ -378,6 +382,9 @@ end
 ns.On("MODE", function(on)
     passes = 0
     if on then
+        -- The pole fished with last is the one the gear key reaches for
+        local pole = GetInventoryItemID and GetInventoryItemID("player", 16)
+        if pole and not Util.Hidden(pole) and ns.char then ns.char.pole = pole end
         Gear.Equip()
         -- Right after login the game may not know the bag items yet; look again shortly.
         -- Equip only ever acts where the bags hold something better, so this is harmless.
@@ -409,6 +416,167 @@ end)
 
 -- The choices and the swaps are this character's: look again once it is known who that is
 ns.On("CHARACTER", function() plan = nil end)
+
+-- ---------------------------------------------------------------------------------------------
+-- The gear key: a key of the player's choosing (ns.settings.gearKey), apart from the fishing
+-- key, that changes into fishing gear and back.
+--   No pole on:  the fishing pole in the bags goes into the main hand (the one last fished
+--                with, or else the one that raises Fishing most). What was in the two hands
+--                is written down first (ns.char.hands), like the clothing, so it can be put
+--                back after a /reload, a logout or a crash. The pole going on is what turns
+--                fishing mode on, and that puts the fishing clothing on (above).
+--   Pole on:     what was in the main hand goes back, then what was in the off hand. The
+--                pole coming off turns fishing mode off, which puts the clothing back.
+-- The key is bound for as long as it is set, pole or no pole; while it is, the game's own
+-- use of that key is out of reach. Nothing is changed in combat: the player is told to
+-- press again afterwards.
+--
+-- A pole the player put on by hand has nothing written down to go back to. Keepnet says so
+-- instead of guessing.
+-- ---------------------------------------------------------------------------------------------
+local MAIN_HAND, OFF_HAND = 16, 17
+local WEAPON_CLASS, POLE_SUBCLASS = 2, 20
+local KEY_BUTTON = "KeepnetGearButton"
+-- A press arrives as key down and as key up: the second of the two is not a second press
+local PRESS_GAP = 0.5
+
+local function IsPole(itemID)
+    local _, _, _, _, _, classID, subclassID = Util.ItemInfoInstant(itemID)
+    return classID == WEAPON_CLASS and subclassID == POLE_SUBCLASS
+end
+
+-- The pole in the bags to put on: { id, link, bonus }, or nil
+local function PoleInBags()
+    local best
+    local last = ns.char and ns.char.pole
+    Util.EachBagSlot(function(bag, slot, itemID)
+        if not IsPole(itemID) then return end
+        local link = C_Container.GetContainerItemLink and C_Container.GetContainerItemLink(bag, slot)
+        if not link or Util.Hidden(link) then return end
+        local bonus, usable = ReadLines(Tooltip("GetBagItem", bag, slot))
+        if not usable then return end
+        local isLast = itemID == last
+        if not best or (isLast and not best.last) or (isLast == best.last and bonus > best.bonus) then
+            best = { id = itemID, link = link, bonus = bonus, last = isLast }
+        end
+    end)
+    return best
+end
+
+local function HeldIn(slot)
+    local link = GetInventoryItemLink and GetInventoryItemLink("player", slot)
+    if not link or Util.Hidden(link) then return false end
+    return link
+end
+
+local function PoleOn()
+    local pole = PoleInBags()
+    if not pole then
+        Util.Print("There is no fishing pole in your bags to put on.")
+        return false
+    end
+    -- Written down before the swap, so it can be undone whatever happens next
+    ns.char.hands = { main = HeldIn(MAIN_HAND), off = HeldIn(OFF_HAND) }
+    EquipCall(pole.link, MAIN_HAND)
+    Util.Print("Fishing pole on: " .. LinkName(pole.link))
+    return true
+end
+
+local function PoleOff()
+    local hands = ns.char.hands
+    if not hands then
+        Util.Print("Keepnet didn't put this pole on, so it doesn't know what you held before it: "
+            .. "equip your own weapon to stop fishing.")
+        return false
+    end
+    if not hands.main then
+        Util.Print("You held nothing before the pole: take it off yourself to stop fishing.")
+        return false
+    end
+    if Util.ItemCount(ItemID(hands.main)) <= 0 then
+        Util.Print(LinkName(hands.main) .. " isn't in your bags any more: equip a weapon yourself to stop fishing.")
+        ns.char.hands = nil
+        return false
+    end
+    local off = hands.off
+    ns.char.hands = nil
+    EquipCall(hands.main, MAIN_HAND)
+    local names = { LinkName(hands.main) }
+    -- A pole takes both hands: what the other hand held went to the bags, and goes back a
+    -- moment after the main hand, since the game can refuse a swap while another is in flight
+    if off and GetInventoryItemID("player", OFF_HAND) ~= ItemID(off) and Util.ItemCount(ItemID(off)) > 0 then
+        names[#names + 1] = LinkName(off)
+        C_Timer.After(PRESS_GAP, function()
+            if InCombatLockdown() or ns.inCombat or ns.fishing then return end
+            if GetInventoryItemID("player", OFF_HAND) ~= ItemID(off) then EquipCall(off, OFF_HAND) end
+        end)
+    end
+    Util.Print("Back in your hands: " .. table.concat(names, ", "))
+    return true
+end
+
+local lastPress = -PRESS_GAP
+
+-- What the gear key does: into fishing gear, or out of it
+function Gear.Toggle()
+    if not ns.db or not ns.char then return end
+    local now = GetTime()
+    if now - lastPress < PRESS_GAP then return end
+    lastPress = now
+    if InCombatLockdown() or ns.inCombat then
+        Util.Print("Gear can't be changed in combat: press the gear key again afterwards.")
+        return
+    end
+    if ns.fishing then
+        PoleOff()
+    else
+        PoleOn()
+    end
+end
+
+-- No parent: the key must keep working while the game's interface is hidden (HideUI.lua)
+local keyButton = CreateFrame("Button", KEY_BUTTON)
+keyButton:RegisterForClicks("AnyUp", "AnyDown")
+keyButton:SetScript("OnClick", function() Gear.Toggle() end)
+
+local keyOwner = CreateFrame("Frame") -- owns the override binding
+local keyBound
+
+-- Binds the key that is set, or lets the last one go. Bindings are protected: in combat this
+-- waits for combat to end.
+function Gear.UpdateKey()
+    if not ns.db or InCombatLockdown() then return end
+    local key = ns.settings.gearKey
+    -- (the fishing key is the fishing key: the two can't be one)
+    if key == "" or key == ns.settings.key then key = nil end
+    if key == keyBound then return end
+    ClearOverrideBindings(keyOwner)
+    if key then SetOverrideBindingClick(keyOwner, false, key, KEY_BUTTON) end
+    keyBound = key
+end
+
+-- The key the gear key is bound to now, or nil
+function Gear.Key()
+    return keyBound
+end
+
+ns.On("WORLD", Gear.UpdateKey)
+ns.On("SETTINGS", Gear.UpdateKey)
+ns.On("CHARACTER", Gear.UpdateKey)
+ns.On("COMBAT", function(inCombat)
+    if not inCombat then Gear.UpdateKey() end
+end)
+ns.On("MODE", function(on)
+    Gear.UpdateKey()
+    -- The pole is off: what was written down for the hands has been used, or the player
+    -- changed weapons by hand and it no longer holds
+    if not on and ns.char then ns.char.hands = nil end
+end)
+ns.On("LOGOUT", function()
+    if InCombatLockdown() then return end
+    ClearOverrideBindings(keyOwner)
+    keyBound = nil
+end)
 
 local events = CreateFrame("Frame")
 events:RegisterEvent("BAG_UPDATE_DELAYED")

@@ -39,6 +39,7 @@ local DEFAULTS = {
     rareQuality = 2,      -- alert for a catch of at least this quality (2 green, 3 blue, 4 purple; 0 off)
     rareGold = 0,         -- alert for a catch worth at least this much gold each (0 off)
     rareSound = true,     -- play a sound with the alert
+    gearKey = nil,        -- the key that changes into fishing gear and back (Gear.lua), or none
     theme = "keepnet",    -- the look (see W.THEMES)
     schemes = nil,        -- the colours chosen for each family of looks: { keepnet = "slate", ... }
     accentMode = "theme", -- the accent colour: "theme" (the colours' own), "class" or "custom"

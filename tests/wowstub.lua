@@ -647,10 +647,24 @@ function C_Item.EquipItemByName(item, slot)
         return
     end
     if not id or (Stub.bags[id] or 0) <= 0 then return end
-    local previous = Stub.equipped[slot]
+    -- (the main hand is kept apart: Stub.mainHand)
+    local previous
+    if slot == 16 then previous = Stub.mainHand else previous = Stub.equipped[slot] end
     Stub.bags[id] = Stub.bags[id] - 1
     if previous then Stub.bags[previous] = (Stub.bags[previous] or 0) + 1 end
-    Stub.equipped[slot] = id
+    if slot == 16 then
+        Stub.mainHand = id
+        -- A fishing pole takes both hands: what the other hand held goes to the bags
+        local info = Stub.items[id]
+        local other = Stub.equipped[17]
+        if info and info[4] == 2 and info[5] == 20 and other then
+            Stub.equipped[17] = nil
+            Stub.bags[other] = (Stub.bags[other] or 0) + 1
+            Stub.fire("PLAYER_EQUIPMENT_CHANGED", 17, false)
+        end
+    else
+        Stub.equipped[slot] = id
+    end
     Stub.fire("PLAYER_EQUIPMENT_CHANGED", slot, true)
     Stub.fire("BAG_UPDATE_DELAYED")
 end
@@ -1002,6 +1016,11 @@ end
 
 local function Click(buttonName, down)
     local button = _G[buttonName]
+    -- A plain button of the addon's own: its click script gets the press and the release
+    if button.__scripts.OnClick and not button.__template then
+        button.__scripts.OnClick(button, "LeftButton", down)
+        return "clicked"
+    end
     if button.__scripts.PreClick then button.__scripts.PreClick(button, "LeftButton", down) end
     local result
     if (down and Stub.useKeyDown) or (not down and not Stub.useKeyDown) then
