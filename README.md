@@ -7,8 +7,8 @@ the net an angler keeps the catch in.
   in and reels in when it's out. One press does one thing.
 - **Lures.** Off, Auto (the strongest lure in your bags that your skill allows) or Specific (one
   lure you choose). With no lure on the pole, the next press applies it and the press after casts.
-- **Lures bought for you.** Turn it on in the Gear & food tab and Keepnet buys lures whenever
-  you open a vendor that sells them:
+- **Lures bought automatically, your way.** Turn it on in the Gear & food tab and Keepnet buys
+  your lure whenever you open a vendor that sells it. You set what it buys and how:
   - *What:* choose one of the five basic lures from a list (Shiny Bauble, Nightcrawlers,
     Aquadynamic Fish Lens, Bright Baubles, Flesh Eating Worm). A tick box of its own also
     buys every Aquadynamic Fish Attractor a vendor has, since vendors only ever have a few.
