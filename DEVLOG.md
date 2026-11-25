@@ -16,6 +16,15 @@ Keepnet). **Not known to have been looked at in the game: Windows 95, Keepnet ro
 other colours, the Font list with shared fonts, the Appearance tab's new rows.** Everything
 below about "the branch only" was true until this release.
 
+**1.0.1 is on CurseForge** (uploaded 2026-11-25, about 18:00; "Under Review" a minute
+later) and on GitHub (`main`, tag `v1.0.1`). The listing's description starts with a note
+about the looks. What went up and how is in `PUBLISHING.md`, "1.0.1". The owner's game
+holds the development copy made from the same files a few minutes before the version number
+changed (it says 1.0.0 and is marked as a development build); the CurseForge app will offer
+1.0.1 once it is approved, and `tools/install.ps1 -Remove` takes the development copy out
+first. Open: pictures of the new looks for the gallery; the owner also asked where else the
+addon could be published (Wago Addons: see `PUBLISHING.md`, "Other sites").
+
 **What the looks are (written while they were an experiment on the branch `looks`, before
 the release above):** The owner: "for now,
 the tinkering with these themes and stuff is purely development, i am not sure if it will see

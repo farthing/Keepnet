@@ -282,6 +282,37 @@ and while the upload form was open: "add bullet point about searchable character
 - **The source is public since that day**: https://github.com/farthing/Keepnet, one commit
   for 1.0.0. The listing's "Source" tab does not point at it yet.
 
+## 1.0.1 (2026-11-25, evening)
+
+The owner, with the Glass look in their game: "publish to curse as 1.0.0.1, add a not early
+on that the themes are in and there is a gimmick one (windows 95)", then "also git it all".
+The number became 1.0.1 on the owner's choice, after being told that copies of 1.0.0 only
+understand versions of three parts.
+
+- **Keepnet 1.0.1 uploaded** as the seventh file (`dist\Keepnet-1.0.1.zip`, 41 files, 351
+  KB: the first with files that are not code, in `Keepnet\Media`: five small pictures, two
+  font files and the font's licence text). Through the author site in Chrome as before:
+  release, 1.60.1, Auctionator optional (copied by the form from 1.0.0), published
+  automatically once approved, display name typed over as "Keepnet 1.0.1". Its changelog on
+  the site is the 1.0.1 section of `CHANGELOG.md`, seven points. "File uploaded
+  successfully"; status "Under Review" a minute later. **The last version on CurseForge is
+  now 1.0.1**; the next upload's changelog starts after it (`release.py --since 1.0.1`).
+- **The description starts with a note**, before "Features": "New in 1.0.1: looks. Keepnet
+  can now be dressed several ways, each in colours of its own: Keepnet, Keepnet rounded,
+  Glass, the game's own windows, EllesmereUI's, and one for fun, Windows 95. Pick one on the
+  Appearance tab." And the feature list has a line "Looks and colours: ..." after the one
+  about hiding the interface. Saved ("Changes saved successfully") and read back after a
+  reload; `media\curseforge-description.html` holds both. **The gallery has no picture of
+  any of the new looks**, and the picture of the Appearance tab shows the old one list.
+- The upload form this time: the form's file field was kept on the page the same way
+  (`HTMLInputElement.prototype.click` replaced for a moment, then "Choose File" pressed);
+  the display name went in through the input's own value setter and an `input` event.
+- **1.0.1 went up with only the Glass look seen in the game** (the owner's saved settings
+  said Glass in Amber with Overpass, and the error log held nothing from Keepnet). Windows
+  95, Keepnet rounded, the other colours and the Font list with shared fonts were only
+  tested offline. Watch the comments and the error reports.
+- The source on GitHub is at the same commit, tagged `v1.0.1`.
+
 ## Four pictures redone for 1.0.0 (2026-11-25, evening)
 
 The owner set each screen up with `/kn demo` on and said when it showed; each was taken with
