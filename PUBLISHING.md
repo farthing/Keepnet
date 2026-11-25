@@ -314,7 +314,33 @@ understand versions of three parts.
 - The source on GitHub is at the same commit, tagged `v1.0.1`.
 - **"Approved"** within about twenty minutes (seen on the Media tab's file list).
 
-### Waiting for the next upload (written 2026-11-25, night)
+## 1.1.4 (2026-11-25, evening)
+
+The owner, with the gear key seen working in a fight: "document, save, publish to curse.
+publish to public git."
+
+- **Keepnet 1.1.4 uploaded** as the eighth file (`dist/Keepnet-1.1.4.zip`, 42 files, 364
+  KB), through the author site in Chrome as before: release, 1.60.1, Auctionator optional
+  (copied by the form from 1.0.1), published automatically once approved, display name
+  "Keepnet 1.1.4". Its changelog on the site is written for the site, everything since 1.0.1
+  under four headings: "Lures bought for you", "A gear key", "The line's time and what it
+  brought up", "Looks" (the Matrix colours). "File uploaded successfully"; "Processing"
+  right after. **The last version on CurseForge is now 1.1.4**; the next upload's changelog
+  starts after it (`release.py --since 1.1.4`).
+- **The description is up to date with it** (saved, "Changes saved successfully", read back
+  after a reload): the opening note is "New in 1.1: ...", the feature list has the points
+  for buying lures (the owner: "this should be a dot point feature, pointing out the auto
+  purchase and customization of said purchase"), the gear key and the line's countdown, the
+  section "Lures bought for you" stands before "Out of your way", and "Theming is a work in
+  progress" is gone. `media/curseforge-description.html` is the same text.
+- **Buying lures went up without having bought anything in the real game.** The gear key
+  (also in combat), recording key combinations, the line's strip and the looks were seen
+  there by the owner. Watch the comments and the error reports for the vendor part.
+- No new pictures: the gallery shows nothing of the lure buying, the gear key's button or
+  the strip.
+- The source on GitHub is at the same commit, tagged `v1.1.4`.
+
+### Waiting for the next upload (written 2026-11-25, night; done with 1.1.4, see above)
 
 `media\curseforge-description.html` is ahead of the site: it has what 1.0.2 to 1.0.8 add
 (lines in the feature list for buying lures, the gear key, and the line's countdown and

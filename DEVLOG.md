@@ -4,6 +4,12 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.1.4 is on CurseForge (uploaded 2026-11-25, about 19:55; "Processing" when last looked)
+and on GitHub (`main`, tag `v1.1.4`).** It brings everything from 1.0.2 to 1.1.4. The
+listing's description was brought up to date in the same go. What went up and how is in
+`PUBLISHING.md`, "1.1.4". The owner's game holds the development copy of the same files.
+The next changelog starts after 1.1.4.
+
 **The gear key in combat, seen in the game by the owner on 1.1.4 (2026-11-25, about 19:45):**
 "yep that works". Then: "document, save, publish to curse. publish to public git." **Buying
 lures has still not bought anything in the real game** when 1.1.4 went up: the owner was
