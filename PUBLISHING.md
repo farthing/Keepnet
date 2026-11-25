@@ -343,6 +343,30 @@ publish to public git."
   the strip.
 - The source on GitHub is at the same commit, tagged `v1.1.4`.
 
+## 1.1.5 (2026-11-25, about 22:10)
+
+The owner, after a restart with the development copy of 1.1.5 in the game: "works well,
+push to curse".
+
+- **Keepnet 1.1.5 uploaded** as the ninth file (`dist/Keepnet-1.1.5.zip`, 44 files, 373
+  KB; built from the project, so without the development mark), through the author site in
+  Chrome as before: release, 1.60.1, Auctionator optional (copied by the form from 1.1.4),
+  published automatically once approved, display name "Keepnet 1.1.5". Its changelog on the
+  site is the 1.1.5 section of `CHANGELOG.md`, two points (the minimap button, the icon).
+  "File uploaded successfully"; "Uploading" right after. **The last version on CurseForge
+  is now 1.1.5**; the next upload's changelog starts after it (`release.py --since 1.1.5`).
+- **The description was left as it is**, on purpose: a minimap button is a given, like
+  settings per character. The logo on the listing is unchanged too.
+- The upload form this time: 1.1.4 read "Approved" on the Files tab. The form's file field
+  was kept on the page the same way (`HTMLInputElement.prototype.click` replaced for a
+  moment, "Choose File" pressed, the zip given to the field that appeared, the function put
+  back); the display name went in through the browser tool's form fill, the changelog
+  through `tinymce.get()[0].setContent(html)`.
+- What the owner tried before saying so was not said. See DEVLOG for what is still unseen.
+- The source on GitHub is at the same code, tagged `v1.1.5`.
+- **Pictures are still owed** from 1.1.4 (lure buying, the gear key's button, the line's
+  strip); a picture with the minimap button in it could go up with them.
+
 ### Waiting for the next upload (written 2026-11-25, night; done with 1.1.4, see above)
 
 `media\curseforge-description.html` is ahead of the site: it has what 1.0.2 to 1.0.8 add

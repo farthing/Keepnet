@@ -13,9 +13,19 @@ replaced by the new ones (delete the old, restore the order). Raise it at the st
 next session. Also still open from before: the lure buying has not bought anything in the
 real game.
 
+**1.1.5 is on CurseForge (uploaded 2026-11-25, about 22:10; "Uploading" when last looked)
+and on GitHub (`main`, tag `v1.1.5`).** The owner, after restarting the game with the
+development copy: "works well, push to curse". What went up and how is in `PUBLISHING.md`,
+"1.1.5". The next changelog starts after 1.1.5. The owner's game holds the development copy
+of the same files (it says 1.1.5 and never announces itself), until they take the app's.
+Which parts the owner tried was not said: taken as the button and the icon showing and the
+clicks working in their game, where the button is LibDBIcon's. Still unseen by anyone:
+Keepnet's own button (no other addon bringing the library), a square minimap, the broker
+launcher, the addon menu's tooltip and right click.
+
 **1.1.5 (2026-11-25, about 20:45): a minimap button, and an icon of Keepnet's own. Passes
-its offline tests, committed and tagged; not on CurseForge; installed as the development
-copy at 22:00 but nothing of it seen in the game yet.** The owner: "i want keepnet to have a loaded addon icon, and button, like
+its offline tests, committed and tagged; installed as the development copy at 22:00.** The
+owner: "i want keepnet to have a loaded addon icon, and button, like
 master craft currently does in the ui. or dungeon journal etc etc. one that sits with the
 minimap".
 
