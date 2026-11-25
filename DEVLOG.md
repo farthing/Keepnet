@@ -14,8 +14,8 @@ next session. Also still open from before: the lure buying has not bought anythi
 real game.
 
 **1.1.5 (2026-11-25, about 20:45): a minimap button, and an icon of Keepnet's own. Passes
-its offline tests, committed and tagged; not on CurseForge, NOT in the game, nothing of it
-seen there.** The owner: "i want keepnet to have a loaded addon icon, and button, like
+its offline tests, committed and tagged; not on CurseForge; installed as the development
+copy at 22:00 but nothing of it seen in the game yet.** The owner: "i want keepnet to have a loaded addon icon, and button, like
 master craft currently does in the ui. or dungeon journal etc etc. one that sits with the
 minimap".
 
@@ -61,10 +61,12 @@ minimap".
   written); how the icon reads at the button's size; where EllesmereUI's minimap puts the
   button; that the addon menu passes "RightButton" on this client (the Dungeon Journal
   relies on it).
-- **Not installed.** The game was running and holds 1.1.4 without the development mark in
-  its TOC: the CurseForge copy. `install.ps1` would put a development copy over it, so the
-  owner is asked first. Two files are new (`Minimap.lua`, `Media\Icon.tga`): a full restart
-  of the game, not `/reload`.
+- **In the game as the development copy since 2026-11-25, 22:00.** The game was running and
+  held 1.1.4 without the development mark in its TOC: the CurseForge copy. `install.ps1`
+  puts a development copy over that, so the owner was asked first and chose to install.
+  Two files are new (`Minimap.lua`, `Media\Icon.tga`) and the game was running at the time:
+  it needs a full restart, not `/reload`, before any of this shows. Until the owner takes
+  a version from the CurseForge app again, the game's copy is this one.
 - Left out of the listing's description on purpose: a minimap button is as much a given as
   settings per character, which the owner did not want there. It is in the README.
 
