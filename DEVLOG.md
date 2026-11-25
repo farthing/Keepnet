@@ -106,8 +106,27 @@ needs the owner's word (`tools\install.ps1`), and a full restart, because files 
   **Spinnaker**, from lettering on posters for travel by ship (OFL with a reserved name,
   one weight, no Cyrillic). A font without Cyrillic needs the game's own font for the
   Russian client. Each needs its licence text shipped beside it.
-- **A glass look** (the owner: "i've seen the option for a glass skin/theme somewhere"):
-  research was still running when this was written; nothing built.
+- **A glass look** (the owner: "i've seen the option for a glass skin/theme somewhere in
+  some addon/ui. i wouldn't mind being able to do something like that"). Researched
+  2026-11-25, nothing built; the owner has not yet said whether to build it or how.
+  - What they most likely saw: Spotnick's "Glass" addons for this very client (Glass UI,
+    Glass Unit Frames, Glass Panel), all drawn by one library, **LibGlass-1.0**
+    (https://github.com/Spotnick2/LibGlass), which is **MIT** and writes its whole method
+    down (`docs/GLASS-MATERIAL.md`). Two other glass interfaces for this client (Fantasy
+    Glass UI, Lattice) are all rights reserved.
+  - There is no blur for addons: what is behind a frame always shows through sharp. Glass
+    is layers: a soft shadow outside, a dark see-through tint, a faint white wash that
+    grows upwards, a bright thin rim strongest along the top, round corners by a mask,
+    and text with a solid dark shadow. For reading, the tint has to be dense (0.5 to 0.8);
+    0.24 only where there is little text.
+  - Two ways open to Keepnet: carry LibGlass (MIT, with credit), or draw its own from the
+    same ingredients with pictures made by `tools\make_art.py`, beside the round corners
+    it already has (a shadow, a rim, perhaps a sheen). Either way with credit to LibGlass
+    for the method.
+  - Facts worth keeping, as LibGlass measured them on this client: a gradient ignores
+    `SetAlpha` (the alpha goes in its colours); a mask only reaches textures of its own
+    frame; a sliced mask fails on small boxes; `SetTextureSliceMargins` and
+    `CreateMaskTexture` exist here; pictures as uncompressed 32-bit TGA.
 
 **What can be taken from other packs (researched 2026-11-25; figures and licences as read
 that day):** almost nothing. Of sixteen packs looked at, nine are "all rights reserved" or
