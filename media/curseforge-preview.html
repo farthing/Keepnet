@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keepnet: project page preview</title>
+<style>
+  :root {
+    --page: #0d0d0d;
+    --card: #1a1a1a;
+    --card-2: #222222;
+    --line: #333333;
+    --text: #e5e5e5;
+    --muted: #999999;
+    --accent: #f16436;
+    --link: #f58a66;
+    --ok: #32a852;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--page); }
+  body {
+    margin: 0;
+    font: 16px/1.6 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+    color: var(--text);
+    background: var(--page);
+  }
+  a { color: var(--link); }
+  .note {
+    background: #2b2110;
+    border-bottom: 1px solid #5c4513;
+    color: #f2d28b;
+    font-size: 14px;
+    padding: 10px 24px;
+    text-align: center;
+  }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---- project header ---- */
+  .project {
+    display: grid;
+    grid-template-columns: 96px 1fr auto;
+    gap: 20px;
+    align-items: center;
+    padding: 28px 0 20px;
+  }
+  .logo {
+    width: 96px; height: 96px; border-radius: 12px;
+    background: #10161d; border: 1px solid var(--line);
+    display: grid; place-items: center;
+  }
+  .project h1 { margin: 0; font-size: 30px; line-height: 1.2; text-wrap: balance; }
+  .byline { color: var(--muted); font-size: 14px; margin-top: 2px; }
+  .summary { margin: 8px 0 0; color: #cfcfcf; max-width: 68ch; }
+  .install {
+    background: var(--accent); color: #fff; border: 0; border-radius: 6px;
+    font: 600 15px/1 inherit; padding: 13px 26px; cursor: default; white-space: nowrap;
+  }
+  .stats { display: flex; flex-wrap: wrap; gap: 8px 22px; color: var(--muted); font-size: 13px; margin-top: 10px; }
+  .stats b { color: var(--text); font-weight: 600; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .chip { background: var(--card-2); border: 1px solid var(--line); border-radius: 999px; padding: 2px 12px; font-size: 12px; color: #cfcfcf; }
+
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+  .tabs span { padding: 12px 18px; font-size: 14px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+  .tabs .on { color: var(--text); border-bottom: 3px solid var(--accent); }
+
+  /* ---- body ---- */
+  .columns { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 32px; padding: 28px 0 80px; }
+  .description { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 32px 36px; min-width: 0; }
+  .description h2 { font-size: 22px; margin: 40px 0 10px; padding-top: 4px; text-wrap: balance; }
+  .description h2:first-child { margin-top: 0; }
+  .description h3 { font-size: 17px; margin: 28px 0 6px; }
+  .description p { margin: 10px 0; max-width: 72ch; }
+  .description ul { margin: 10px 0; padding-left: 22px; max-width: 72ch; }
+  .description li { margin: 5px 0; }
+  .description img { display: block; max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); margin: 16px 0 6px; }
+  .description figure { margin: 18px 0 26px; }
+  .description figcaption { color: var(--muted); font-size: 13px; }
+  .lead { font-size: 18px; color: #f0f0f0; }
+  .pair { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 28px; align-items: start; }
+  .pair img { margin-top: 4px; }
+  code { background: #101010; border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; font: 13px/1.5 Consolas, "Cascadia Mono", monospace; }
+  table { border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+  td, th { text-align: left; padding: 7px 18px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; }
+
+  .side { display: flex; flex-direction: column; gap: 16px; }
+  .box { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; font-size: 14px; }
+  .box h4 { margin: 0 0 10px; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+  .box dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; }
+  .box dt { color: var(--muted); }
+  .box dd { margin: 0; text-align: right; }
+  .todo { color: #f2d28b; }
+
+  @media (max-width: 900px) {
+    .columns { grid-template-columns: 1fr; }
+    .project { grid-template-columns: 72px 1fr; }
+    .logo { width: 72px; height: 72px; }
+    .install { grid-column: 1 / -1; justify-self: start; }
+    .description { padding: 22px 18px; }
+    .pair { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="note">
+  Preview only. This is a mock-up of how the Keepnet description could look on a CurseForge project page.
+  It is not CurseForge, the buttons do nothing, and the wording is a draft for you to edit.
+</div>
+
+<div class="wrap">
+
+  <header class="project">
+    <div class="logo">
+      <img src="logo.png" alt="Keepnet logo: a landing net with a gold fish in it" width="400" height="400" style="width:100%;height:100%;display:block;border-radius:11px">
+    </div>
+    <div>
+      <h1>Keepnet</h1>
+      <div class="byline">By farthing</div>
+      <p class="summary">One-key fishing with a live panel that shows what your catch is worth, session history by zone, and alerts for rare catches.</p>
+      <div class="stats">
+        <span><b>0</b> downloads</span>
+        <span>Created <b class="todo">on release</b></span>
+        <span>Game version <b>1.60.1 (Forever)</b></span>
+      </div>
+      <div class="chips">
+        <span class="chip">Fishing</span>
+        <span class="chip">Professions</span>
+        <span class="chip">Auction &amp; Economy</span>
+      </div>
+    </div>
+    <button class="install" type="button">Install</button>
+  </header>
+
+  <nav class="tabs" aria-label="Project sections (preview)">
+    <span class="on">Description</span><span>Comments</span><span>Files</span><span>Images</span><span>Relations</span>
+  </nav>
+
+  <div class="columns">
+
+    <main class="description">
+
+      <h2>Fish with one key, and see what the catch is worth</h2>
+      <p class="lead">Keepnet is a fishing addon for World of Warcraft: Forever. Equip a fishing pole and one key does the fishing: it casts when the line is in and reels in when it's out. A small panel keeps the score while you fish.</p>
+
+      <figure>
+        <img src="screens/00-in-game.png" alt="The Keepnet live panel and its settings window over the game world" width="2260" height="900">
+        <figcaption>The live panel (left) stays up while a pole is equipped. The window opens with <code>/kn</code>.</figcaption>
+      </figure>
+
+      <h2>The live panel</h2>
+      <div class="pair">
+        <img src="screens/01-live-panel.png" alt="The live panel: zone, fishing skill bar, casts and catches, value and gold per hour, lure, food and gear, and a list of catches with counts and percentages" width="484" height="586">
+        <div>
+          <ul>
+            <li><b>The zone and the skill it asks for.</b> The number in brackets is the Fishing skill that water needs before nothing gets away. Green means you have it, yellow means some fish will get away, red means you can't cast there yet.</li>
+            <li><b>Your Fishing skill</b> as a bar with numbers.</li>
+            <li><b>Casts, catches and empty casts</b> for the session.</li>
+            <li><b>What the catch is worth, and gold per hour,</b> priced from your auction addon and updated every few seconds.</li>
+            <li><b>What's in use:</b> the lure the key applies, your food and your fishing gear, with a button to switch lure-applying on and off.</li>
+            <li><b>Everything caught this session,</b> most first, with each item's count and its share of the catch.</li>
+            <li><b>Splash only / Game audio:</b> one button switches between a loud splash with everything else quiet, and your normal sound.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>One key does the fishing</h2>
+      <ul>
+        <li>Casts when the line is in, reels in when it's out. Only while a fishing pole is equipped, so the key is yours again the moment you put the pole away.</li>
+        <li>Puts a lure on first when there is none: the best one in your bags, or the one you choose.</li>
+        <li>Eats fishing food and uses other items you list (a coin, a toy) when their buff runs out.</li>
+        <li>Puts on fishing gear from your bags with the pole, and puts your own back afterwards.</li>
+        <li>Every cast, lure and reel-in is your own key press. One press, one action.</li>
+      </ul>
+      <figure>
+        <img src="screens/05-gear-food.png" alt="The Gear and food tab" width="1440" height="864">
+        <figcaption>Gear, food and other buff items.</figcaption>
+      </figure>
+
+      <h2>Sessions and history</h2>
+      <p>A session starts with your first cast and ends after a break or when you move to another zone. Each one keeps its time, casts, catches and gold.</p>
+      <figure>
+        <img src="screens/02-session.png" alt="The Session tab: every item caught, with count, price each, total and where the price came from" width="1440" height="864">
+        <figcaption>The running session: every item with its count, price and total.</figcaption>
+      </figure>
+      <figure>
+        <img src="screens/03-history.png" alt="The History tab: one row per session with date, zone, time, casts, catches, gold and gold per hour" width="1440" height="864">
+        <figcaption>History. Click any heading to sort, or pick a zone.</figcaption>
+      </figure>
+      <figure>
+        <img src="screens/04-zones.png" alt="The Zones tab: sessions added up per zone" width="1440" height="864">
+        <figcaption>Zones: where your time earned the most.</figcaption>
+      </figure>
+      <h3>Where do I catch it?</h3>
+      <p>Type part of a fish's name in History and the list becomes the zones you caught it in, the zone where it made up the largest share of your catch first.</p>
+
+      <h2>Rare catches</h2>
+      <p>Keepnet knows 121 catches that are rare and come from fishing: every trophy fish, The 1 Ring and the fish weapons, Message in a Bottle, the tournament fish, bloated fish, the chests of open water and the named coins. Most of them are plain white or grey items, so item quality alone would never flag them.</p>
+      <ul>
+        <li>A sound, a line on screen, a chat line and a highlight on the panel.</li>
+        <li>Tick which kinds you want to hear about.</li>
+        <li>Also alert for any item of a chosen quality, or worth a chosen amount of gold.</li>
+        <li>A different sound for each kind of catch, including sound files of your own.</li>
+      </ul>
+      <figure>
+        <img src="screens/06-alerts.png" alt="The Alerts tab: kinds of rare catch with tick boxes, and a sound for each kind" width="752" height="864">
+        <figcaption>What counts as rare, and how it sounds.</figcaption>
+      </figure>
+
+      <h2>Out of your way</h2>
+      <ul>
+        <li><b>Hide the game's interface while fishing:</b> everything except the live panel, or just the parts you tick. It comes back by itself when you move, when combat starts, or when something needs an answer.</li>
+        <li>Set how solid the panel's background is, down to just its text over the game, and how big the panel is.</li>
+      </ul>
+      <p>Theming is a work in progress.</p>
+
+      <h2>Prices</h2>
+      <p>Gold figures come from the auction addon you choose: Auctionator, TradeSkillMaster, Auctioneer, aux or Oribos Exchange. Grey items, items that bind when picked up and anything without an auction price count at the vendor price. An item with no price at all is left out of the total and shown as "without price", never counted as zero.</p>
+      <figure>
+        <img src="screens/08-settings.png" alt="The Settings tab: fishing key, lures, price source, sound, sessions and live panel options" width="1440" height="864">
+        <figcaption>Settings.</figcaption>
+      </figure>
+
+      <h2>Commands</h2>
+      <table>
+        <tr><th>Command</th><th>What it does</th></tr>
+        <tr><td><code>/kn</code> or <code>/keepnet</code></td><td>Open the window</td></tr>
+        <tr><td><code>/kn new</code></td><td>End the session; a new one starts with your next cast</td></tr>
+        <tr><td><code>/kn panel</code></td><td>Hide or show the live panel</td></tr>
+        <tr><td><code>/kn ui</code></td><td>Hide the game's interface, or bring it back</td></tr>
+        <tr><td><code>/kn demo</code></td><td>Show sample sessions, to try the screens before you have a history</td></tr>
+      </table>
+
+      <h2>Good to know</h2>
+      <ul>
+        <li>Disable other one-key fishing addons while you use Keepnet: they bind the same key and change the same game settings.</li>
+        <li>Your own sound settings and key come back when the pole comes off.</li>
+        <li>Lures and fishing food are recognised from their English tooltips.</li>
+        <li>Auction addons are optional. Without one, everything counts at vendor prices.</li>
+      </ul>
+
+    </main>
+
+    <aside class="side">
+      <div class="box">
+        <h4>About project</h4>
+        <dl>
+          <dt>Created</dt><dd class="todo">on release</dd>
+          <dt>Updated</dt><dd class="todo">on release</dd>
+          <dt>Project ID</dt><dd class="todo">given by CurseForge</dd>
+          <dt>License</dt><dd>MIT License</dd>
+        </dl>
+      </div>
+      <div class="box">
+        <h4>Class &amp; categories</h4>
+        Addons: Fishing (main), Professions, Auction &amp; Economy
+      </div>
+      <div class="box">
+        <h4>Game versions</h4>
+        1.60.1 (Forever)
+      </div>
+      <div class="box">
+        <h4>Optional dependencies</h4>
+        Auctionator
+      </div>
+      <div class="box">
+        <h4>Still to confirm before release</h4>
+        <ul style="margin:0;padding-left:18px">
+          <li>The licence: MIT is the suggestion</li>
+          <li>The wording of this page</li>
+        </ul>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+</body>
+</html>

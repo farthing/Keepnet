@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+# Your own sound files: never committed (they may be someone else's work)
+sounds-local/
+# Raw captures of the game window: they can show other players' names
+media/raw/
+# Built zips and the CurseForge API token: never committed
+dist/
+keys/

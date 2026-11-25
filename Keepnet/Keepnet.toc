@@ -1,0 +1,41 @@
+## Interface: 16001
+## Title: Keepnet
+## Notes: One-key fishing with lures, food and fishing gear, a fishing sound mode, sessions with history by zone, and live gold from your auction addon
+## Author: farthing
+## X-License: MIT
+## X-Curse-Project-ID: 1825443
+## Version: 1.0.0
+## IconTexture: Interface\Icons\INV_Misc_Net_01
+## SavedVariables: KeepnetDB
+## OptionalDeps: EllesmereUI, ElvUI, Auctionator, TradeSkillMaster, Auc-Advanced, aux-forever, RECrystallize, OribosExchange, KeepnetSounds
+## AddonCompartmentFunc: Keepnet_OnAddonCompartmentClick
+
+Util.lua
+Sessions.lua
+Prices.lua
+Waters.lua
+Rares.lua
+Core.lua
+Demo.lua
+Fishing.lua
+Lures.lua
+Buffs.lua
+Gear.lua
+Skill.lua
+Alerts.lua
+HideUI.lua
+Sound.lua
+OneKey.lua
+Updates.lua
+UI\Widgets.lua
+UI\Native.lua
+UI\Adopt.lua
+UI\LivePanel.lua
+UI\MainWindow.lua
+UI\SessionTab.lua
+UI\HistoryTab.lua
+UI\ZonesTab.lua
+UI\GearTab.lua
+UI\AlertsTab.lua
+UI\AppearanceTab.lua
+UI\SettingsTab.lua

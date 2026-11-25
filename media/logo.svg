@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <!-- Keepnet logo. Drawn for this project: no game art in it. -->
+  <defs>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1d3850"/>
+      <stop offset="1" stop-color="#0a1118"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.42" r="0.6">
+      <stop offset="0" stop-color="#4fc3f7" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#4fc3f7" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="mesh" width="38" height="38" patternUnits="userSpaceOnUse" patternTransform="translate(196 150) rotate(45)">
+      <path d="M0 0H38M0 0V38" stroke="#4fc3f7" stroke-width="6" fill="none"/>
+    </pattern>
+    <clipPath id="bag">
+      <path d="M62 150 C66 252 128 338 196 352 C264 338 326 252 330 150 A134 40 0 0 0 62 150 Z"/>
+    </clipPath>
+  </defs>
+
+  <rect width="400" height="400" fill="url(#water)"/>
+  <rect width="400" height="400" fill="url(#glow)"/>
+
+  <g transform="rotate(-9 200 200)">
+    <!-- handle -->
+    <path d="M326 142 L398 84" stroke="#e7b548" stroke-width="20" stroke-linecap="round" fill="none"/>
+    <path d="M326 142 L398 84" stroke="#f6d581" stroke-width="5" stroke-linecap="round" fill="none" transform="translate(-3 -5)"/>
+
+    <!-- the back of the hoop, seen through the opening -->
+    <ellipse cx="196" cy="150" rx="134" ry="40" fill="#0c1a26"/>
+
+    <!-- the catch -->
+    <g transform="translate(186 250) rotate(-24)">
+      <path d="M-62 0 C-40 -34 22 -34 48 0 C22 34 -40 34 -62 0 Z" fill="#ffd100"/>
+      <path d="M40 0 L82 -30 L74 0 L82 30 Z" fill="#ffd100"/>
+      <circle cx="-38" cy="-6" r="6" fill="#0c1a26"/>
+    </g>
+
+    <!-- the net -->
+    <g clip-path="url(#bag)">
+      <rect x="40" y="100" width="320" height="270" fill="url(#mesh)"/>
+    </g>
+    <path d="M62 150 C66 252 128 338 196 352 C264 338 326 252 330 150" stroke="#4fc3f7" stroke-width="10" fill="none" stroke-linecap="round"/>
+
+    <!-- hoop -->
+    <ellipse cx="196" cy="150" rx="134" ry="40" fill="none" stroke="#d8f1fd" stroke-width="13"/>
+  </g>
+</svg>
