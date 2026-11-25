@@ -284,8 +284,10 @@ and while the upload form was open: "add bullet point about searchable character
 
 ## For the next description (written 2026-11-25; the update notice and the searchable sessions are on the site since, see above)
 
-Still not in the description: that every setting and the panel's place are kept per
-character, and new pictures of the History, Zones and Settings tabs.
+Still not on the site: new pictures of the History, Zones and Settings tabs. That every
+setting and the panel's place are kept per character stays out of the description on the
+owner's word (2026-11-25: "the kept per character is actually sort of a given in any
+addon"): don't offer it again.
 
 The description on the site stops at 0.9.9. When 1.0.0 goes up and the owner asks for the
 listing to be brought up to date, it should cover:
