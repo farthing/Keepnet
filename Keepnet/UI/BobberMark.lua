@@ -1,5 +1,6 @@
 -- Keepnet: a mark over your fishing bobber while the line is out, so it is easy to find on the
--- water: a ring in the look's accent colour with a dark middle, and an arrow pointing down at
+-- water: a ring in the look's accent colour round Keepnet's net and fish, on a middle that fades
+-- from green through yellow to red as the line's time runs out, and an arrow pointing down at
 -- the bobber, bobbing gently.
 --
 -- How it finds the bobber: there is no way for an addon to learn where an object is on the
@@ -56,13 +57,19 @@ local body = CreateFrame("Frame", nil, mark)
 body:SetSize(SIZE, SIZE + 18)
 body:SetPoint("BOTTOM", mark, "BOTTOM", 0, 0)
 
+-- The middle: a disc whose colour runs from green to yellow to red as the line's time runs out
+-- (the owner's colours and times), with Keepnet's net and fish on it
 local disc = body:CreateTexture(nil, "BACKGROUND")
 disc:SetTexture(MEDIA .. "BobberDisc")
 disc:SetSize(SIZE, SIZE)
 disc:SetPoint("TOP", body, "TOP", 0, 0)
-disc:SetVertexColor(0, 0, 0, 0.5)
 
-local ring = body:CreateTexture(nil, "ARTWORK")
+local icon = body:CreateTexture(nil, "ARTWORK", nil, 1)
+icon:SetTexture(MEDIA .. "BobberIcon")
+icon:SetSize(SIZE * 0.62, SIZE * 0.62)
+icon:SetPoint("CENTER", disc, "CENTER", 0, 0)
+
+local ring = body:CreateTexture(nil, "ARTWORK", nil, 2)
 ring:SetTexture(MEDIA .. "BobberRing")
 ring:SetSize(SIZE, SIZE)
 ring:SetPoint("TOP", body, "TOP", 0, 0)
@@ -71,7 +78,40 @@ local arrow = body:CreateTexture(nil, "ARTWORK")
 arrow:SetTexture(MEDIA .. "BobberArrow")
 arrow:SetSize(SIZE * 0.5, SIZE * 0.5)
 arrow:SetPoint("BOTTOM", body, "BOTTOM", 0, 0)
-BobberMark.parts = { disc = disc, ring = ring, arrow = arrow } -- (for the tests)
+BobberMark.parts = { disc = disc, icon = icon, ring = ring, arrow = arrow } -- (for the tests)
+
+-- The middle's colour by how long the line has been out, in seconds (the owner, 2026-11-27:
+-- "green for the first 10 seconds, yellow for when it gets to 20, red when it hits 29.9.
+-- gradient fade"). Between two of them the colour fades from one to the next.
+local GREEN, YELLOW, RED = { 0.20, 0.78, 0.25 }, { 1.00, 0.82, 0.10 }, { 0.90, 0.16, 0.12 }
+local STOPS = { { 10, GREEN }, { 20, YELLOW }, { 29.9, RED } }
+local DISC_ALPHA = 0.85
+
+function BobberMark.Colour(seconds)
+    seconds = seconds or 0
+    if seconds <= STOPS[1][1] then return GREEN[1], GREEN[2], GREEN[3] end
+    for i = 2, #STOPS do
+        local from, to = STOPS[i - 1], STOPS[i]
+        if seconds < to[1] then
+            local f = (seconds - from[1]) / (to[1] - from[1])
+            local a, b = from[2], to[2]
+            return a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f, a[3] + (b[3] - a[3]) * f
+        end
+    end
+    return RED[1], RED[2], RED[3]
+end
+
+-- How long the line now out has been in the water
+local function LineSeconds()
+    local from = Fishing.Line()
+    if not from then return 0 end
+    return math.max(0, GetTime() - from)
+end
+
+local function Colour()
+    local r, g, b = BobberMark.Colour(LineSeconds())
+    disc:SetVertexColor(r, g, b, DISC_ALPHA)
+end
 
 local function Tint()
     local accent = W.COLORS.accent
@@ -91,6 +131,7 @@ mark:SetScript("OnUpdate", function(_, elapsed)
     phase = (phase + (elapsed or 0)) % BOB_SECONDS
     body:ClearAllPoints()
     body:SetPoint("BOTTOM", mark, "BOTTOM", 0, BOB * math.sin(phase / BOB_SECONDS * 2 * math.pi))
+    Colour()
 end)
 
 -- ---------------------------------------------------------------------------------------------
@@ -159,6 +200,7 @@ local function Refresh()
     end
     if not mark:IsShown() then
         ApplyScale()
+        Colour()
         mark:Show()
     end
 end

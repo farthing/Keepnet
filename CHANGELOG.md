@@ -3,6 +3,12 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.1.9
+
+- The bobber mark has Keepnet's net and fish in the middle, and the middle's colour tells
+  you how long the line has been out: green for the first 10 seconds, fading to yellow by
+  20 seconds and to red by 29.9.
+
 ## 1.1.8
 
 - The bobber mark now also shows while Keepnet hides the game's whole interface. The game

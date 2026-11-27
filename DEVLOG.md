@@ -13,6 +13,30 @@ replaced by the new ones (delete the old, restore the order). Raise it at the st
 next session. Also still open from before: the lure buying has not bought anything in the
 real game.
 
+**1.1.9 (2026-11-27, about 15:00): the net and fish in the mark, on a colour that runs with
+the line's time. Installed as the development copy; a NEW picture (`Media\BobberIcon.tga`),
+so the game needs a full restart, not /reload. Passes its offline tests; committed and
+tagged.**
+- **The owner (after 1.1.8):** "ok mark is there. i want the addon's icon in the circle. can we
+  progressivly change the background colour in the circle as the line timer runs out? green
+  for the first 10 seconds, yellow for when it gets to 20, red when it hits 29.9. gradient
+  fade if possible".
+- **The icon:** `tools\make_art.py` draws the icon again with `clear=True`, which gives the net
+  and fish with no water and nothing in the hoop's opening, so the colour shows through the
+  net. It writes `BobberIcon.tga` (straight alpha, each dot coloured by its solid part only).
+  - `Icon.tga` came out byte-identical.
+  - It sits at 62 % of the ring, between the disc and the ring.
+- **The colour** (`BobberMark.Colour(seconds)`):
+  - green (0.20, 0.78, 0.25) up to 10 s, fading to yellow (1.00, 0.82, 0.10) at 20 s, then to
+    red (0.90, 0.16, 0.12) at 29.9 s, red after that;
+  - the disc at 85 %;
+  - counted from the channel's start (`Fishing.Line()`), updated every frame with the bob.
+- **Absolute seconds, as the owner said them:** if a line here lasts 20 s, it would never go
+  red. Not measured.
+- **Preview:** I rendered a preview from the real TGA files (scratchpad, not kept): the
+  icon reads on all three colours; the yellow fish is the weakest but keeps its dark edge.
+- **Not seen in the game yet.**
+
 **1.1.8 (2026-11-27, about 14:30): the bobber mark with the interface hidden. Installed as the
 development copy (needs /reload only); passes its offline tests; committed and tagged.**
 - **Seen in the game (the owner, on 1.1.7):** "that shows the mark", "but only when the ui is

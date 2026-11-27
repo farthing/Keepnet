@@ -26,6 +26,8 @@ three for the mark over the fishing bobber (see "bobber mark" below):
     BobberRing.tga     a ring with a soft glow on both sides, 64 dots across
     BobberDisc.tga     a filled circle that sits dark behind the ring, 64 dots across
     BobberArrow.tga    a V pointing down at the bobber, 32 dots across
+    BobberIcon.tga     the icon's net and fish with nothing behind them, in their own colours,
+                       for the middle of the mark (whose colour shows through the net)
 
 and the addon's icon, in its own colours (see "the icon" below):
 
@@ -167,8 +169,10 @@ def turn(x, y, degrees, about=(0, 0)):
             about[1] + x * math.sin(angle) + y * math.cos(angle))
 
 
-def icon(size=ICON_SIZE, samples=ICON_SAMPLES):
-    """The icon as rows of (red, green, blue), top row first."""
+def icon(size=ICON_SIZE, samples=ICON_SAMPLES, clear=False):
+    """The icon as rows of (red, green, blue), top row first. With `clear`, the net and fish
+    alone with nothing behind them (no water, nothing in the hoop's opening), as rows of
+    (red, green, blue, how solid): for the bobber mark, whose colour shows through the net."""
     cx, cy, rx, ry = HOOP
     # The bag: down from the left of the hoop, round the bottom, up to the right, and back
     # over the far side of the hoop
@@ -213,13 +217,13 @@ def icon(size=ICON_SIZE, samples=ICON_SAMPLES):
             if abs((mx + half) % MESH_STEP - half) <= MESH_LINE / 2 or abs((my + half) % MESH_STEP - half) <= MESH_LINE / 2:
                 return MESH
         if out <= 1:
-            return DEEP  # the far side of the hoop, seen through the opening
+            return None if clear else DEEP  # the far side of the hoop, seen through the opening
         if x > HANDLE[0][0] - HANDLE_LINE and y < HANDLE[0][1] + HANDLE_LINE:
             if near(shine, x, y, HANDLE_LINE / 8):
                 return WOOD_LIGHT
             if near(HANDLE, x, y, HANDLE_LINE / 2):
                 return WOOD
-        return back
+        return None if clear else back
 
     vx, vy, span = ICON_VIEW
     rows = []
@@ -227,17 +231,39 @@ def icon(size=ICON_SIZE, samples=ICON_SAMPLES):
         line = []
         for column in range(size):
             total = [0.0, 0.0, 0.0]
+            solid = 0
             for sy in range(samples):
                 for sx in range(samples):
                     x = vx + ((column + (sx + 0.5) / samples) / size - 0.5) * span
                     y = vy + ((row + (sy + 0.5) / samples) / size - 0.5) * span
                     dot = colour(x, y)
+                    if dot is None:
+                        continue
+                    solid += 1
                     total[0] += dot[0]
                     total[1] += dot[1]
                     total[2] += dot[2]
-            line.append(tuple(round(value / (samples * samples)) for value in total))
+            if clear:
+                # The colour of the solid part only (no dark fringe), and how much is solid
+                rgb = tuple(round(value / solid) for value in total) if solid else (0, 0, 0)
+                line.append(rgb + (solid / (samples * samples),))
+            else:
+                line.append(tuple(round(value / (samples * samples)) for value in total))
         rows.append(line)
     return rows
+
+
+def write_rgba(path, rows):
+    """A picture in its own colours that can be see-through: `rows` of (red, green, blue, how
+    solid from 0 to 1)."""
+    size = len(rows)
+    header = struct.pack("<BBBHHBHHHHBB", 0, 0, 2, 0, 0, 0, 0, 0, size, size, 32, 8)
+    body = bytearray()
+    for row in reversed(rows):  # the file starts with the bottom row
+        for red, green, blue, alpha in row:
+            body += bytes((blue, green, red, round(alpha * 255)))
+    path.write_bytes(header + bytes(body))
+    print(path.name, size, "x", size, len(header) + len(body), "bytes")
 
 
 def write_picture(path, rows):
@@ -315,6 +341,8 @@ def main():
     write_tga(MEDIA / "BobberRing.tga", ring(64, 23, 5, 7))
     write_tga(MEDIA / "BobberDisc.tga", disc(64, 21))
     write_tga(MEDIA / "BobberArrow.tga", chevron(32, 6))
+    # Keepnet's net and fish with nothing behind them, for the middle of the bobber mark
+    write_rgba(MEDIA / "BobberIcon.tga", icon(clear=True))
     # (measures across, dots across): four dots to a measure
     for measures, size in ((8, 32), (4, 16)):
         write_tga(MEDIA / ("RoundFill%d.tga" % measures), coverage(size, 0))

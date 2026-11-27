@@ -94,7 +94,7 @@ function T.run(ns)
     local accent = ns.Widgets.COLORS.accent
     local ring = Mark.parts.ring.__vertex
     check(ring and ring[1] == accent[1] and ring[2] == accent[2] and ring[3] == accent[3], "the ring takes the accent colour")
-    eq(Mark.parts.disc.__vertex[1], 0, "its middle is dark, to stand out on bright water")
+    eq(Mark.parts.icon.__texture, "Interface\\AddOns\\Keepnet\\Media\\BobberIcon", "Keepnet's net and fish in the middle")
     check(math.abs(mark.__scale - (Stub.uiScale or 1)) < 1e-9, "at its own size: the interface's scale, as the live panel")
 
     -- It bobs: a quarter of the way through, it is at the top of its bob
@@ -102,6 +102,25 @@ function T.run(ns)
     local body = Mark.parts.ring.__parent
     local at = body.__placed[#body.__placed]
     check(math.abs(at[5] - 4) < 0.01, "the mark bobs up and down")
+
+    -- The middle's colour runs with the line's time: green to 10 s, fading to yellow at 20 s,
+    -- then to red at 29.9 s (the owner's times)
+    local function MiddleAfter(seconds)
+        Stub.advance(seconds)
+        mark:GetScript("OnUpdate")(mark, 0)
+        return Mark.parts.disc.__vertex
+    end
+    local function Is(c, r, g, b)
+        return math.abs(c[1] - r) < 0.01 and math.abs(c[2] - g) < 0.01 and math.abs(c[3] - b) < 0.01
+    end
+    check(Is(MiddleAfter(0), 0.20, 0.78, 0.25), "green as the line goes out")
+    check(Is(MiddleAfter(9.9), 0.20, 0.78, 0.25), "still green just before 10 seconds")
+    check(Is(MiddleAfter(5.1), 0.60, 0.80, 0.175), "half way to yellow at 15 seconds")
+    check(Is(MiddleAfter(5), 1.00, 0.82, 0.10), "yellow at 20")
+    check(Is(MiddleAfter(4.95), 0.95, 0.49, 0.11), "half way to red at 24.95")
+    check(Is(MiddleAfter(4.95), 0.90, 0.16, 0.12), "red at 29.9")
+    check(Is(MiddleAfter(5), 0.90, 0.16, 0.12), "and red after that")
+    eq(Mark.parts.disc.__vertex[4], 0.85, "nearly solid, over the water")
 
     -- The game picks something else: a crate, a sheep, nothing, a hidden value
     Target(CRATE)
