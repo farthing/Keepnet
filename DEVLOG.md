@@ -19,6 +19,15 @@ Newest state first. Read this before working on the addon.
     background 19,23,29, at the owner's word "blank it");
   - `05-gear-food.png` (Bright Baubles, keep 20, floor 4 g, attractors on).
   - No names in either.
+  - `16-bobber-timer.png`: three close-ups at the same crop, labelled "Line just out", "About
+    20 seconds" and "Nearly done (pulsing)", joined side by side. Green and yellow came from
+    single captures; red from a capture run of 19 frames, 2.4 s apart, over one cast
+    (`tools\capture-watch.ps1 -Full -Ticks 1.5 -Seconds 45`), since two "red ready" calls
+    came too late.
+  - `12-interface-hidden.jpg`: frame 13 of that run, scaled to 1920 wide. The orange mark is
+    over the bobber; the panel's strip reads "Line out: 8 s". It replaces the old picture.
+- Still open from the list: a colour blind set on the water (optional), Appearance, the
+  minimap button, the live panel at v1.2.x.
 - Not uploaded yet: the gallery goes up in one batch at the end; delete the old pictures and
   put the order back.
 
