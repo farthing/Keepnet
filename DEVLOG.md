@@ -6,7 +6,9 @@ Newest state first. Read this before working on the addon.
 
 **1.2.6 (2026-11-27, about 17:15): the game's cog under the mark faded. Installed as the
 development copy (/reload); passes its offline tests (`test_bobber_mark.lua` 124 checks);
-committed and tagged; NOT uploaded (1.2.5 is the last on CurseForge).**
+committed and tagged; NOT uploaded (1.2.5 is the last on CurseForge). The owner: "we will
+wait for more changes before pushing updates", so the next upload waits for a batch and covers
+everything after 1.2.5 (`release.py --since 1.2.5`).**
 - **The owner:** "one issue, the game's cog icon is still below our mark. can that be removed?"
 - **How:** while the mark hangs from a plate, `plate.UnitFrame.SoftTargetFrame:SetAlpha(0)` (in
   pcall), applied again at every look (the game may redraw it).
