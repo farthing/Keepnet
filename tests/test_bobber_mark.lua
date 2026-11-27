@@ -206,6 +206,31 @@ function T.run(ns)
     Stub.advance(1.1)
     eq(cvars.SoftTargetIconGameObject, "0", "line in: back")
 
+    -- Keepnet hides the whole interface: the game takes the nameplates with it, so Keepnet
+    -- brings the in-world part back on its own and the mark keeps its plate
+    local s = ns.settings
+    s.hideMode, s.hideAuto = "all", true
+    ns.Fire("SETTINGS")
+    eq(Stub.press(KEY), "cast", "a cast that hides the interface")
+    eq(ns.HideUI.IsActive(), true, "the interface is hidden")
+    eq(Stub.inWorldUI, true, "but the nameplates are back on their own, for the bobber's")
+    Target(BOBBER)
+    check(ns.BobberMark.Shown(), "the bobber is marked with the interface hidden")
+    ns.HideUI.Show()
+    Stub.reel(nil)
+    Stub.advance(1.1)
+    -- With the mark off the nameplates go with the interface, as before
+    s.bobberMark = false
+    ns.Fire("SETTINGS")
+    eq(Stub.press(KEY), "cast", "a cast that hides the interface, mark off")
+    eq(Stub.inWorldUI, false, "mark off: the nameplates are hidden with the interface, as before")
+    ns.HideUI.Show()
+    eq(Stub.inWorldUI, true, "and back with it")
+    Stub.reel(nil)
+    Stub.advance(1.1)
+    s.bobberMark, s.hideMode = true, "off"
+    ns.Fire("SETTINGS")
+
     -- The Appearance tab offers it
     ns.UI.Show("appearance")
     ns.UI.Refresh()

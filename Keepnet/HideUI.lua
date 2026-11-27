@@ -163,6 +163,13 @@ function HideUI.Hide()
             return false
         end
         hiddenAll = true
+        -- The game's switch takes the nameplates with the interface, and the bobber mark hangs
+        -- from the bobber's nameplate. The in-world part (nameplates) comes back on its own
+        -- with SetInWorldUIVisibility, as Blizzard's commentator mode does while the interface
+        -- is hidden. (Only for the mark: it shows the player's other nameplates too.)
+        if ns.settings.bobberMark and SetInWorldUIVisibility then
+            pcall(SetInWorldUIVisibility, true)
+        end
     else
         Fade()
         reapply = C_Timer.NewTicker(REAPPLY_SECONDS, Fade)

@@ -3,6 +3,14 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.1.8
+
+- The bobber mark now also shows while Keepnet hides the game's whole interface. The game
+  hides nameplates along with the interface, and the mark hangs from the bobber's, so with
+  the mark on Keepnet brings the nameplates back on their own. That means your other
+  nameplates (if you have any turned on) show too while the interface is hidden; switch the
+  mark off to have them hidden as before.
+
 ## 1.1.7
 
 - `/kn bobber` says, step by step, why the bobber mark is or isn't showing: the

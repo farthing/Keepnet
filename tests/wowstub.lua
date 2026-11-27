@@ -450,8 +450,17 @@ function SetUIVisibility(visible)
     end
     local was = UIParent.__shown
     UIParent.__shown = visible and true or false
+    -- The interface switch takes the in-world part (nameplates) with it, as in the game
+    Stub.inWorldUI = visible and true or false
     local script = UIParent.__scripts[visible and "OnShow" or "OnHide"]
     if was ~= UIParent.__shown and script then script(UIParent) end
+end
+-- Nameplates and the like on their own, without the interface's frames (Blizzard's commentator
+-- mode turns them back on this way while the interface is hidden)
+Stub.inWorldUI = true
+function SetInWorldUIVisibility(visible)
+    if Stub.lockdown then error("blocked in combat") end
+    Stub.inWorldUI = visible and true or false
 end
 function GetMouseFoci() return { Stub.mouseFocus } end
 function LootSlot(slot) Stub.looted[#Stub.looted + 1] = slot end

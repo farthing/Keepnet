@@ -13,6 +13,37 @@ replaced by the new ones (delete the old, restore the order). Raise it at the st
 next session. Also still open from before: the lure buying has not bought anything in the
 real game.
 
+**1.1.8 (2026-11-27, about 14:30): the bobber mark with the interface hidden. Installed as the
+development copy (needs /reload only); passes its offline tests; committed and tagged.**
+- **Seen in the game (the owner, on 1.1.7):** "that shows the mark", "but only when the ui is
+  visible". So the plate, the anchor and the pictures work on this client.
+- **Why it vanished:** the game's `SetUIVisibility(false)` (Keepnet's "all" hide, and Alt-Z)
+  takes the nameplates with it. Blizzard's own commentator code for this client says so
+  ("UI visibility controls whether nameplates are visible"). It brings them back with
+  `SetInWorldUIVisibility(true)`, which is in this client's API ("enables nameplates, etc.
+  but doesn't affect the actual UI frames").
+- **The fix** (`HideUI.lua`): after an "all" hide, call `SetInWorldUIVisibility(true)` if the
+  mark is on.
+  - The cost: the player's other nameplates show while the interface is hidden. That's in
+    the changelog; switching the mark off restores the old behaviour.
+  - The "parts" hide never touched nameplates.
+  - Not covered: the player's own Alt-Z (Keepnet doesn't call anything then), and turning
+    the mark on while the interface is already hidden.
+- **The stub** now ties in-world visibility to `SetUIVisibility`, and has
+  `SetInWorldUIVisibility`, `IsVisible` and `GetScale`.
+- **1.1.7** (same afternoon): `/kn bobber` reports every step, from the setting to the mark on
+  screen, for when it doesn't show.
+- **Researched for the owner's "can the mark flash or grow when it bobs for a catch":** there
+  is no bite signal for addons on this client.
+  - Blizzard's Forever interface source has no bobber or fishing event, and the soft-target
+    icon is only refreshed on target or plate events.
+  - Mastercraft removed its test "bite" ding ("the game hides where the bobber is").
+  - Campfire Angler's page says addons can't detect a bite.
+  - Classic addons' "bite" flashes were worked out afterwards from the channel stop.
+  - Still "maybe", only an in-game probe can tell: whether the bobber's plate moves with the
+    model's bob, or whether its cursor or icon changes at the splash. Not built; the owner
+    hasn't said whether to.
+
 **1.1.6 (2026-11-27, afternoon): a mark over the bobber. Passes its offline tests (21 files;
 the new `tests\test_bobber_mark.lua` 61 checks), committed and tagged; NOT installed in the
 game yet and NOT uploaded.** The owner: "i think the mastercraft addon's angler function
