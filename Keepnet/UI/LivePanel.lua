@@ -407,7 +407,7 @@ end
 -- ---------------------------------------------------------------------------------------------
 local STRIP_ROW, STRIP_ROWS = 15, 4
 local STRIP_BAR = 13
-local CAME_SECONDS, EMPTY_SECONDS = 8, 3
+local CAME_SECONDS, EMPTY_SECONDS = 10, 3 -- (the catch list stayed 8 s until 1.2.8; the owner: 2 s longer)
 -- What the last cast brought up, as lines to show ({ icon, text }), and until when
 local came = { rows = nil, expires = 0 }
 

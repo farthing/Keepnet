@@ -4,6 +4,13 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.8 (2026-11-27, about 18:20): the strip's catch list stays 10 s (was 8). Installed as the
+development copy (/reload); passes its offline tests; committed and tagged; NOT uploaded (1.2.7 is
+the last on CurseForge, and uploads wait for a batch).** The owner: "i want the loot list to stay
+on screen 2 seconds longer". `CAME_SECONDS` in `UI\LivePanel.lua`; "Nothing on the line" keeps
+its 3 s. The owner also asked whether the list shows counts: it does ("  x2" when more than one,
+nothing for one; three kinds, then "and N more").
+
 **1.2.7 and the new pictures are on CurseForge (2026-11-27, about 18:00; the owner: "push to
 curse"). 1.2.7 approved; 17 pictures in the gallery in order; the description holds them all. See
 `PUBLISHING.md`, "1.2.7 and the new pictures". Nothing is owed on the listing now.**

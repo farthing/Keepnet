@@ -3,6 +3,10 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.8
+
+- What a cast brought up stays on the strip under the live panel for 10 seconds instead of 8.
+
 ## 1.2.7
 
 - A little more room on the Settings tab between the bobber mark's pulse option and "New
