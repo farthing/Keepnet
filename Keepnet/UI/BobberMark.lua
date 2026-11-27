@@ -169,9 +169,30 @@ local function LineSeconds()
     return math.max(0, GetTime() - from)
 end
 
+-- The pulse: from 20 s (when the second colour is reached) the mark swells and its middle
+-- brightens, gently at first and fully by 29.9 s, so the end of the line shows by more than
+-- colour (the Game Accessibility Guidelines' advice; the owner, 2026-11-27: "do the pulse").
+-- 1.5 swells a second, well under the three flashes a second that WCAG 2.3.1 warns about.
+local PULSE_FROM, PULSE_HZ, PULSE_GROW = 20, 1.5, 0.18
+
+-- How much bigger the mark is, and how much brighter its middle, after `seconds` of line
+-- (1 and 0 when it isn't pulsing)
+function BobberMark.Pulse(seconds)
+    seconds = seconds or 0
+    if not (ns.settings and ns.settings.bobberPulse) or seconds < PULSE_FROM then return 1, 0 end
+    local ramp = math.min(1, (seconds - PULSE_FROM) / (STOP_SECONDS[3] - PULSE_FROM))
+    local wave = 0.5 - 0.5 * math.cos((seconds - PULSE_FROM) * PULSE_HZ * 2 * math.pi) -- 0 to 1
+    local strength = (0.4 + 0.6 * ramp) * wave
+    return 1 + PULSE_GROW * strength, strength
+end
+
 local function Colour()
-    local r, g, b = BobberMark.Colour(LineSeconds())
-    disc:SetVertexColor(r, g, b, DISC_ALPHA)
+    local seconds = LineSeconds()
+    local r, g, b = BobberMark.Colour(seconds)
+    local grow, bright = BobberMark.Pulse(seconds)
+    disc:SetVertexColor(r, g, b, DISC_ALPHA + (1 - DISC_ALPHA) * bright)
+    -- (it swells from its foot: the arrow's tip stays at the bobber)
+    body:SetScale(grow)
 end
 
 local function Tint()

@@ -105,6 +105,7 @@ function T.run(ns)
 
     -- The middle's colour runs with the line's time: green to 10 s, fading to yellow at 20 s,
     -- then to red at 29.9 s (the owner's times)
+    settings.bobberPulse = false -- (the colour on its own first; the pulse is below)
     local function MiddleAfter(seconds)
         Stub.advance(seconds)
         mark:GetScript("OnUpdate")(mark, 0)
@@ -121,6 +122,31 @@ function T.run(ns)
     check(Is(MiddleAfter(4.95), 0.90, 0.16, 0.12), "red at 29.9")
     check(Is(MiddleAfter(5), 0.90, 0.16, 0.12), "and red after that")
     eq(Mark.parts.disc.__vertex[4], 0.85, "nearly solid, over the water")
+
+    -- The pulse (on by default): from 20 s the mark swells and its middle brightens, gently at
+    -- first and fully by 29.9 s, 1.5 times a second
+    settings.bobberPulse = true
+    local function Near(a, b) return math.abs(a - b) < 0.001 end
+    check(Near(Mark.Pulse(15), 1), "no pulse before 20 seconds")
+    check(Near(Mark.Pulse(20), 1), "it starts from its own size")
+    local early = Mark.Pulse(20 + 1 / 3)
+    check(early > 1.05 and early < 1.1, "the first swell is gentle")
+    check(Near(Mark.Pulse(20 + 15 / 1.5 + 1 / 3), 1.18), "at the end it swells by 18 %")
+    check(Near(Mark.Pulse(20 + 16 / 1.5), 1), "and back to its size a third of a second later: 1.5 a second")
+    local most = 1
+    for i = 0, 300 do most = math.max(most, (Mark.Pulse(20 + i * 0.05))) end
+    check(most <= 1.1801, "never more than 18 % bigger")
+    local _, bright = Mark.Pulse(20 + 15 / 1.5 + 1 / 3)
+    check(Near(bright, 1), "and its middle fully solid at the top of a swell")
+    -- On the mark itself: the body swells (from its foot, so the arrow stays at the bobber)
+    mark:GetScript("OnUpdate")(mark, 0)
+    local grow = Mark.parts.ring.__parent.__scale
+    check(grow and Near(grow, (Mark.Pulse(Stub.now - ns.Fishing.Line()))), "the mark takes the pulse's size")
+    settings.bobberPulse = false
+    mark:GetScript("OnUpdate")(mark, 0)
+    eq(Mark.parts.ring.__parent.__scale, 1, "switched off: no pulse")
+    eq(Mark.parts.disc.__vertex[4], 0.85, "and the middle as it was")
+    settings.bobberPulse = true
 
     -- The game picks something else: a crate, a sheep, nothing, a hidden value
     Target(CRATE)
@@ -312,6 +338,7 @@ function T.run(ns)
     check(controls ~= nil, "the Settings tab has the bobber mark")
     eq(controls.check:GetChecked(), true, "switched on")
     eq(controls.size.value:GetText(), "100%", "at its own size")
+    eq(controls.pulse:GetChecked(), true, "the pulse is on")
     check(Is(controls.arrow.color.__color, 0.00, 0.63, 0.24), "the arrow's swatch shows green")
     check(Is(controls.stops[3].__color, 0.90, 0.16, 0.12), "the third colour shown is red")
     eq(#Mark2.PaletteChoices(), 6, "off, four colour blind sets, and as the game's")

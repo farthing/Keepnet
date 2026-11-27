@@ -71,11 +71,16 @@ usually easy to tell apart). [E]
     differ by shape. [E]
 - **The player's own circle and arrow colours** (Settings tab) win over any set.
 
-## Not done (suggestions)
+## A cue besides colour
 
-- **A cue besides colour for the last stage:** for example a gentle pulse in size or
-  brightness from 20 s, kept under three flashes a second
-  ([WCAG 2.3.1](https://www.w3.org/WAI/WCAG21/Understanding/three-flashes-or-below-threshold)).
-  Not built: the owner hasn't asked for it.
+**Built in 1.2.2 at the owner's word:** a pulse in the last stage.
+- From 20 s the mark swells by up to 18 % and its middle goes fully solid, 1.5 times a
+  second. That is well under the three flashes a second
+  [WCAG 2.3.1](https://www.w3.org/WAI/WCAG21/Understanding/three-flashes-or-below-threshold)
+  warns about.
+- It starts at 40 % strength and is at full strength by 29.9 s.
+- It can be switched off on the Settings tab.
+
+## Not done
 - **Red and dark middles on blue-green water** have almost no lightness contrast; the ring
   around them keeps them readable. [E]

@@ -32,6 +32,21 @@ replaced by the new ones (delete the old, restore the order). Raise it at the st
 next session. Also still open from before: the lure buying has not bought anything in the
 real game.
 
+**1.2.2 (2026-11-27, about 16:20): the pulse. Installed as the development copy (/reload is
+enough). Passes its offline tests (`test_bobber_mark.lua` 118 checks); committed and tagged.**
+- **The owner:** "do the pulse" (my suggestion in 1.2.1: a cue besides colour for the last
+  stage).
+- **How:** `BobberMark.Pulse(seconds)` returns (size, brightness).
+  - From 20 s: a cosine swell at 1.5 Hz, up to +18 % size and a fully solid middle.
+  - Its strength runs from 40 % at 20 s to 100 % at 29.9 s.
+  - The body (not the anchor) is scaled, so the mark swells from its foot and the arrow's tip
+    stays at the bobber.
+  - It's in the same per-frame update as the bob and the colour.
+- **Setting:** `bobberPulse` (on). The checkbox "Pulse as the line runs out (from 20 seconds)"
+  is on the Settings tab, replacing the note line in the Bobber mark section.
+- **My choices:** the start at 20 s, the speed, the 18 %, the 40 % start, and on by default.
+- **Not seen in the game.**
+
 **1.2.1 (2026-11-27, about 16:00): the mark's colours, colour blind sets, and a Bobber mark
 section on the Settings tab. Installed as the development copy (/reload is enough: no new
 files in the addon). Passes its offline tests (`test_bobber_mark.lua` 107 checks); committed

@@ -403,11 +403,15 @@ local function Build(frame)
         square:SetPoint("TOPLEFT", right + 290 + (i - 1) * 18, ry - 80)
         stops[i] = square
     end
-    local markNote = W.Text(frame, "GameFontDisableSmall",
-        "The middle fades through those three as the line's time runs out.")
-    markNote:SetPoint("TOPLEFT", right, ry - 104)
+    -- (The middle fades through those three as the line's time runs out; this adds a cue
+    -- that isn't colour for the last part)
+    local pulse = W.Check(frame, "Pulse as the line runs out (from 20 seconds)", function(checked)
+        settings.bobberPulse = checked
+        Changed()
+    end)
+    pulse:SetPoint("TOPLEFT", right, ry - 100)
     ns.SettingsBobber = { check = bobber, size = markSize, ring = ringSwatch, arrow = arrowSwatch,
-        palette = palette, stops = stops } -- (for the tests)
+        palette = palette, stops = stops, pulse = pulse } -- (for the tests)
 
     -- ------------------------------------------------------------------ new versions
     ry = ry - 124
@@ -478,6 +482,7 @@ local function Build(frame)
         cut:SetChecked(settings.auctionCut and true or false)
         minimapButton:SetChecked(settings.minimapButton and true or false)
         bobber:SetChecked(settings.bobberMark ~= false)
+        pulse:SetChecked(settings.bobberPulse ~= false)
         local markPercent = math.floor((settings.bobberMarkSize or 1) * 100 + 0.5)
         markSize:Set(markPercent)
         markSize.value:SetText(("%d%%"):format(markPercent))

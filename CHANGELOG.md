@@ -3,6 +3,13 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.2
+
+- The bobber mark pulses as the line runs out: from 20 seconds it swells gently and its
+  middle brightens, more and more until the end, so the end of the line shows by more than
+  colour. It pulses one and a half times a second. Switch it off on the Settings tab ("Pulse
+  as the line runs out").
+
 ## 1.2.1
 
 - The bobber mark's arrow is green.
