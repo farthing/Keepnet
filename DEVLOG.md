@@ -4,6 +4,15 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**Decided 2026-11-27: no cast after the lure.** The owner asked for "apply lure if available,
+after applying, auto cast".
+- A cast by itself isn't possible (protected; one key press, one action) and would be
+  automation.
+- I offered a press queued in the lure's last moments (the game's spell queue) and a "lure on"
+  cue.
+- The owner: "that sounds like it is complicating the addon. my design idea was clean and
+  simple. i think we have achieved that as is." Keep the key as it is; don't propose this again.
+
 **1.2.8 (2026-11-27, about 18:20): the strip's catch list stays 10 s (was 8). Installed as the
 development copy (/reload); passes its offline tests; committed and tagged; NOT uploaded (1.2.7 is
 the last on CurseForge, and uploads wait for a batch).** The owner: "i want the loot list to stay
