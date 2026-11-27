@@ -32,6 +32,11 @@ replaced by the new ones (delete the old, restore the order). Raise it at the st
 next session. Also still open from before: the lure buying has not bought anything in the
 real game.
 
+**1.2.4 (2026-11-27, about 16:35): the mark at 65 %. Installed as the development copy
+(/reload).** The owner, after 1.2.3: "drop more. say 65%".
+- **How:** `mark:SetAlpha(0.65)`. The middle ends up at 0.85 × 0.65 ≈ 0.55, or 0.65 at the
+  top of a pulse.
+
 **1.2.3 (2026-11-27, about 16:30): the mark 10 % see-through. Installed as the development
 copy (/reload).** The owner: "we need a little bit more transparency on the markers. not a
 lot. maybe like 10% more transparent".

@@ -3,6 +3,10 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.4
+
+- The bobber mark is more see-through: 65 % solid, so the water and the bobber show through it.
+
 ## 1.2.3
 
 - The bobber mark is a little see-through (10 %), so the water shows through it.

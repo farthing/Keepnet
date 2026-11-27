@@ -50,7 +50,7 @@ mark:SetFrameStrata("HIGH")
 mark:EnableMouse(false)
 -- The whole mark a little see-through, so the water shows (the owner, 2026-11-27: "a little
 -- bit more transparency on the markers. not a lot. maybe like 10% more transparent")
-mark:SetAlpha(0.9)
+mark:SetAlpha(0.65) -- (0.9 in 1.2.3; "drop more. say 65%")
 mark:Hide()
 BobberMark.frame = mark -- (for the tests)
 
