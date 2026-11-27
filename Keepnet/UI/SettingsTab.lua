@@ -326,43 +326,88 @@ local function Build(frame)
     minimapButton:SetPoint("TOPLEFT", left, y - 134)
     ns.SettingsChecks = { minimap = minimapButton } -- (for the tests)
 
-    -- ------------------------------------------------------------------ live panel
+    -- ------------------------------------------------------------------ bobber mark
+    -- (The live panel's options moved to the Appearance tab in 1.2.1 to make room here)
     ry = ry - 84
-    Heading(frame, "Live panel", right, ry)
-    local lock = W.Check(frame, "Lock the live panel in place", function(checked)
-        settings.panelLocked = checked
+    Heading(frame, "Bobber mark", right, ry)
+    local Mark = ns.BobberMark
+    local bobber = W.Check(frame, "A mark over my bobber while the line is out", function(checked)
+        settings.bobberMark = checked
         Changed()
     end)
-    lock:SetPoint("TOPLEFT", right, ry - 22)
-    local catches = W.Check(frame, "List what was caught this session", function(checked)
-        settings.panelCatches = checked
+    bobber:SetPoint("TOPLEFT", right, ry - 22)
+
+    local markLabel = W.Text(frame, "GameFontHighlightSmall", "Size")
+    markLabel:SetPoint("TOPLEFT", right, ry - 50)
+    local markSize
+    markSize = W.Slider(frame, 110, 60, 200, 10, function(value)
+        markSize.value:SetText(("%d%%"):format(value))
+        settings.bobberMarkSize = value / 100
         Changed()
     end)
-    catches:SetPoint("TOPLEFT", right, ry - 44)
-    local kitCheck = W.Check(frame, "Show the lure, food and gear in use", function(checked)
-        settings.panelKit = checked
+    markSize:SetPoint("TOPLEFT", right + 34, ry - 50)
+
+    -- The circle's and the arrow's colours: a click picks one, a right click goes back to the
+    -- default (which the colour blind choice decides)
+    local function Swatch(label, x, key, what)
+        local text = W.Text(frame, "GameFontHighlightSmall", label)
+        text:SetPoint("TOPLEFT", right + x, ry - 50)
+        local swatch = CreateFrame("Button", nil, frame, "BackdropTemplate")
+        swatch:SetSize(18, 18)
+        swatch:SetPoint("LEFT", text, "RIGHT", 6, 0)
+        W.Skin(swatch, W.COLORS.button, nil, "slot")
+        swatch.color = swatch:CreateTexture(nil, "ARTWORK")
+        swatch.color:SetPoint("TOPLEFT", 2, -2)
+        swatch.color:SetPoint("BOTTOMRIGHT", -2, 2)
+        swatch:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+        swatch:SetScript("OnClick", function(_, button)
+            if button == "RightButton" then
+                settings[key] = nil
+                Changed()
+                UI.Refresh()
+                return
+            end
+            local now = Mark.Colours()[what]
+            W.PickColor(now[1], now[2], now[3], function(r, g, b)
+                settings[key] = { r, g, b }
+                Changed()
+                UI.Refresh()
+            end)
+        end)
+        swatch:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_TOP")
+            GameTooltip:SetText(("Click to pick the %s's colour. Right click: back to the default."):format(what),
+                1, 1, 1, 1, true)
+            GameTooltip:Show()
+        end)
+        swatch:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        return swatch
+    end
+    local ringSwatch = Swatch("Circle", 196, "bobberRingColor", "ring")
+    local arrowSwatch = Swatch("Arrow", 272, "bobberArrowColor", "arrow")
+
+    -- Colour blind colours for the circle, the arrow and the middle's three
+    local paletteLabel = W.Text(frame, "GameFontHighlightSmall", "Colour blind")
+    paletteLabel:SetPoint("TOPLEFT", right, ry - 80)
+    local palette = W.Dropdown(frame, 190, Mark.PaletteChoices, function(value)
+        settings.bobberPalette = value
         Changed()
+        UI.Refresh()
     end)
-    kitCheck:SetPoint("TOPLEFT", right, ry - 66)
-    -- The strip under the panel: the line's time, and what each cast brought up
-    local STRIP_MODES = {
-        { value = "hidden", text = "While the interface is hidden" },
-        { value = "always", text = "Always" },
-        { value = "off", text = "Never" },
-    }
-    local stripLabel = W.Text(frame, "GameFontHighlightSmall", "Line timer and catch")
-    stripLabel:SetPoint("TOPLEFT", right, ry - 92)
-    local strip = W.Dropdown(frame, 210, function() return STRIP_MODES end, function(value)
-        settings.lineStrip = value
-        Changed()
-    end)
-    strip:SetPoint("TOPLEFT", right + 150, ry - 88)
-    strip.modes = STRIP_MODES
-    local reset = W.Button(frame, "Reset panel", 110, 22, function()
-        ns.LivePanel.ResetPosition()
-    end)
-    reset.tooltip = "Put the live panel back in the middle of the screen, at the size it started with."
-    reset:SetPoint("TOPLEFT", right + 250, ry - 24)
+    palette:SetPoint("TOPLEFT", right + 90, ry - 76)
+    -- The middle's three colours with the choice: from the line going out to its end
+    local stops = {}
+    for i = 1, 3 do
+        local square = frame:CreateTexture(nil, "ARTWORK")
+        square:SetSize(14, 14)
+        square:SetPoint("TOPLEFT", right + 290 + (i - 1) * 18, ry - 80)
+        stops[i] = square
+    end
+    local markNote = W.Text(frame, "GameFontDisableSmall",
+        "The middle fades through those three as the line's time runs out.")
+    markNote:SetPoint("TOPLEFT", right, ry - 104)
+    ns.SettingsBobber = { check = bobber, size = markSize, ring = ringSwatch, arrow = arrowSwatch,
+        palette = palette, stops = stops } -- (for the tests)
 
     -- ------------------------------------------------------------------ new versions
     ry = ry - 124
@@ -432,11 +477,19 @@ local function Build(frame)
         zoneSplit:SetChecked(settings.zoneSplit and true or false)
         cut:SetChecked(settings.auctionCut and true or false)
         minimapButton:SetChecked(settings.minimapButton and true or false)
-        lock:SetChecked(settings.panelLocked and true or false)
-        catches:SetChecked(settings.panelCatches and true or false)
-        kitCheck:SetChecked(settings.panelKit and true or false)
-        for _, option in ipairs(strip.modes) do
-            if option.value == (settings.lineStrip or "hidden") then strip:Set(option.value, option.text) end
+        bobber:SetChecked(settings.bobberMark ~= false)
+        local markPercent = math.floor((settings.bobberMarkSize or 1) * 100 + 0.5)
+        markSize:Set(markPercent)
+        markSize.value:SetText(("%d%%"):format(markPercent))
+        local colours = Mark.Colours()
+        ringSwatch.color:SetColorTexture(colours.ring[1], colours.ring[2], colours.ring[3], 1)
+        arrowSwatch.color:SetColorTexture(colours.arrow[1], colours.arrow[2], colours.arrow[3], 1)
+        for i, square in ipairs(stops) do
+            local c = colours.stops[i]
+            square:SetColorTexture(c[1], c[2], c[3], 1)
+        end
+        for _, choice in ipairs(Mark.PaletteChoices()) do
+            if choice.value == (settings.bobberPalette or "normal") then palette:Set(choice.value, choice.text) end
         end
         for _, choice in ipairs(Prices.Choices()) do
             if choice.value == (settings.priceSource or "auto") then source:Set(choice.value, choice.text) end

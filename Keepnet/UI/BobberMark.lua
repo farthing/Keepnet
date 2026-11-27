@@ -75,25 +75,91 @@ arrow:SetSize(SIZE * 0.5, SIZE * 0.5)
 arrow:SetPoint("BOTTOM", body, "BOTTOM", 0, 0)
 BobberMark.parts = { disc = disc, ring = ring, arrow = arrow } -- (for the tests)
 
--- The middle's colour by how long the line has been out, in seconds (the owner, 2026-11-27:
--- "green for the first 10 seconds, yellow for when it gets to 20, red when it hits 29.9.
--- gradient fade"). Between two of them the colour fades from one to the next.
-local GREEN, YELLOW, RED = { 0.20, 0.78, 0.25 }, { 1.00, 0.82, 0.10 }, { 0.90, 0.16, 0.12 }
-local STOPS = { { 10, GREEN }, { 20, YELLOW }, { 29.9, RED } }
+-- The mark's colours. Each set has the circle, the arrow, and the middle's three: the line
+-- going out, half way, nearly done. "normal" is the owner's (2026-11-27: "green for the first
+-- 10 seconds, yellow for when it gets to 20, red when it hits 29.9", the arrow green); the
+-- colour blind sets follow docs/research/colour-blind.md. ring = nil means the look's accent.
+-- The arrow is a darker green than the middle's first colour, or the two would be one at the
+-- start. In the colour blind sets the circle and the arrow are white: a near black arrow is
+-- lost on deep water (contrast about 2:1), and the two differ by shape anyway.
+local WHITE = { 1.00, 1.00, 1.00 }
+local PALETTES = {
+    { key = "normal", name = "Off (green, yellow, red)", ring = nil,
+      arrow = { 0.00, 0.63, 0.24 },
+      stops = { { 0.20, 0.78, 0.25 }, { 1.00, 0.82, 0.10 }, { 0.90, 0.16, 0.12 } } },
+    -- Okabe-Ito sky blue, yellow and vermillion: along the blue-yellow axis red-weak eyes keep
+    { key = "protanopia", name = "Protanopia (red weak)", ring = WHITE, arrow = WHITE,
+      stops = { { 0.34, 0.71, 0.91 }, { 0.94, 0.89, 0.26 }, { 0.84, 0.37, 0.00 } } },
+    -- The same, with a darker vermillion: yellow against vermillion is the weakest pair for
+    -- green-weak eyes
+    { key = "deuteranopia", name = "Deuteranopia (green weak)", ring = WHITE, arrow = WHITE,
+      stops = { { 0.34, 0.71, 0.91 }, { 0.94, 0.89, 0.26 }, { 0.67, 0.24, 0.00 } } },
+    -- Cyan, pink and red: along the red-cyan axis blue-weak eyes keep, never blue against yellow
+    { key = "tritanopia", name = "Tritanopia (blue weak)", ring = WHITE, arrow = WHITE,
+      stops = { { 0.31, 0.82, 0.82 }, { 1.00, 0.63, 0.78 }, { 0.86, 0.08, 0.08 } } },
+    -- Brightness alone: light, mid and dark grey
+    { key = "mono", name = "Monochrome (by brightness)", ring = WHITE, arrow = WHITE,
+      stops = { { 0.78, 0.78, 0.78 }, { 0.50, 0.50, 0.50 }, { 0.22, 0.22, 0.22 } } },
+}
+-- (A last choice, "game", follows the game's own colour blind setting; see Palette below)
+local STOP_SECONDS = { 10, 20, 29.9 }
 local DISC_ALPHA = 0.85
 
+function BobberMark.PaletteChoices()
+    local choices = {}
+    for _, p in ipairs(PALETTES) do choices[#choices + 1] = { value = p.key, text = p.name } end
+    choices[#choices + 1] = { value = "game", text = "As the game's colour blind mode" }
+    return choices
+end
+
+local function ByKey(key)
+    for _, p in ipairs(PALETTES) do
+        if p.key == key then return p end
+    end
+    return PALETTES[1]
+end
+
+-- The game's own colour blind mode (Options, Accessibility), when it has one: which filter
+-- (0 none, 1 protanopia, 2 deuteranopia, 3 tritanopia)
+local GAME_FILTERS = { [1] = "protanopia", [2] = "deuteranopia", [3] = "tritanopia" }
+local function GamePalette()
+    local filter = tonumber(Util.GetCVar("colorblindSimulator") or "")
+    return GAME_FILTERS[filter or 0] or "normal"
+end
+
+-- The set in use
+function BobberMark.Palette()
+    local key = (ns.settings and ns.settings.bobberPalette) or "normal"
+    if key == "game" then key = GamePalette() end
+    return ByKey(key)
+end
+
+-- The colours in use: { ring, arrow, stops = { three } }, the player's own picks first
+function BobberMark.Colours()
+    local p, settings = BobberMark.Palette(), ns.settings or {}
+    local accent = W.COLORS.accent
+    return {
+        ring = settings.bobberRingColor or p.ring or { accent[1], accent[2], accent[3] },
+        arrow = settings.bobberArrowColor or p.arrow,
+        stops = p.stops,
+    }
+end
+
+-- The middle's colour after `seconds` of line: the first colour up to 10 s, fading to the
+-- second at 20 s and to the third at 29.9 s
 function BobberMark.Colour(seconds)
     seconds = seconds or 0
-    if seconds <= STOPS[1][1] then return GREEN[1], GREEN[2], GREEN[3] end
-    for i = 2, #STOPS do
-        local from, to = STOPS[i - 1], STOPS[i]
-        if seconds < to[1] then
-            local f = (seconds - from[1]) / (to[1] - from[1])
-            local a, b = from[2], to[2]
+    local stops = BobberMark.Palette().stops
+    if seconds <= STOP_SECONDS[1] then return stops[1][1], stops[1][2], stops[1][3] end
+    for i = 2, #STOP_SECONDS do
+        if seconds < STOP_SECONDS[i] then
+            local f = (seconds - STOP_SECONDS[i - 1]) / (STOP_SECONDS[i] - STOP_SECONDS[i - 1])
+            local a, b = stops[i - 1], stops[i]
             return a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f, a[3] + (b[3] - a[3]) * f
         end
     end
-    return RED[1], RED[2], RED[3]
+    local last = stops[#stops]
+    return last[1], last[2], last[3]
 end
 
 -- How long the line now out has been in the water
@@ -109,9 +175,9 @@ local function Colour()
 end
 
 local function Tint()
-    local accent = W.COLORS.accent
-    ring:SetVertexColor(accent[1], accent[2], accent[3], 1)
-    arrow:SetVertexColor(accent[1], accent[2], accent[3], 1)
+    local colours = BobberMark.Colours()
+    ring:SetVertexColor(colours.ring[1], colours.ring[2], colours.ring[3], 1)
+    arrow:SetVertexColor(colours.arrow[1], colours.arrow[2], colours.arrow[3], 1)
 end
 
 local function ApplyScale()
@@ -291,6 +357,7 @@ events:SetScript("OnEvent", function() Refresh() end)
 
 Tint()
 ns.On("THEME", Tint)
+ns.On("SETTINGS", Tint) -- (the circle, arrow and colour blind choices)
 ns.On("LINE", BobberMark.Update)
 ns.On("MODE", BobberMark.Update)
 ns.On("COMBAT", BobberMark.Update)

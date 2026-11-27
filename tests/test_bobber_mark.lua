@@ -250,13 +250,77 @@ function T.run(ns)
     s.bobberMark, s.hideMode = true, "off"
     ns.Fire("SETTINGS")
 
-    -- The Appearance tab offers it
-    ns.UI.Show("appearance")
+    -- Its colours: the circle in the accent, the arrow green (the owner's default)
+    local Mark2 = ns.BobberMark
+    local function Is(c, r, g, b)
+        return c and math.abs(c[1] - r) < 0.01 and math.abs(c[2] - g) < 0.01 and math.abs(c[3] - b) < 0.01
+    end
+    local accent2 = ns.Widgets.COLORS.accent
+    check(Is(Mark2.parts.ring.__vertex, accent2[1], accent2[2], accent2[3]), "the circle in the accent colour")
+    check(Is(Mark2.parts.arrow.__vertex, 0.00, 0.63, 0.24), "the arrow green (a darker green than the middle's first)")
+
+    -- The player's own colours, each on its own
+    s.bobberRingColor = { 1, 0, 1 }
+    ns.Fire("SETTINGS")
+    check(Is(Mark2.parts.ring.__vertex, 1, 0, 1), "a circle colour of the player's own")
+    check(Is(Mark2.parts.arrow.__vertex, 0.00, 0.63, 0.24), "the arrow left as it was")
+    s.bobberArrowColor = { 0, 1, 1 }
+    ns.Fire("SETTINGS")
+    check(Is(Mark2.parts.arrow.__vertex, 0, 1, 1), "an arrow colour of the player's own")
+    s.bobberRingColor, s.bobberArrowColor = nil, nil
+    ns.Fire("SETTINGS")
+    check(Is(Mark2.parts.arrow.__vertex, 0.00, 0.63, 0.24), "back to the defaults")
+
+    -- Colour blind colours: the circle, the arrow and the middle's three all change
+    local normal = { Mark2.Colour(0) }
+    for _, choice in ipairs(Mark2.PaletteChoices()) do
+        if choice.value ~= "normal" and choice.value ~= "game" then
+            s.bobberPalette = choice.value
+            ns.Fire("SETTINGS")
+            local start = { Mark2.Colour(0) }
+            local mid = { Mark2.Colour(20) }
+            local finish = { Mark2.Colour(29.9) }
+            check(not Is(start, normal[1], normal[2], normal[3]), choice.text .. ": its own first colour")
+            check(not Is(start, mid[1], mid[2], mid[3]) and not Is(mid, finish[1], finish[2], finish[3]),
+                choice.text .. ": three different colours")
+            local colours = Mark2.Colours()
+            check(Is(Mark2.parts.arrow.__vertex, colours.arrow[1], colours.arrow[2], colours.arrow[3]),
+                choice.text .. ": the arrow in its colour")
+        end
+    end
+    -- The player's own pick still wins over a colour blind set
+    s.bobberPalette, s.bobberArrowColor = "deuteranopia", { 0, 1, 1 }
+    ns.Fire("SETTINGS")
+    check(Is(Mark2.parts.arrow.__vertex, 0, 1, 1), "a picked arrow colour stays with colour blind colours")
+    s.bobberArrowColor = nil
+    -- As the game's own colour blind mode
+    s.bobberPalette = "game"
+    Stub.cvars.colorblindSimulator = "2"
+    ns.Fire("SETTINGS")
+    eq(Mark2.Palette().key, "deuteranopia", "the game's deuteranopia filter: the deuteranopia colours")
+    Stub.cvars.colorblindSimulator = "0"
+    eq(Mark2.Palette().key, "normal", "the game's filter off: the usual colours")
+    Stub.cvars.colorblindSimulator = nil
+    eq(Mark2.Palette().key, "normal", "a game with no such setting: the usual colours")
+    s.bobberPalette = "normal"
+    ns.Fire("SETTINGS")
+
+    -- The Settings tab offers it all (the live panel's options went to Appearance)
+    ns.UI.Show("settings")
     ns.UI.Refresh()
-    local controls = ns.AppearanceBobber
-    check(controls ~= nil, "the Appearance tab has the bobber mark")
+    local controls = ns.SettingsBobber
+    check(controls ~= nil, "the Settings tab has the bobber mark")
     eq(controls.check:GetChecked(), true, "switched on")
     eq(controls.size.value:GetText(), "100%", "at its own size")
+    check(Is(controls.arrow.color.__color, 0.00, 0.63, 0.24), "the arrow's swatch shows green")
+    check(Is(controls.stops[3].__color, 0.90, 0.16, 0.12), "the third colour shown is red")
+    eq(#Mark2.PaletteChoices(), 6, "off, four colour blind sets, and as the game's")
+    -- A right click on a swatch puts the colour back to the default
+    s.bobberArrowColor = { 0, 1, 1 }
+    controls.arrow:GetScript("OnClick")(controls.arrow, "RightButton")
+    eq(s.bobberArrowColor, nil, "a right click: the arrow back to its default")
+    ns.UI.Show("appearance")
+    ns.UI.Refresh()
 
     Stub.equip(nil)
     for _, err in ipairs(Stub.errors) do

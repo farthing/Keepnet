@@ -4,6 +4,25 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**TO DO WITH THE NEXT UPLOAD (the owner, 2026-11-27): the CurseForge description and short
+description must be updated for the bobber mark. Pictures can wait ("media we can worry about
+later").**
+- **The description:** a new bullet point in the feature list at the top, for the bobber mark.
+  Draft: "**A clearer bobber:** a mark over your bobber while the line is out, its middle
+  fading green to yellow to red as the line's 30 seconds run out. Pick the circle's and
+  arrow's colours, or colour blind colours."
+- **The short description (summary)** should mention a clearer bobber. The owner: "our short
+  description is too generic and too like other addon's 'hook'". The TOC's `## Notes` reads
+  the same and should change with it. Drafts for the owner to choose from (not yet shown to
+  them):
+  1. "See your bobber at a glance: a colour-timed mark over it, one-key casting with lures and
+     food, and live gold for every catch."
+  2. "A bobber you can't lose: a mark that counts down the line in colour, plus one-key fishing,
+     auto lures and food, and gold per hour."
+  3. "Never lose your bobber again. Keepnet marks it, times the line in colour, and handles
+     lures, food and gear on one key."
+- Do it through the author site in Chrome as before (`PUBLISHING.md`).
+
 **TO DO, AS SOON AS POSSIBLE (the owner, 2026-11-25: "we can do pictures later, mark as
 asap"): gallery pictures for 1.1.4.** Nothing on the listing shows the lure buying (Gear &
 food tab, "Lures from vendors"), the gear key's button (Settings tab, top row) or the line's
@@ -12,6 +31,43 @@ The existing pictures of the Gear & food and Settings tabs are from before and s
 replaced by the new ones (delete the old, restore the order). Raise it at the start of the
 next session. Also still open from before: the lure buying has not bought anything in the
 real game.
+
+**1.2.1 (2026-11-27, about 16:00): the mark's colours, colour blind sets, and a Bobber mark
+section on the Settings tab. Installed as the development copy (/reload is enough: no new
+files in the addon). Passes its offline tests (`test_bobber_mark.lua` 107 checks); committed
+and tagged.**
+- **The owner:** "change the colour of the arrow to green, add a settings section on the
+  settings tab. to change the colour of both the circle and arrow independently. add a colour
+  blind option for the arrow, circle and the three fading colours. look up what the standard
+  colour blind options are for anything in other games." Then "green, by default".
+- **The layout:** the Settings tab was full. Asked; the owner chose "Swap a section":
+  - the **Live panel** options (lock, catches, kit, line strip, Reset panel) moved to the
+    Appearance tab, right column, where the bobber block was;
+  - the **Bobber mark** section took their place on Settings, right column, between Sessions
+    and New versions.
+  - Rows:
+    - the switch;
+    - Size (a slider 60–200 %), Circle (swatch), Arrow (swatch);
+    - Colour blind (a drop-down) with the three middle colours as squares;
+    - a one-line note.
+  - A swatch click opens the game's colour picker; a right click goes back to the default.
+- **The colours** (`UI\BobberMark.lua`: PALETTES, `Palette()`, `Colours()`, `Colour(s)`):
+  - normal: the owner's green, yellow and red; the circle in the accent; the arrow a darker
+    green (0, 0.63, 0.24), so it doesn't merge with the middle's first green;
+  - protanopia, deuteranopia, tritanopia and monochrome sets;
+  - "game" follows `colorblindSimulator` (1, 2, 3; 0 or missing means normal);
+  - the player's own circle and arrow colours (`bobberRingColor`, `bobberArrowColor`) win
+    over any set.
+  - Research and values: `docs\research\colour-blind.md`, credited in `CREDITS.md`.
+  - **My choice against the agent's advice:** the arrow is white, not near black, in the
+    colour blind sets, because black is lost on deep water.
+- **Not seen in the game:**
+  - the new section's layout (hand-placed: the swatches at right+196 and right+272 might
+    crowd the slider's value);
+  - the colour picker from a swatch;
+  - whether the game's own colour blind filter also recolours the mark (that would be a
+    double correction with "As the game's").
+- **Suggested, not built:** a pulse in the last stage, as a cue besides colour.
 
 **1.2.0 (2026-11-27, about 15:15): the icon out of the mark again. Installed as the
 development copy (/reload is enough: a picture was removed, none added). Passes its offline

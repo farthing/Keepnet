@@ -3,6 +3,19 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.1
+
+- The bobber mark's arrow is green.
+- A **Bobber mark** section on the Settings tab: switch it on or off, its size, and your own
+  colour for the circle and for the arrow (click a swatch to pick, right click for the
+  default).
+- **Colour blind colours** for the whole mark, the circle, the arrow and the middle's three
+  timer colours: Protanopia, Deuteranopia, Tritanopia and Monochrome, or "As the game's colour
+  blind mode", which follows the game's own Colorblind Filter. The three colours in use are
+  shown next to the choice.
+- The live panel's options (lock, catches, gear in use, the line's strip, reset) moved from
+  the Settings tab to the Appearance tab to make room.
+
 ## 1.2.0
 
 - The bobber mark's middle is just its colour again (no icon on it), so the fade from green

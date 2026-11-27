@@ -185,31 +185,48 @@ local function Build(frame)
         settings.windowOpacity, settings.panelOpacity, settings.panelScale = 0.94, 0.94, 1
         settings.glassWindow, settings.glassPanel = W.GLASS_TINT, W.GLASS_TINT
         settings.borders = true
-        settings.bobberMarkSize = 1
         Apply()
     end)
     reset:SetPoint("TOPLEFT", right, ry - 114)
 
-    -- --------------------------------------------------------------------- bobber mark
+    -- ---------------------------------------------------------------------- live panel
+    -- (On the Settings tab until 1.2.1; moved here to make room there for the bobber mark)
     ry = ry - 150
-    Heading(frame, "Bobber mark", right, ry)
-    local bobber = W.Check(frame, "A mark over my bobber while the line is out", function(checked)
-        settings.bobberMark = checked
+    Heading(frame, "Live panel", right, ry)
+    local lock = W.Check(frame, "Lock the live panel in place", function(checked)
+        settings.panelLocked = checked
         ns.Fire("SETTINGS")
     end)
-    bobber:SetPoint("TOPLEFT", right, ry - 22)
-    local markLabel = W.Text(frame, "GameFontHighlightSmall", "Its size")
-    markLabel:SetPoint("TOPLEFT", right, ry - 52)
-    local markSize
-    markSize = W.Slider(frame, 170, 60, 200, 10, function(value)
-        markSize.value:SetText(("%d%%"):format(value))
-        settings.bobberMarkSize = value / 100
+    lock:SetPoint("TOPLEFT", right, ry - 22)
+    local catches = W.Check(frame, "List what was caught this session", function(checked)
+        settings.panelCatches = checked
         ns.Fire("SETTINGS")
     end)
-    markSize:SetPoint("TOPLEFT", right + 90, ry - 52)
-    Note(frame, "In the accent colour. It shows once the game has picked your bobber as what you "
-        .. "would interact with, which is within about 30 yards.", right, ry - 76)
-    ns.AppearanceBobber = { check = bobber, size = markSize } -- (for the tests)
+    catches:SetPoint("TOPLEFT", right, ry - 44)
+    local kitCheck = W.Check(frame, "Show the lure, food and gear in use", function(checked)
+        settings.panelKit = checked
+        ns.Fire("SETTINGS")
+    end)
+    kitCheck:SetPoint("TOPLEFT", right, ry - 66)
+    -- The strip under the panel: the line's time, and what each cast brought up
+    local STRIP_MODES = {
+        { value = "hidden", text = "While the interface is hidden" },
+        { value = "always", text = "Always" },
+        { value = "off", text = "Never" },
+    }
+    local stripLabel = W.Text(frame, "GameFontHighlightSmall", "Line timer and catch")
+    stripLabel:SetPoint("TOPLEFT", right, ry - 92)
+    local strip = W.Dropdown(frame, 210, function() return STRIP_MODES end, function(value)
+        settings.lineStrip = value
+        ns.Fire("SETTINGS")
+    end)
+    strip:SetPoint("TOPLEFT", right + 150, ry - 88)
+    strip.modes = STRIP_MODES
+    local resetPanel = W.Button(frame, "Reset panel", 110, 22, function()
+        ns.LivePanel.ResetPosition()
+    end)
+    resetPanel.tooltip = "Put the live panel back in the middle of the screen, at the size it started with."
+    resetPanel:SetPoint("TOPLEFT", right + 250, ry - 24)
 
     -- ------------------------------------------------- hiding the game's interface
     y = y - 144
@@ -307,10 +324,12 @@ local function Build(frame)
         local scalePercent = math.floor((settings.panelScale or 1) * 100 + 0.5)
         scale:Set(scalePercent)
         scale.value:SetText(("%d%%"):format(scalePercent))
-        bobber:SetChecked(settings.bobberMark ~= false)
-        local markPercent = math.floor((settings.bobberMarkSize or 1) * 100 + 0.5)
-        markSize:Set(markPercent)
-        markSize.value:SetText(("%d%%"):format(markPercent))
+        lock:SetChecked(settings.panelLocked and true or false)
+        catches:SetChecked(settings.panelCatches and true or false)
+        kitCheck:SetChecked(settings.panelKit and true or false)
+        for _, option in ipairs(strip.modes) do
+            if option.value == (settings.lineStrip or "hidden") then strip:Set(option.value, option.text) end
+        end
     end
 end
 
