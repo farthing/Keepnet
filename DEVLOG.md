@@ -26,8 +26,30 @@ Newest state first. Read this before working on the addon.
     came too late.
   - `12-interface-hidden.jpg`: frame 13 of that run, scaled to 1920 wide. The orange mark is
     over the bobber; the panel's strip reads "Line out: 8 s". It replaces the old picture.
-- Still open from the list: a colour blind set on the water (optional), Appearance, the
-  minimap button, the live panel at v1.2.x.
+  - `07-appearance.png` (v1.2.6 in its corner): look and colours, hiding the interface,
+    backgrounds, size, and the Live panel block in its new place.
+- **The owner settled the rest:** "we don't need media for colour blind, we can add text to the
+  description page to indicate this. also, just mention the map icon." The live panel picture
+  was not retaken.
+- **The description** (`media/curseforge-description.html`):
+  - a "Colour blind colours" point in the bobber section naming each set;
+  - a "A minimap button" point in the feature list;
+  - the bobber timer picture with a caption under the bobber section;
+  - the Appearance picture after the interface-hidden one, whose caption now mentions the
+    timer and the mark;
+  - new alt texts for Gear & food, Settings and the hidden interface.
+  - **Five pictures wait as `@@name@@` placeholders:** 05-gear-food, 07-appearance,
+    08-settings, 12-interface-hidden, 16-bobber-timer. `tools/description.py` refuses until
+    they have the gallery's addresses.
+- **The upload batch (when the owner says to push):**
+  1. Add the five pictures to the gallery, with titles; feature the bobber timer.
+  2. Delete the three old ones they replace (05, 08, 12; the owner said yes to that pattern
+     before, and the "clean up replaced images" rule applies).
+  3. Put the gallery order back with the new ones in their places.
+  4. Fill the placeholders with the new addresses, run `description.py`, and put the
+     description on the site.
+  5. Upload 1.2.7 (the changelog covers 1.2.6 and 1.2.7: the cog faded, the Settings
+     spacing).
 - Not uploaded yet: the gallery goes up in one batch at the end; delete the old pictures and
   put the order back.
 
