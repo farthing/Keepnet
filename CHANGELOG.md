@@ -3,6 +3,10 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.3
+
+- The bobber mark is a little see-through (10 %), so the water shows through it.
+
 ## 1.2.2
 
 - The bobber mark pulses as the line runs out: from 20 seconds it swells gently and its

@@ -61,6 +61,7 @@ function T.run(ns)
     eq(settings.bobberMarkSize, 1, "at its own size")
     check(not mark:IsShown(), "nothing shows with no line out")
     eq(mark:GetParent(), WorldFrame, "it lives under the world frame, so hiding the interface leaves it")
+    eq(mark:GetAlpha(), 0.9, "the whole mark a little see-through (10 %)")
     eq(cvars.SoftTargetIconGameObject, "0", "the game's settings are the player's own before a cast")
 
     -- The line goes out: the game is asked to give the bobber a nameplate

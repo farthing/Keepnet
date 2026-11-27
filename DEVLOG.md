@@ -32,6 +32,13 @@ replaced by the new ones (delete the old, restore the order). Raise it at the st
 next session. Also still open from before: the lure buying has not bought anything in the
 real game.
 
+**1.2.3 (2026-11-27, about 16:30): the mark 10 % see-through. Installed as the development
+copy (/reload).** The owner: "we need a little bit more transparency on the markers. not a
+lot. maybe like 10% more transparent".
+- **How:** `mark:SetAlpha(0.9)` on the whole mark. The ring, the arrow and the middle all
+  lose 10 %; the middle is 0.85 × 0.9, or up to 0.9 at the top of a pulse.
+- **Not a setting.**
+
 **1.2.2 (2026-11-27, about 16:20): the pulse. Installed as the development copy (/reload is
 enough). Passes its offline tests (`test_bobber_mark.lua` 118 checks); committed and tagged.**
 - **The owner:** "do the pulse" (my suggestion in 1.2.1: a cue besides colour for the last

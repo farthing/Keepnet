@@ -48,6 +48,9 @@ local mark = CreateFrame("Frame", nil, WorldFrame)
 mark:SetSize(SIZE, SIZE + 18)
 mark:SetFrameStrata("HIGH")
 mark:EnableMouse(false)
+-- The whole mark a little see-through, so the water shows (the owner, 2026-11-27: "a little
+-- bit more transparency on the markers. not a lot. maybe like 10% more transparent")
+mark:SetAlpha(0.9)
 mark:Hide()
 BobberMark.frame = mark -- (for the tests)
 
