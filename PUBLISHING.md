@@ -367,6 +367,44 @@ push to curse".
 - **Pictures are still owed** from 1.1.4 (lure buying, the gear key's button, the line's
   strip); a picture with the minimap button in it could go up with them.
 
+## 1.2.5 (2026-11-27, about 17:00)
+
+The owner, with the 65 % bobber mark in their game: "that... is MUCH better. push to curse with
+bullets updated. the new short description".
+
+- **Keepnet 1.2.5 uploaded** as the tenth file (`dist/Keepnet-1.2.5.zip`, 49 files, 384 KB,
+  built from the project without the development mark), through the author site in Chrome
+  as before:
+  - release, 1.60.1, Auctionator optional (copied by the form from 1.1.5), published
+    automatically once approved, display name "Keepnet 1.2.5";
+  - the file field kept on the page by replacing `HTMLInputElement.prototype.click` for a
+    moment, the zip given to it with the browser tool's file upload.
+  - **Its changelog on the site** is written for the site (`dist/changelog-1.2.5-site.html`,
+    not tracked): "A bobber you can always see" and "Its settings", covering 1.1.6 to 1.2.5
+    as a whole. No player had the steps in between.
+  - "Uploading", then "Under Review" two minutes later. **The last version on CurseForge is
+    now 1.2.5**; the next upload's changelog starts after it (`release.py --since 1.2.5`).
+- **The summary (short description)** went from "One-key fishing with a live panel that shows
+  what your catch is worth, session history by zone, and alerts for rare catches." to "Fish
+  smarter: see which zones your skill can fish, search every catch by character, spot your
+  bobber at a glance, and pick your own sounds."
+  - The owner chose it from four drafts, after saying the bobber should be one point among
+    zones with skill requirements, searchable history per character and customisable sounds.
+  - The TOC's `## Notes` (the line in the game's addon list) is the same text since 1.2.5.
+  - Saved; read back after a reload.
+- **The description** (`media/curseforge-description.html`, put in through a temporary file
+  field and `tinymce.get()[0].setContent`):
+  - the opening note is "New in 1.2: a bobber you can always see…";
+  - the feature list has "A bobber you can always see" after the gear key;
+  - a new section of the same name stands before "Out of your way". It says plainly that
+    Keepnet turns on the game's soft target settings while the line is out, puts them back
+    after, and keeps the nameplates showing while the whole interface is hidden.
+  - "Changes saved successfully"; read back after a reload.
+- **No new pictures** ("media we can worry about later"). The gallery shows no bobber mark,
+  and the Settings tab picture still shows the Live panel options there (they're on the
+  Appearance tab since 1.2.1).
+- The source on GitHub is at the same commit, tagged `v1.2.5`.
+
 ### Waiting for the next upload (written 2026-11-25, night; done with 1.1.4, see above)
 
 `media\curseforge-description.html` is ahead of the site: it has what 1.0.2 to 1.0.8 add

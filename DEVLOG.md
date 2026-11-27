@@ -4,9 +4,20 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
-**TO DO WITH THE NEXT UPLOAD (the owner, 2026-11-27): the CurseForge description and short
-description must be updated for the bobber mark. Pictures can wait ("media we can worry about
-later").**
+**1.2.5 is on CurseForge (uploaded 2026-11-27, about 17:00; "Under Review" when last
+looked), with the description and the new summary; see `PUBLISHING.md`, "1.2.5".** The owner,
+after trying the 65 % mark: "that... is MUCH better. push to curse with bullets updated. the
+new short description".
+- The summary is "Fish smarter: see which zones your skill can fish, search every catch by
+  character, spot your bobber at a glance, and pick your own sounds." The owner picked it
+  from four drafts built on their points: zones with skill requirements, searchable history
+  per character, visible bobber, customisable sounds. It is also the TOC's `## Notes` since
+  1.2.5.
+- **Still owed:** pictures of the bobber mark, and a new Settings/Appearance tab picture.
+  Also the older 1.1.4 pictures, see below.
+
+**DONE with 1.2.5 (kept for the wording): the CurseForge description and short description
+updated for the bobber mark.**
 - **The description:** a new bullet point in the feature list at the top, for the bobber mark.
   Draft: "**A clearer bobber:** a mark over your bobber while the line is out, its middle
   fading green to yellow to red as the line's 30 seconds run out. Pick the circle's and
