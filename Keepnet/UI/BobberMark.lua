@@ -23,7 +23,8 @@ ns.BobberMark = BobberMark
 local BOBBER = 35591          -- the Fishing Bobber's game object ID
 local MEDIA = "Interface\\AddOns\\Keepnet\\Media\\"
 local SIZE = 44               -- the ring, before the player's size setting
-local RISE = 20               -- above the nameplate's top, clear of the game's own small icon
+local RISE = 6                -- above the nameplate's top (20 until 1.2.6, to clear the game's own
+                              -- small icon, which is now faded while the mark is up)
 local BOB, BOB_SECONDS = 4, 1.4
 local CHECK_SECONDS = 0.25    -- how often to look again while the line is out
 
@@ -267,9 +268,44 @@ local function Wanted()
     return settings and settings.bobberMark and ns.fishing and not ns.inCombat and Fishing.LineOut() or false
 end
 
+-- The game's own small icon (a cog) on the bobber's plate sits under the mark (the owner,
+-- 2026-11-27: "the game's cog icon is still below our mark. can that be removed?"). It is
+-- faded to nothing while the mark hangs from that plate, and given back its own opacity as
+-- soon as the mark leaves it (the plate is then the game's again, and plates are re-used).
+-- Only its opacity is changed; nothing of the game's is hooked or replaced. Mastercraft and
+-- OneCast fade the same icon on this client.
+local faded -- { frame = the game's icon frame, alpha = what it had }
+
+local function GameIcon(plate)
+    local unitFrame = plate and plate.UnitFrame
+    if type(unitFrame) ~= "table" or Util.Hidden(unitFrame) then return nil end
+    local icon = unitFrame.SoftTargetFrame
+    if type(icon) ~= "table" or Util.Hidden(icon) or not icon.SetAlpha then return nil end
+    return icon
+end
+
+local function GiveIconBack()
+    if not faded then return end
+    pcall(faded.frame.SetAlpha, faded.frame, faded.alpha)
+    faded = nil
+end
+
+local function FadeIcon(plate)
+    local icon = GameIcon(plate)
+    if not icon then return GiveIconBack() end
+    if not faded or faded.frame ~= icon then
+        GiveIconBack()
+        local ok, alpha = pcall(icon.GetAlpha, icon)
+        faded = { frame = icon, alpha = (ok and type(alpha) == "number" and not Util.Hidden(alpha)) and alpha or 1 }
+    end
+    -- (again every look: the game may set it back when it redraws the icon)
+    pcall(icon.SetAlpha, icon, 0)
+end
+
 local function HideMark()
     mark:Hide()
     pinned = nil
+    GiveIconBack()
 end
 
 -- Looks for the bobber's nameplate and hangs the mark from it
@@ -283,6 +319,7 @@ local function Refresh()
         if not pcall(mark.SetPoint, mark, "BOTTOM", plate, "TOP", 0, RISE) then return HideMark() end
         pinned = plate
     end
+    FadeIcon(plate)
     if not mark:IsShown() then
         ApplyScale()
         Colour()

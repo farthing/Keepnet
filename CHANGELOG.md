@@ -3,6 +3,12 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.6
+
+- The game's own small cog icon no longer shows under the bobber mark: Keepnet fades it
+  while the mark is up and gives it back after. The mark sits a little lower, closer to the
+  bobber.
+
 ## 1.2.5
 
 - Keepnet's line in the game's addon list says what it does: "Fish smarter: see which zones

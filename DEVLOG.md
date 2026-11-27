@@ -4,6 +4,23 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.6 (2026-11-27, about 17:15): the game's cog under the mark faded. Installed as the
+development copy (/reload); passes its offline tests (`test_bobber_mark.lua` 124 checks);
+committed and tagged; NOT uploaded (1.2.5 is the last on CurseForge).**
+- **The owner:** "one issue, the game's cog icon is still below our mark. can that be removed?"
+- **How:** while the mark hangs from a plate, `plate.UnitFrame.SoftTargetFrame:SetAlpha(0)` (in
+  pcall), applied again at every look (the game may redraw it).
+  - Its own alpha is saved first and given back when the mark leaves that plate (another
+    target, no target, line in, combat, logout), since plates are re-used.
+  - Mastercraft and OneCast fade the same frame on this client.
+- **Chose this over** `SoftTargetNameplateSize` 0 (a game setting that turns the icon off),
+  because it isn't known whether the plate stays without the icon, and the mark needs the
+  plate.
+- **The mark sits lower:** 6 above the plate's top instead of 20.
+- **Not seen in the game:** whether the fade holds; the agents' code reading says the game
+  only redraws the icon on target or plate events, and Keepnet re-fades every 0.25 s anyway.
+  Also whether the lower height looks right.
+
 **1.2.5 is on CurseForge (uploaded 2026-11-27, about 17:00; "Under Review" when last
 looked), with the description and the new summary; see `PUBLISHING.md`, "1.2.5".** The owner,
 after trying the 65 % mark: "that... is MUCH better. push to curse with bullets updated. the

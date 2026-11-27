@@ -35,6 +35,10 @@ end
 local function Target(guid, listOnly)
     local plate = CreateFrame("Frame", nil, WorldFrame)
     plate.namePlateUnitToken = "nameplate3"
+    -- The game's own small soft target icon (a cog), at an opacity of its own
+    plate.UnitFrame = CreateFrame("Frame", nil, plate)
+    plate.UnitFrame.SoftTargetFrame = CreateFrame("Frame", nil, plate.UnitFrame)
+    plate.UnitFrame.SoftTargetFrame:SetAlpha(0.8)
     Stub.soft.guid, Stub.soft.plate, Stub.soft.token, Stub.soft.listOnly = guid, plate, "nameplate3", listOnly or false
     Stub.fire("NAME_PLATE_UNIT_ADDED", "nameplate3")
     Stub.fire("PLAYER_SOFT_INTERACT_CHANGED", nil, guid)
@@ -91,7 +95,8 @@ function T.run(ns)
     eq(placed[1], "BOTTOM", "it hangs by its foot")
     eq(placed[2], plate, "from the bobber's nameplate")
     eq(placed[3], "TOP", "above the plate")
-    check(placed[5] > 0, "clear of the game's own small icon")
+    check(placed[5] > 0 and placed[5] < 10, "just above the plate (the game's own icon is faded, so it can sit low)")
+    eq(plate.UnitFrame.SoftTargetFrame:GetAlpha(), 0, "the game's cog under the mark is faded to nothing")
     local accent = ns.Widgets.COLORS.accent
     local ring = Mark.parts.ring.__vertex
     check(ring and ring[1] == accent[1] and ring[2] == accent[2] and ring[3] == accent[3], "the ring takes the accent colour")
@@ -150,8 +155,11 @@ function T.run(ns)
     settings.bobberPulse = true
 
     -- The game picks something else: a crate, a sheep, nothing, a hidden value
+    local bobberPlate = Stub.soft.plate
     Target(CRATE)
     check(not mark:IsShown(), "a crate as the target: no mark")
+    eq(bobberPlate.UnitFrame.SoftTargetFrame:GetAlpha(), 0.8, "the bobber's plate gets its own icon opacity back")
+    eq(Stub.soft.plate.UnitFrame.SoftTargetFrame:GetAlpha(), 0.8, "and the crate's icon is left alone")
     Target(BOBBER)
     check(mark:IsShown(), "back on the bobber")
     Target(SHEEP)
@@ -176,8 +184,11 @@ function T.run(ns)
     check(mark:IsShown(), "and the bobber again")
 
     -- The line comes in: the mark goes and the game's settings come back
+    local lastPlate = Stub.soft.plate
+    eq(lastPlate.UnitFrame.SoftTargetFrame:GetAlpha(), 0, "(the cog faded while marked)")
     Stub.reel({ { id = EEL, count = 1 } })
     check(not mark:IsShown(), "the line is in: no mark")
+    eq(lastPlate.UnitFrame.SoftTargetFrame:GetAlpha(), 0.8, "the game's cog back as it was")
     eq(cvars.SoftTargetIconGameObject, "0", "the player's icon setting is back")
     eq(cvars.SoftTargetNameplateInteract, "0", "and the nameplate setting")
     eq(cvars.SoftTargetInteract, "0", "and the interact setting")
