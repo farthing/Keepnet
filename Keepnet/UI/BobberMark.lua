@@ -185,6 +185,66 @@ function BobberMark.Shown()
     return mark:IsShown() and true or false
 end
 
+-- /kn bobber: every step from the setting to the mark on screen, for when it doesn't show
+local function Say(value)
+    if value == nil then return "none" end
+    if Util.Hidden(value) then return "hidden by the game" end
+    return tostring(value)
+end
+
+function BobberMark.Report()
+    local settings = ns.settings or {}
+    local lines = {}
+    local function Add(text) lines[#lines + 1] = text end
+    Add(("setting: %s, size %d%%"):format(settings.bobberMark and "on" or "off",
+        math.floor((settings.bobberMarkSize or 1) * 100 + 0.5)))
+    Add(("pole on: %s, in combat: %s, line out: %s, so wanted: %s, looking every %.2f s: %s"):format(
+        tostring(ns.fishing), tostring(ns.inCombat), tostring(Fishing.LineOut()), tostring(Wanted()),
+        CHECK_SECONDS, tostring(ticker ~= nil)))
+    local values = {}
+    for _, entry in ipairs(CVARS) do values[#values + 1] = entry[1]:gsub("SoftTarget", "") .. "=" .. Say(Util.GetCVar(entry[1])) end
+    Add("game settings: " .. table.concat(values, " "))
+    local guid
+    if UnitGUID then
+        local ok, value = pcall(UnitGUID, "softinteract")
+        guid = ok and value or ("error: " .. tostring(value))
+    end
+    Add(("soft interact target: %s, is the bobber: %s"):format(Say(guid), tostring(BobberMark.IsBobberTarget())))
+    local direct
+    if C_NamePlate and C_NamePlate.GetNamePlateForUnit then
+        local ok, plate = pcall(C_NamePlate.GetNamePlateForUnit, "softinteract")
+        direct = ok and plate or nil
+        Add(("its nameplate (asked for directly): %s"):format(ok and Say(plate) or ("error: " .. tostring(plate))))
+    else
+        Add("its nameplate: this client has no C_NamePlate.GetNamePlateForUnit")
+    end
+    local count = 0
+    if C_NamePlate and C_NamePlate.GetNamePlates then
+        local ok, plates = pcall(C_NamePlate.GetNamePlates)
+        if ok and type(plates) == "table" then count = #plates end
+    end
+    local found = BobberMark.Plate()
+    Add(("nameplates in sight: %d, the one found: %s%s"):format(count, Say(found),
+        found and found ~= direct and " (from the list)" or ""))
+    if found and found.GetCenter then
+        local ok, x, y = pcall(found.GetCenter, found)
+        Add(("  where it is: %s"):format(ok and (Say(x) .. ", " .. Say(y)) or ("error: " .. tostring(x))))
+        local okShown, shown = pcall(found.IsVisible, found)
+        Add(("  visible: %s"):format(okShown and Say(shown) or "unknown"))
+    end
+    Add(("mark: shown %s, hangs from %s, scale %.2f"):format(tostring(mark:IsShown()),
+        pinned and "that plate" or "nothing", mark:GetScale() or 0))
+    if mark:IsShown() then
+        local ok, x, y = pcall(mark.GetCenter, mark)
+        Add(("  where it is: %s"):format(ok and (Say(x) .. ", " .. Say(y)) or ("error: " .. tostring(x))))
+    end
+    if Util.IsAddOnLoaded("EllesmereUINameplates") then
+        Add("EllesmereUI Nameplates is loaded: it replaces the game's nameplates")
+    end
+    Util.Print("Bobber mark:")
+    for _, line in ipairs(lines) do DEFAULT_CHAT_FRAME:AddMessage("  " .. line) end
+end
+
 -- The game's own news about the soft target and nameplates
 local events = CreateFrame("Frame")
 for _, event in ipairs({ "PLAYER_SOFT_INTERACT_CHANGED", "NAME_PLATE_UNIT_ADDED", "NAME_PLATE_UNIT_REMOVED" }) do

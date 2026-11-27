@@ -75,6 +75,17 @@ function T.run(ns)
     -- The bobber lands and becomes the target
     local plate = Target(BOBBER)
     check(mark:IsShown(), "the bobber is the target: the mark shows")
+
+    -- /kn bobber tells every step
+    local before = #Stub.chat
+    SlashCmdList.KEEPNET("bobber")
+    local said = table.concat(Stub.chat, "\n", before + 1)
+    check(said:find("setting: on", 1, true), "/kn bobber: the setting")
+    check(said:find("line out: true", 1, true), "the line")
+    check(said:find("35591", 1, true) and said:find("is the bobber: true", 1, true), "the target, and that it is the bobber")
+    check(said:find("IconGameObject=1", 1, true), "the game's settings")
+    check(said:find("mark: shown true, hangs from that plate", 1, true), "and the mark")
+
     local placed = mark.__placed[#mark.__placed]
     eq(placed[1], "BOTTOM", "it hangs by its foot")
     eq(placed[2], plate, "from the bobber's nameplate")

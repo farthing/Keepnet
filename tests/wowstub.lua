@@ -257,6 +257,7 @@ function Methods:EnableMouseWheel(on) self.__wheel = on and true or false end
 function Methods:EnableKeyboard(on) self.__keyboard = on end
 function Methods:SetShown(shown) if shown then self:Show() else self:Hide() end end
 function Methods:IsShown() return self.__shown end
+function Methods:IsVisible() return Stub.visible(self) end
 function Methods:SetText(text) self.__text = text end
 function Methods:GetText() return self.__text end
 function Methods:GetStringWidth() return #tostring(self.__text or "") * 6 end
@@ -305,6 +306,7 @@ function Methods:GetFont()
 end
 function Methods:SetFontObject(font) self.__fontObject = font end
 function Methods:SetScale(scale) self.__scale = scale end
+function Methods:GetScale() return self.__scale or 1 end
 function Methods:GetLeft() return 400 end
 -- The middle of a frame, in its own measure: where a test puts it in frame.__center
 function Methods:GetCenter()

@@ -546,6 +546,13 @@ SlashCmdList["KEEPNET"] = function(message)
             Util.Print(ns.MinimapButton.Toggle() and "The minimap button is back."
                 or "The minimap button is hidden. /kn minimap brings it back.")
         end
+    elseif command == "bobber" then
+        if ns.BobberMark then
+            ns.BobberMark.Report()
+        else
+            Util.Print("The bobber mark didn't load: there was an error in its file. Turn on "
+                .. "/console scriptErrors 1 and /reload to see it.")
+        end
     elseif command == "help" then
         Util.Print("/kn opens the window. /kn new starts a new session. /kn panel shows or "
             .. "hides the live panel. /kn reset puts the panel back in the middle at the size it "

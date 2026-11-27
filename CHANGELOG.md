@@ -3,6 +3,12 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.1.7
+
+- `/kn bobber` says, step by step, why the bobber mark is or isn't showing: the
+  setting, the line, the game's soft target settings, what the game has as the soft
+  target, its nameplate, and the mark.
+
 ## 1.1.6
 
 - A mark over your bobber while the line is out: a ring in your accent colour with a dark
