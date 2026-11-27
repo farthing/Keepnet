@@ -13,6 +13,17 @@ replaced by the new ones (delete the old, restore the order). Raise it at the st
 next session. Also still open from before: the lure buying has not bought anything in the
 real game.
 
+**1.2.0 (2026-11-27, about 15:15): the icon out of the mark again. Installed as the
+development copy (/reload is enough: a picture was removed, none added). Passes its offline
+tests; committed and tagged.**
+- **The owner, after trying 1.1.9:** "maybe remove the icon, if the colour can just fade
+  between the three that would be nice".
+- **What changed:**
+  - The middle is the coloured disc alone; the fade is unchanged (it already faded).
+  - `Media\BobberIcon.tga` is deleted, and `make_art.py` no longer writes it.
+    `icon(clear=True)` and `write_rgba` stay, with a note.
+- **Version:** 1.1.9 → 1.2.0 (as 1.0.9 → 1.1.0).
+
 **1.1.9 (2026-11-27, about 15:00): the net and fish in the mark, on a colour that runs with
 the line's time. Installed as the development copy; a NEW picture (`Media\BobberIcon.tga`),
 so the game needs a full restart, not /reload. Passes its offline tests; committed and

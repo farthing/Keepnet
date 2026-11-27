@@ -94,7 +94,7 @@ function T.run(ns)
     local accent = ns.Widgets.COLORS.accent
     local ring = Mark.parts.ring.__vertex
     check(ring and ring[1] == accent[1] and ring[2] == accent[2] and ring[3] == accent[3], "the ring takes the accent colour")
-    eq(Mark.parts.icon.__texture, "Interface\\AddOns\\Keepnet\\Media\\BobberIcon", "Keepnet's net and fish in the middle")
+    eq(Mark.parts.icon, nil, "the middle is the colour alone (no icon on it)")
     check(math.abs(mark.__scale - (Stub.uiScale or 1)) < 1e-9, "at its own size: the interface's scale, as the live panel")
 
     -- It bobs: a quarter of the way through, it is at the top of its bob

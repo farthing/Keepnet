@@ -1,7 +1,6 @@
 -- Keepnet: a mark over your fishing bobber while the line is out, so it is easy to find on the
--- water: a ring in the look's accent colour round Keepnet's net and fish, on a middle that fades
--- from green through yellow to red as the line's time runs out, and an arrow pointing down at
--- the bobber, bobbing gently.
+-- water: a ring in the look's accent colour round a middle that fades from green through yellow
+-- to red as the line's time runs out, and an arrow pointing down at the bobber, bobbing gently.
 --
 -- How it finds the bobber: there is no way for an addon to learn where an object is on the
 -- screen. So while the line is out the game is asked (SoftTarget.lua) to make the bobber its
@@ -58,18 +57,14 @@ body:SetSize(SIZE, SIZE + 18)
 body:SetPoint("BOTTOM", mark, "BOTTOM", 0, 0)
 
 -- The middle: a disc whose colour runs from green to yellow to red as the line's time runs out
--- (the owner's colours and times), with Keepnet's net and fish on it
+-- (the owner's colours and times). (1.1.9 had Keepnet's net and fish on it; the owner
+-- preferred the colour alone.)
 local disc = body:CreateTexture(nil, "BACKGROUND")
 disc:SetTexture(MEDIA .. "BobberDisc")
 disc:SetSize(SIZE, SIZE)
 disc:SetPoint("TOP", body, "TOP", 0, 0)
 
-local icon = body:CreateTexture(nil, "ARTWORK", nil, 1)
-icon:SetTexture(MEDIA .. "BobberIcon")
-icon:SetSize(SIZE * 0.62, SIZE * 0.62)
-icon:SetPoint("CENTER", disc, "CENTER", 0, 0)
-
-local ring = body:CreateTexture(nil, "ARTWORK", nil, 2)
+local ring = body:CreateTexture(nil, "ARTWORK")
 ring:SetTexture(MEDIA .. "BobberRing")
 ring:SetSize(SIZE, SIZE)
 ring:SetPoint("TOP", body, "TOP", 0, 0)
@@ -78,7 +73,7 @@ local arrow = body:CreateTexture(nil, "ARTWORK")
 arrow:SetTexture(MEDIA .. "BobberArrow")
 arrow:SetSize(SIZE * 0.5, SIZE * 0.5)
 arrow:SetPoint("BOTTOM", body, "BOTTOM", 0, 0)
-BobberMark.parts = { disc = disc, icon = icon, ring = ring, arrow = arrow } -- (for the tests)
+BobberMark.parts = { disc = disc, ring = ring, arrow = arrow } -- (for the tests)
 
 -- The middle's colour by how long the line has been out, in seconds (the owner, 2026-11-27:
 -- "green for the first 10 seconds, yellow for when it gets to 20, red when it hits 29.9.

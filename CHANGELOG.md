@@ -3,6 +3,11 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.0
+
+- The bobber mark's middle is just its colour again (no icon on it), so the fade from green
+  to yellow to red is easy to read at a glance.
+
 ## 1.1.9
 
 - The bobber mark has Keepnet's net and fish in the middle, and the middle's colour tells

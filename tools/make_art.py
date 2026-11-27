@@ -26,8 +26,6 @@ three for the mark over the fishing bobber (see "bobber mark" below):
     BobberRing.tga     a ring with a soft glow on both sides, 64 dots across
     BobberDisc.tga     a filled circle that sits dark behind the ring, 64 dots across
     BobberArrow.tga    a V pointing down at the bobber, 32 dots across
-    BobberIcon.tga     the icon's net and fish with nothing behind them, in their own colours,
-                       for the middle of the mark (whose colour shows through the net)
 
 and the addon's icon, in its own colours (see "the icon" below):
 
@@ -341,8 +339,9 @@ def main():
     write_tga(MEDIA / "BobberRing.tga", ring(64, 23, 5, 7))
     write_tga(MEDIA / "BobberDisc.tga", disc(64, 21))
     write_tga(MEDIA / "BobberArrow.tga", chevron(32, 6))
-    # Keepnet's net and fish with nothing behind them, for the middle of the bobber mark
-    write_rgba(MEDIA / "BobberIcon.tga", icon(clear=True))
+    # (1.1.9 also wrote BobberIcon.tga, the net and fish alone, for the middle of the mark:
+    # `write_rgba(MEDIA / "BobberIcon.tga", icon(clear=True))`. The owner preferred the colour
+    # alone, so it is no longer made; icon(clear=True) and write_rgba stay for another use.)
     # (measures across, dots across): four dots to a measure
     for measures, size in ((8, 32), (4, 16)):
         write_tga(MEDIA / ("RoundFill%d.tga" % measures), coverage(size, 0))
