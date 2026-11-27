@@ -4,7 +4,11 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
-**Pictures under way (2026-11-27, from about 17:20; the owner: "let's do media").**
+**1.2.7 and the new pictures are on CurseForge (2026-11-27, about 18:00; the owner: "push to
+curse"). 1.2.7 approved; 17 pictures in the gallery in order; the description holds them all. See
+`PUBLISHING.md`, "1.2.7 and the new pictures". Nothing is owed on the listing now.**
+
+**Pictures (2026-11-27, from about 17:20; the owner: "let's do media"). DONE.**
 - The list agreed:
   1. the bobber mark close up at green, yellow and red (joined into one picture);
   2. the mark with the interface hidden and the panel's strip (replaces `12-interface-hidden`);
@@ -106,8 +110,8 @@ updated for the bobber mark.**
      lures, food and gear on one key."
 - Do it through the author site in Chrome as before (`PUBLISHING.md`).
 
-**TO DO, AS SOON AS POSSIBLE (the owner, 2026-11-25: "we can do pictures later, mark as
-asap"): gallery pictures for 1.1.4.** Nothing on the listing shows the lure buying (Gear &
+**DONE 2026-11-27 (was: TO DO AS SOON AS POSSIBLE, gallery pictures for 1.1.4): the Gear & food
+and Settings pictures were retaken and the line's strip shows in the interface-hidden one.** Nothing on the listing shows the lure buying (Gear &
 food tab, "Lures from vendors"), the gear key's button (Settings tab, top row) or the line's
 strip under the live panel (a cast with the interface hidden, and one with a catch listed).
 The existing pictures of the Gear & food and Settings tabs are from before and should be

@@ -405,6 +405,53 @@ bullets updated. the new short description".
   Appearance tab since 1.2.1).
 - The source on GitHub is at the same commit, tagged `v1.2.5`.
 
+## 1.2.7 and the new pictures (2026-11-27, about 18:00)
+
+The owner: "push to curse".
+
+- **Keepnet 1.2.7 uploaded** as the eleventh file (`dist/Keepnet-1.2.7.zip`, 49 files, 384 KB, no
+  development mark), as before: release, 1.60.1, Auctionator optional (copied from 1.2.5),
+  display name "Keepnet 1.2.7". Its changelog is two points: the cog faded under the mark, and
+  the Settings spacing. **"Approved" within about ten minutes. The last version on CurseForge
+  is now 1.2.7** (`release.py --since 1.2.7` next).
+- **Gallery: 17 pictures.** Five were added, in one go through the "Add media" dialog's
+  "Upload or Drag Image" file field (it takes several files):
+  - `2284/290` "The bobber mark: the line's time at a glance" (featured);
+  - `2284/291` "Gear & food, and lures bought from vendors";
+  - `2284/292` "Settings, with the bobber mark's options";
+  - `2284/293` "The interface hidden: the panel, its line timer and the bobber mark"
+    (featured);
+  - `2284/294` "Appearance: looks, colours, size and the live panel".
+  - Titles and stars were set in the edit dialog, stepping with its arrow; wait for Apply
+    to grey out before stepping, or a "discard changes?" box comes up.
+- **Four old pictures deleted** (the clean-up rule): `2265/896` Gear & food, `2271/922`
+  Settings, `2267/450` the interface hidden, and `2272/275` an older Appearance picture that
+  was in the gallery but not in the description.
+  - The bin only appears on hover: hover the card first, then click about 25 px in from its
+    right edge and 26 down from its top (CSS px; screenshot coordinates are those × 1120 /
+    innerWidth).
+  - It asks "Delete media … OK" in the page itself (no browser pop-up).
+- **Order put back** with "Reorder gallery":
+  - in the game, live panel, **bobber timer**, session, history, zones, **gear & food**,
+    alerts, **settings**, find a fish, zone session, panel lists, **interface hidden**,
+    **appearance**, Windows 95, Glass, rounded.
+  - **Reload before reordering:** right after the deletes, the reorder list still held the
+    four deleted pictures (the stale copies).
+  - It is a dnd-kit list: focus the item (`li.sortable-screenshot-element`), Space to pick
+    up, the arrow keys (three columns: Up is three places), Space to drop, then Done.
+    Reliable where dragging blind isn't.
+- **The logo trap:** the General tab's "Upload image" (the project logo) stays in the page.
+  A script that grabs the first file field behind an "Upload…" button gets the logo's. Use
+  the gallery's own field (the multiple one behind "Add media", "Upload or Drag Image").
+  Nothing went into the logo.
+- **Description:**
+  - the five placeholders filled with the new addresses (`description.py`: 14 pictures);
+  - put in through a temporary file field and `setContent`;
+  - "Changes saved successfully". The first reload still showed the old text (stale); the
+    one 20 s later showed the new one.
+- Screenshots of the author site often time out in this browser; reading the page with
+  scripts worked throughout.
+
 ### Waiting for the next upload (written 2026-11-25, night; done with 1.1.4, see above)
 
 `media\curseforge-description.html` is ahead of the site: it has what 1.0.2 to 1.0.8 add
