@@ -21,6 +21,12 @@ window, 4 for a button); the border is one measure thick in both, which is why t
 are two pictures and not one drawn at two sizes. Edges are smoothed by measuring how much of
 each dot the shape covers.
 
+three for the mark over the fishing bobber (see "bobber mark" below):
+
+    BobberRing.tga     a ring with a soft glow on both sides, 64 dots across
+    BobberDisc.tga     a filled circle that sits dark behind the ring, 64 dots across
+    BobberArrow.tga    a V pointing down at the bobber, 32 dots across
+
 and the addon's icon, in its own colours (see "the icon" below):
 
     Icon.tga           64 dots across: the addon list, the minimap button, the addon menu
@@ -246,8 +252,69 @@ def write_picture(path, rows):
     print(path.name, size, "x", size, len(header) + len(body), "bytes")
 
 
+# -------------------------------------------------------------------------------- bobber mark
+# The mark that hangs over the bobber (BobberMark.lua): a ring with a soft glow, a disc to sit
+# dark behind it, and an arrow pointing down at the bobber. White on nothing, so the mark takes
+# the look's accent colour. Plain geometry, nothing taken from anywhere.
+def supersample(size, value):
+    """Each dot's average of value(x, y) over SAMPLES x SAMPLES points inside it."""
+    rows = []
+    for y in range(size):
+        row = []
+        for x in range(size):
+            total = 0.0
+            for sy in range(SAMPLES):
+                for sx in range(SAMPLES):
+                    total += value(x + (sx + 0.5) / SAMPLES, y + (sy + 0.5) / SAMPLES)
+            row.append(total / (SAMPLES * SAMPLES))
+        rows.append(row)
+    return rows
+
+
+def ring(size, radius, width, glow):
+    """A ring `width` dots thick at `radius` from the centre, with a glow fading over `glow`
+    dots on both sides of it."""
+    c = size / 2
+
+    def value(px, py):
+        edge = abs(math.hypot(px - c, py - c) - radius) - width / 2
+        if edge <= 0:
+            return 1.0
+        if edge < glow:
+            return 0.45 * (1 - edge / glow) ** 2
+        return 0.0
+    return supersample(size, value)
+
+
+def disc(size, radius):
+    c = size / 2
+    return supersample(size, lambda px, py: 1.0 if math.hypot(px - c, py - c) <= radius else 0.0)
+
+
+def segment_distance(px, py, a, b):
+    ax, ay = a
+    bx, by = b
+    dx, dy = bx - ax, by - ay
+    t = max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)))
+    return math.hypot(px - (ax + t * dx), py - (ay + t * dy))
+
+
+def chevron(size, line):
+    """A V pointing down, its strokes `line` dots thick with round ends."""
+    left, tip, right = (size * 0.18, size * 0.28), (size * 0.5, size * 0.72), (size * 0.82, size * 0.28)
+
+    def value(px, py):
+        d = min(segment_distance(px, py, left, tip), segment_distance(px, py, tip, right))
+        return 1.0 if d <= line / 2 else 0.0
+    return supersample(size, value)
+
+
 def main():
     MEDIA.mkdir(exist_ok=True)
+    # The bobber mark: ring and disc 64 dots across, the arrow 32
+    write_tga(MEDIA / "BobberRing.tga", ring(64, 23, 5, 7))
+    write_tga(MEDIA / "BobberDisc.tga", disc(64, 21))
+    write_tga(MEDIA / "BobberArrow.tga", chevron(32, 6))
     # (measures across, dots across): four dots to a measure
     for measures, size in ((8, 32), (4, 16)):
         write_tga(MEDIA / ("RoundFill%d.tga" % measures), coverage(size, 0))

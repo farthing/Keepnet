@@ -62,6 +62,8 @@ local DEFAULTS = {
     updates = true,       -- hear from other players' copies when a newer Keepnet is out (Updates.lua)
     minimapButton = true, -- Keepnet's button on the minimap (Minimap.lua)
     minimapAngle = 190,   -- where on the minimap's edge it sits: degrees, 0 at the right, towards the top
+    bobberMark = true,    -- a mark over the bobber while the line is out (UI\BobberMark.lua)
+    bobberMarkSize = 1,   -- its size, 0.6 to 2
 }
 
 -- The sound for each kind of rare catch: green, blue, purple (and better), and "worth gold"

@@ -185,9 +185,31 @@ local function Build(frame)
         settings.windowOpacity, settings.panelOpacity, settings.panelScale = 0.94, 0.94, 1
         settings.glassWindow, settings.glassPanel = W.GLASS_TINT, W.GLASS_TINT
         settings.borders = true
+        settings.bobberMarkSize = 1
         Apply()
     end)
     reset:SetPoint("TOPLEFT", right, ry - 114)
+
+    -- --------------------------------------------------------------------- bobber mark
+    ry = ry - 150
+    Heading(frame, "Bobber mark", right, ry)
+    local bobber = W.Check(frame, "A mark over my bobber while the line is out", function(checked)
+        settings.bobberMark = checked
+        ns.Fire("SETTINGS")
+    end)
+    bobber:SetPoint("TOPLEFT", right, ry - 22)
+    local markLabel = W.Text(frame, "GameFontHighlightSmall", "Its size")
+    markLabel:SetPoint("TOPLEFT", right, ry - 52)
+    local markSize
+    markSize = W.Slider(frame, 170, 60, 200, 10, function(value)
+        markSize.value:SetText(("%d%%"):format(value))
+        settings.bobberMarkSize = value / 100
+        ns.Fire("SETTINGS")
+    end)
+    markSize:SetPoint("TOPLEFT", right + 90, ry - 52)
+    Note(frame, "In the accent colour. It shows once the game has picked your bobber as what you "
+        .. "would interact with, which is within about 30 yards.", right, ry - 76)
+    ns.AppearanceBobber = { check = bobber, size = markSize } -- (for the tests)
 
     -- ------------------------------------------------- hiding the game's interface
     y = y - 144
@@ -285,6 +307,10 @@ local function Build(frame)
         local scalePercent = math.floor((settings.panelScale or 1) * 100 + 0.5)
         scale:Set(scalePercent)
         scale.value:SetText(("%d%%"):format(scalePercent))
+        bobber:SetChecked(settings.bobberMark ~= false)
+        local markPercent = math.floor((settings.bobberMarkSize or 1) * 100 + 0.5)
+        markSize:Set(markPercent)
+        markSize.value:SetText(("%d%%"):format(markPercent))
     end
 end
 

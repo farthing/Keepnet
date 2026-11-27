@@ -769,6 +769,7 @@ Stub.cvars = {
     Sound_DialogVolume = "1", Sound_EnableErrorSpeech = "1", Sound_EnableEmoteSounds = "1",
     Sound_EnablePetSounds = "1", Sound_EnableSoundWhenGameIsInBG = "0",
     SoftTargetInteract = "0", SoftTargetInteractArc = "0", SoftTargetInteractRange = "10",
+    SoftTargetIconGameObject = "0", SoftTargetNameplateInteract = "0",
 }
 local SECURE = { SoftTargetInteract = true, SoftTargetInteractArc = true, SoftTargetInteractRange = true }
 

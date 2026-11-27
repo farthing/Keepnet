@@ -87,29 +87,14 @@ button:SetScript("PreClick", function(self, _, down)
 end)
 
 -- ---------------------------------------------------------------------------------------------
--- The interact settings
+-- The interact settings (shared with the bobber mark: SoftTarget.lua saves and restores them)
 -- ---------------------------------------------------------------------------------------------
 local function EnableInteract()
-    local backup = ns.db.interactBackup or {}
-    for _, entry in ipairs(INTERACT_CVARS) do
-        local name, least, wanted = entry[1], entry[2], entry[3]
-        local current = Util.GetCVar(name)
-        if current ~= nil and (tonumber(current) or 0) < least then
-            if backup[name] == nil then backup[name] = current end
-            -- Saved before the change, so a crash can still be undone at next login
-            ns.db.interactBackup = backup
-            Util.SetCVar(name, wanted)
-        end
-    end
+    ns.SoftTarget.Want("key", INTERACT_CVARS)
 end
 
 local function RestoreInteract()
-    local backup = ns.db.interactBackup
-    if not backup then return end
-    for name, value in pairs(backup) do
-        Util.SetCVar(name, value)
-    end
-    ns.db.interactBackup = nil
+    ns.SoftTarget.Release("key")
 end
 
 -- ---------------------------------------------------------------------------------------------

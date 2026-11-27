@@ -13,6 +13,60 @@ replaced by the new ones (delete the old, restore the order). Raise it at the st
 next session. Also still open from before: the lure buying has not bought anything in the
 real game.
 
+**1.1.6 (2026-11-27, afternoon): a mark over the bobber. Passes its offline tests (21 files;
+the new `tests\test_bobber_mark.lua` 61 checks), committed and tagged; NOT installed in the
+game yet and NOT uploaded.** The owner: "i think the mastercraft addon's angler function
+places an icon over the fishing bobber to make it more visible. i would like something like
+that in keepnet" (researched with four agents first).
+- **How** (`Keepnet\UI\BobberMark.lua`, new):
+  - While the line is out, the game is asked for `SoftTargetInteract` 3, arc 2, range 30,
+    `SoftTargetIconGameObject` 1 and `SoftTargetNameplateInteract` 1. The bobber becomes the
+    soft interact target with a nameplate.
+  - Keepnet's own frame (under WorldFrame, so the hidden interface keeps it) is anchored to
+    that plate. The plate comes from `C_NamePlate.GetNamePlateForUnit("softinteract")`, or by
+    `UnitIsUnit(token, "softinteract")` over `GetNamePlates()`.
+  - The target counts as the bobber when its GUID is `GameObject-…-35591-…`, checked with
+    `Util.Hidden` first.
+  - Refreshed on `PLAYER_SOFT_INTERACT_CHANGED`, `NAME_PLATE_UNIT_ADDED`/`REMOVED` and a
+    0.25 s ticker.
+  - Blizzard's plate parts are never touched (taint); the game's own small gear icon still
+    shows under the mark.
+- **The mark** (pictures drawn by `tools\make_art.py`, white and tinted):
+  - `Media\BobberRing.tga` in the accent colour (re-tinted on THEME);
+  - `BobberDisc.tga` dark at 50 % behind it;
+  - `BobberArrow.tga` pointing down;
+  - 44 measures, 20 above the plate's top, bobbing 4 measures every 1.4 s.
+- **The soft-target settings are shared now** (`Keepnet\SoftTarget.lua`, new):
+  - `Want(who, list)` / `Release(who)` for the key ("key") and the mark ("mark");
+  - the same `interactBackup` in the saved data as before;
+  - a setting is put back only once nothing wants it;
+  - a refused restore (combat) keeps its saved value for a later try (before, it was
+    dropped).
+  - `OneKey.lua` calls it; its behaviour is unchanged (all its old tests pass).
+  - **New behaviour:** with the mark on, Keepnet raises `SoftTargetInteract` while the line
+    is out even with no fishing key set.
+- **Settings:** `bobberMark` (on) and `bobberMarkSize` (1, from 0.6 to 2). They are on the
+  Appearance tab, right column, a new "Bobber mark" block under Size. The Settings tab was
+  full. The looks reset button also puts the size back.
+- **My choices, not the owner's:** on by default; the look (ring, dark disc, arrow, bob); its
+  size and height; where the setting sits.
+- **Credits:** Mastercraft (Shadowblade, all rights reserved) for the idea. Nothing of its
+  code or media was used: its licence forbids copying. Also CorpseBeacon (MIT), Rubber Ducky,
+  OneCast and Plumber for the method, and Lueur for the reset note. All in `CREDITS.md` and
+  the file's header.
+- **NOT seen in the game, all of it.** The facts behind it come from other addons' code and
+  Blizzard's interface source for this client, not from a test here:
+  - whether the plate appears for the bobber at all with these settings (Rubber Ducky's
+    notes say only within about 10 yards on Forever);
+  - where the plate's top sits above the bobber, so whether 20 is the right height;
+  - whether `SetPoint` to the plate is ever refused;
+  - whether the plate stays while the interface is hidden;
+  - how the mark looks on the water.
+- **Next:** the owner installs the development copy (`tools\install.ps1`). It has three new
+  pictures and two new Lua files, so the game needs a full restart, not /reload. Then they
+  fish and say how it looks. No upload until the owner says so; the changelog for the next
+  upload starts after 1.1.5.
+
 **1.1.5 is on CurseForge (uploaded 2026-11-25, about 22:10; "Uploading" when last looked)
 and on GitHub (`main`, tag `v1.1.5`).** The owner, after restarting the game with the
 development copy: "works well, push to curse". What went up and how is in `PUBLISHING.md`,

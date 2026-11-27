@@ -4,7 +4,7 @@
 ## Author: farthing
 ## X-License: MIT
 ## X-Curse-Project-ID: 1825443
-## Version: 1.1.5
+## Version: 1.1.6
 ## IconTexture: Interface\AddOns\Keepnet\Media\Icon
 ## SavedVariables: KeepnetDB
 ## OptionalDeps: EllesmereUI, Auctionator, TradeSkillMaster, Auc-Advanced, aux-forever, RECrystallize, OribosExchange, KeepnetSounds
@@ -28,6 +28,7 @@ Skill.lua
 Alerts.lua
 HideUI.lua
 Sound.lua
+SoftTarget.lua
 OneKey.lua
 Updates.lua
 Minimap.lua
@@ -37,6 +38,7 @@ UI\Adopt.lua
 UI\Round.lua
 UI\Retro.lua
 UI\LivePanel.lua
+UI\BobberMark.lua
 UI\MainWindow.lua
 UI\SessionTab.lua
 UI\HistoryTab.lua

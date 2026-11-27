@@ -3,6 +3,17 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.1.6
+
+- A mark over your bobber while the line is out: a ring in your accent colour with a dark
+  middle and an arrow pointing down at the bobber, bobbing gently, so the bobber is easy to
+  find on the water. It shows once the game has picked your bobber as the thing you would
+  interact with, which is within about 30 yards. For that, Keepnet turns on the game's soft
+  target settings for game objects while the line is out (even without a fishing key) and
+  puts your own settings back when the line comes in, at combat and at logout. Switch it off
+  or change its size on the Appearance tab ("Bobber mark"). It also stays when Keepnet hides
+  the game's interface.
+
 ## 1.1.5
 
 - Keepnet has a button on the minimap. A left click opens or closes the window, a right
