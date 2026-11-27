@@ -3,6 +3,11 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.7
+
+- A little more room on the Settings tab between the bobber mark's pulse option and "New
+  versions".
+
 ## 1.2.6
 
 - The game's own small cog icon no longer shows under the bobber mark: Keepnet fades it

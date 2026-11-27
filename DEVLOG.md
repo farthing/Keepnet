@@ -4,6 +4,28 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**Pictures under way (2026-11-27, from about 17:20; the owner: "let's do media").**
+- The list agreed:
+  1. the bobber mark close up at green, yellow and red (joined into one picture);
+  2. the mark with the interface hidden and the panel's strip (replaces `12-interface-hidden`);
+  3. a colour blind set on the water (optional);
+  4. Settings (redo);
+  5. Gear & food with "Lures from vendors" (redo);
+  6. optional: Appearance, the minimap button, the live panel at v1.2.x.
+- **Done so far** (taken in the Keepnet theme, cut with `tools\cut.ps1`, from captures in
+  `media\raw`):
+  - `media\screens\08-settings.png` (1.2.6; the New versions note's last sentence "This is a
+    development copy: it listens and never announces." painted over with the window's own
+    background 19,23,29, at the owner's word "blank it");
+  - `05-gear-food.png` (Bright Baubles, keep 20, floor 4 g, attractors on).
+  - No names in either.
+- Not uploaded yet: the gallery goes up in one batch at the end; delete the old pictures and
+  put the order back.
+
+**1.2.7 (same time): 10 more above "New versions" on the Settings tab** (the owner: "nudge the
+spacing"; the pulse checkbox sat right on its heading). Installed as the development copy
+(/reload). The Settings picture above shows 1.2.6's spacing; retake it if the gap matters.
+
 **1.2.6 (2026-11-27, about 17:15): the game's cog under the mark faded. Installed as the
 development copy (/reload); passes its offline tests (`test_bobber_mark.lua` 124 checks);
 committed and tagged; NOT uploaded (1.2.5 is the last on CurseForge). The owner: "we will

@@ -414,7 +414,7 @@ local function Build(frame)
         palette = palette, stops = stops, pulse = pulse } -- (for the tests)
 
     -- ------------------------------------------------------------------ new versions
-    ry = ry - 124
+    ry = ry - 134 -- (124 until 1.2.7: the pulse checkbox sat right on the heading)
     Heading(frame, "New versions", right, ry)
     local updates = W.Check(frame, "Tell me when a newer Keepnet is out", function(checked)
         settings.updates = checked
