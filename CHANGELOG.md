@@ -3,6 +3,12 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.5
+
+- Keepnet's line in the game's addon list says what it does: "Fish smarter: see which zones
+  your skill can fish, search every catch by character, spot your bobber at a glance, and
+  pick your own sounds."
+
 ## 1.2.4
 
 - The bobber mark is more see-through: 65 % solid, so the water and the bobber show through it.

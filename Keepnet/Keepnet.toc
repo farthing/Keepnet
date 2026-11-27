@@ -1,10 +1,10 @@
 ## Interface: 16001
 ## Title: Keepnet
-## Notes: One-key fishing with lures, food and fishing gear, a fishing sound mode, sessions with history by zone, and live gold from your auction addon
+## Notes: Fish smarter: see which zones your skill can fish, search every catch by character, spot your bobber at a glance, and pick your own sounds.
 ## Author: farthing
 ## X-License: MIT
 ## X-Curse-Project-ID: 1825443
-## Version: 1.2.4
+## Version: 1.2.5
 ## IconTexture: Interface\AddOns\Keepnet\Media\Icon
 ## SavedVariables: KeepnetDB
 ## OptionalDeps: EllesmereUI, Auctionator, TradeSkillMaster, Auc-Advanced, aux-forever, RECrystallize, OribosExchange, KeepnetSounds
