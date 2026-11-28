@@ -3,6 +3,11 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.11
+
+- While the trainers and vendors are listed, a line under the button says what a click on one
+  does: a targeting macro, and a waypoint when you are in their zone.
+
 ## 1.2.10
 
 - A log of what Keepnet does: every step it takes, every line it prints and every purchase it

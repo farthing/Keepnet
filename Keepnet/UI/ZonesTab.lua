@@ -201,6 +201,13 @@ local function Build(frame)
         UI.Refresh()
     end)
     switch:SetPoint("TOPRIGHT", -UI.LEFT - PICKER_WIDTH - 8, UI.TOP + 2)
+    -- Under the button while the trainers and vendors show: what a click on one does
+    local clickHint = W.Text(frame, "GameFontDisableSmall",
+        "Click one: Keepnet makes a targeting macro for them, and a waypoint when you are in their zone.")
+    clickHint:SetPoint("TOPRIGHT", -UI.LEFT, UI.TOP - 19)
+    clickHint:SetJustifyH("RIGHT")
+    clickHint:Hide()
+    ZonesTab.clickHint = clickHint
 
     -- Shown in the order ZoneRows gives until a heading is clicked; after that, rows of the
     -- same value keep that order among themselves
@@ -277,6 +284,7 @@ local function Build(frame)
         switch:SetText(people and SHOW_SESSIONS or SHOW_PEOPLE)
         sessions:SetShown(not people)
         folk:SetShown(people)
+        clickHint:SetShown(people)
         -- Whose sessions doesn't matter to the trainers and vendors
         who:SetShown(not people)
         if people then

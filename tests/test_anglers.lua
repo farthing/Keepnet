@@ -78,6 +78,8 @@ function T.run(ns)
     switch:GetScript("OnClick")(switch)
     check(people:IsShown() and not tab.sessions:IsShown(), "the button swaps them for the trainers and vendors")
     check(not tab.who:IsShown(), "whose sessions doesn't matter there")
+    check(tab.clickHint:IsShown() and tab.clickHint:GetText():find("targeting macro", 1, true)
+        and tab.clickHint:GetText():find("waypoint", 1, true), "under the button: what a click on one does")
     eq(#people.data, #horde, "no zone clicked: everybody for this side")
     check(tab.heading:GetText():find("for the Horde", 1, true), "and the heading says for whom")
     eq(#people.columns, 4, "name, what, zone and where")
@@ -116,6 +118,7 @@ function T.run(ns)
 
     switch:GetScript("OnClick")(switch)
     check(tab.sessions:IsShown() and tab.who:IsShown() and not people:IsShown(), "the button goes back to the sessions")
+    check(not tab.clickHint:IsShown(), "and the line about clicking goes with the list")
 end
 
 return T

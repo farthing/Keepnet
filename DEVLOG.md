@@ -4,6 +4,12 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.11 (2026-11-28): a line under the "Trainers & vendors" button, only while that list
+shows** (the owner asked for it): "Click one: Keepnet makes a targeting macro for them, and a
+waypoint when you are in their zone." Right-aligned in the 12 px between the button row and
+the table; whether it fits there without touching either has not been seen in the game.
+Tests pass; committed, tagged; not uploaded.
+
 **1.2.10 (2026-11-28): a log with a "Collect logs" button, and a click on a trainer or vendor.
 Passes its offline tests (`test_log.lua` 11 checks, `test_anglers.lua` 40); committed and
 tagged; NOT uploaded; nothing of it seen in the game.**
