@@ -43,7 +43,7 @@ local function Create()
         .. "1. Click \"Select all\" below. (Everything is also selected when this window opens.)\n"
         .. "2. Press Ctrl+C to copy it. The game doesn't let an addon copy for you.\n"
         .. "3. Open " .. ns.ISSUES .. " in your browser, start a new issue and paste with Ctrl+V.\n"
-        .. "    No GitHub account? Paste it into a comment at " .. ns.COMMENTS .. " instead.\n"
+        .. "    (A GitHub account is free and is needed to post there.)\n"
         .. "Your character names have been taken out of the text.")
     how:SetPoint("TOPLEFT", 14, -52)
     how:SetWidth(WIDTH - 28)

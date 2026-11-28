@@ -3,7 +3,7 @@
 -- (tests\run_tests.py).
 local ADDON, ns = ...
 ns.ADDON = ADDON or "Keepnet"
-ns.VERSION = "1.2.21"
+ns.VERSION = "1.2.22"
 
 local Util = {}
 ns.Util = Util
@@ -64,8 +64,8 @@ end
 
 -- Where a player sends a log
 ns.ISSUES = "github.com/farthing/Keepnet/issues"
--- (and for players without an account there)
-ns.COMMENTS = "curseforge.com/wow/addons/keepnet"
+-- An issue there takes 65,536 characters at most: the report keeps under this, newest lines
+local REPORT_MOST = 50000
 
 local function Escape(text)
     return (text:gsub("%p", "%%%0"))
@@ -97,7 +97,14 @@ function ns.LogReport()
     for name in pairs(names) do ordered[#ordered + 1] = name end
     table.sort(ordered, function(a, b) return #a > #b end)
 
-    local text = table.concat(log, "\n")
+    -- The newest lines that fit in one issue
+    local first, size = #log + 1, 0
+    while first > 1 and size + #log[first - 1] + 1 <= REPORT_MOST do
+        first = first - 1
+        size = size + #log[first] + 1
+    end
+    local text = table.concat(log, "\n", first)
+    local sent = #log - first + 1
     for _, name in ipairs(ordered) do
         text = text:gsub(Escape(name), "<character>")
     end
@@ -110,14 +117,13 @@ function ns.LogReport()
     end
     local settings = ns.settings or {}
     local header = {
-        "Keepnet " .. tostring(ns.VERSION) .. " log, " .. #log .. " lines",
+        "Keepnet " .. tostring(ns.VERSION) .. " log, the newest " .. sent .. " of " .. #log .. " lines",
         "Game " .. build .. ", interface " .. interface .. ", language " .. tostring(GetLocale and GetLocale() or "?"),
         "Look " .. tostring(settings.theme) .. ", colour blind set " .. tostring(settings.bobberPalette or "normal"),
-        "Character names are taken out. Paste this into a new issue at " .. ns.ISSUES
-            .. " or into a comment at " .. ns.COMMENTS,
+        "Character names are taken out. Paste this into a new issue at " .. ns.ISSUES,
         "",
     }
-    return table.concat(header, "\n") .. text, #log
+    return table.concat(header, "\n") .. text, sent
 end
 
 function ns.On(name, fn)

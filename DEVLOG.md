@@ -4,6 +4,15 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.22 (2026-11-28): reports go to GitHub issues only, and fit in one.** The owner: "keep all
+issues in one place. i don't want to have to check both git and curse". GitHub needs an
+account to post (so does a CurseForge comment); the CurseForge route added in 1.2.21 is gone
+from the window, the report header, README and description. A GitHub issue body takes 65,536
+characters and a full log (1500 lines) can be about 100,000, so `ns.LogReport` sends the
+newest lines up to 50,000 characters and its header says how many of how many. Suggested to
+the owner, not done: set the "Issues" link of the CurseForge project to the GitHub issues
+page. Tests pass; committed, tagged; not uploaded.
+
 **1.2.21 (2026-11-28): reporting a problem can be found.** My three suggestions, taken by the
 owner ("do all 3"): the Settings button is "Report a problem" (was "Collect logs"); the log
 window and the report's header name a second way to send it, a comment on the CurseForge page,

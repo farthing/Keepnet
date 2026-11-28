@@ -3,11 +3,14 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.22
+
+- Problem reports go to one place, GitHub issues, and a long log is cut to its newest lines so
+  that it fits in one issue.
+
 ## 1.2.21
 
-- "Collect logs" on the Settings tab is now "Report a problem", and its window also says how
-  to send the log without a GitHub account: paste it into a comment on Keepnet's CurseForge
-  page.
+- "Collect logs" on the Settings tab is now "Report a problem".
 
 ## 1.2.20
 

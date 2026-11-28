@@ -38,11 +38,17 @@ function T.run(ns)
     button:GetScript("OnClick")(button)
     check(KeepnetLogWindow:IsShown(), "Collect logs opens the log window")
     check(ns.LogWindow.box:GetText():find("line 1600", 1, true), "with the lines in a box to copy")
-    check(ns.LogWindow.count:GetText():find("150%d lines"), "and how many there are")
+    check(ns.LogWindow.count:GetText():find("%d+ lines"), "and how many there are")
+    -- A report never outgrows one GitHub issue: the newest lines that fit
+    for i = 1, 1500 do ns.Log(("x"):rep(100), i) end
+    local long, sent = ns.LogReport()
+    check(#long < 65536 and sent < 1500 and sent > 300, "a long log is cut to what one issue takes")
+    check(long:find(" 1500", 1, true) and long:find("the newest " .. sent .. " of 1500 lines", 1, true),
+        "the newest lines are the ones kept, and the header says so")
     local how = ns.LogWindow.how:GetText()
     check(how:find("Select all", 1, true) and how:find("Ctrl+C", 1, true) and how:find("Ctrl+V", 1, true)
         and how:find("github.com/farthing/Keepnet/issues", 1, true), "the window says how to send it, step by step")
-    check(how:find("curseforge.com/wow/addons/keepnet", 1, true), "with a second way for players without an account")
+    check(not how:find("curseforge", 1, true), "one place only: GitHub")
     eq(button.label and button.label:GetText() or button:GetText(), "Report a problem", "the button says why to press it")
     local all = ns.LogWindow.all
     all:GetScript("OnClick")(all)
