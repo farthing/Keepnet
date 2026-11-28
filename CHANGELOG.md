@@ -3,6 +3,13 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.16
+
+- Two size sliders on the Appearance tab: one for Keepnet's window and one for the live
+  panel, each 70 % to 150 %.
+- The trainers and vendors list shows the fishing trainers and the fishing vendors only. Tick
+  "General vendors too" to add the general trade vendors who also sell a pole or a lure.
+
 ## 1.2.15
 
 - "Collect logs" sits beside the "New versions" heading on the Settings tab, clear of the text

@@ -99,10 +99,10 @@ local function Create()
     end
 end
 
--- The window takes the size chosen on the Appearance tab (the same one the live panel has)
+-- The window takes the size chosen for it on the Appearance tab
 function UI.ApplyScale()
     if not window then return end
-    local scale = tonumber(ns.settings and ns.settings.panelScale) or 1
+    local scale = tonumber(ns.settings and ns.settings.windowScale) or 1
     window:SetScale(math.max(0.7, math.min(1.5, scale)))
 end
 

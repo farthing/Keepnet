@@ -122,7 +122,7 @@ local PEOPLE_COLUMNS = {
 
 -- The trainers and vendors the character's side can use: the zone's, or everybody's (zone nil)
 function ZonesTab.PeopleRows(zone)
-    return Anglers.List(zone, Anglers.Side())
+    return Anglers.List(zone, Anglers.Side(), ns.settings.anglersGeneral and true or false)
 end
 
 -- "for the Horde", or "" when the game doesn't say which side the character is on
@@ -208,6 +208,15 @@ local function Build(frame)
     clickHint:SetJustifyH("RIGHT")
     clickHint:Hide()
     ZonesTab.clickHint = clickHint
+    -- Where the character list is while the sessions show: the general trade vendors too?
+    local general = W.Check(frame, "General vendors too", function(checked)
+        ns.settings.anglersGeneral = checked
+        UI.Refresh()
+    end)
+    general:SetPoint("TOPLEFT", frame, "TOPRIGHT", -UI.LEFT - PICKER_WIDTH, UI.TOP - 1)
+    general.tooltip = "Also list the general trade vendors who sell a fishing pole or a lure."
+    general:Hide()
+    ZonesTab.general = general
 
     -- Shown in the order ZoneRows gives until a heading is clicked; after that, rows of the
     -- same value keep that order among themselves
@@ -285,6 +294,8 @@ local function Build(frame)
         sessions:SetShown(not people)
         folk:SetShown(people)
         clickHint:SetShown(people)
+        general:SetShown(people)
+        general:SetChecked(ns.settings.anglersGeneral and true or false)
         -- Whose sessions doesn't matter to the trainers and vendors
         who:SetShown(not people)
         if people then

@@ -146,32 +146,42 @@ local function Build(frame)
     -- --------------------------------------------------------------------------- size
     ry = ry - 124
     Heading(frame, "Size", right, ry)
-    -- One size for both: the live panel and the window. The panel follows the slider as it
-    -- moves; the window only when the mouse lets go, or it would slide away under the pointer.
-    local scaleLabel = W.Text(frame, "GameFontHighlightSmall", "Scale")
-    scaleLabel:SetPoint("TOPLEFT", right, ry - 26)
+    -- A size each for the window and the live panel. The panel follows its slider as it moves;
+    -- the window only when the mouse lets go, or it would slide away under the pointer.
+    local windowScaleLabel = W.Text(frame, "GameFontHighlightSmall", "Window")
+    windowScaleLabel:SetPoint("TOPLEFT", right, ry - 26)
+    local windowScale
+    windowScale = W.Slider(frame, 170, 70, 150, 5, function(value)
+        windowScale.value:SetText(("%d%%"):format(value))
+        settings.windowScale = value / 100
+    end)
+    windowScale:SetPoint("TOPLEFT", right + 90, ry - 26)
+    windowScale.tooltip = "The size of this window. It changes when you let go of the slider."
+    if windowScale.HookScript then
+        windowScale:HookScript("OnMouseUp", function() UI.ApplyScale() end)
+    end
+    UI.scaleSlider = windowScale
+
+    local scaleLabel = W.Text(frame, "GameFontHighlightSmall", "Live panel")
+    scaleLabel:SetPoint("TOPLEFT", right, ry - 48)
     local scale
     scale = W.Slider(frame, 170, 70, 150, 5, function(value)
         scale.value:SetText(("%d%%"):format(value))
         settings.panelScale = value / 100
         ns.Fire("SETTINGS")
     end)
-    scale:SetPoint("TOPLEFT", right + 90, ry - 26)
-    scale.tooltip = "The size of the live panel and of this window."
-    if scale.HookScript then
-        scale:HookScript("OnMouseUp", function() UI.ApplyScale() end)
-    end
-    UI.scaleSlider = scale
+    scale:SetPoint("TOPLEFT", right + 90, ry - 48)
+    UI.panelScaleSlider = scale
 
     local borders = W.Check(frame, "Thin borders round panels and buttons", function(checked)
         settings.borders = checked
         Apply()
     end)
-    borders:SetPoint("TOPLEFT", right, ry - 54)
+    borders:SetPoint("TOPLEFT", right, ry - 72)
 
     -- The font of Keepnet's own looks
     local fontLabel = W.Text(frame, "GameFontHighlightSmall", "Font")
-    fontLabel:SetPoint("TOPLEFT", right, ry - 84)
+    fontLabel:SetPoint("TOPLEFT", right, ry - 100)
     -- (Keepnet's own, and every font another addon here shares)
     local font = W.Dropdown(frame, 170, function()
         local options = {}
@@ -183,23 +193,23 @@ local function Build(frame)
         settings.font = value
         Apply()
     end)
-    font:SetPoint("TOPLEFT", right + 90, ry - 80)
+    font:SetPoint("TOPLEFT", right + 90, ry - 96)
 
     local reset = W.Button(frame, "Look, colours, backgrounds and size back to the defaults", 320, 22, function()
         settings.theme, settings.accentMode, settings.accentColor = "keepnet", "theme", nil
         settings.schemes = nil
         settings.font = W.FONTS[1].key
-        settings.windowOpacity, settings.panelOpacity, settings.panelScale = 0.94, 0.94, 1
+        settings.windowOpacity, settings.panelOpacity, settings.panelScale, settings.windowScale = 0.94, 0.94, 1, 1
         settings.glassWindow, settings.glassPanel = W.GLASS_TINT, W.GLASS_TINT
         settings.borders = true
         Apply()
         UI.ApplyScale()
     end)
-    reset:SetPoint("TOPLEFT", right, ry - 114)
+    reset:SetPoint("TOPLEFT", right, ry - 128)
 
     -- ---------------------------------------------------------------------- live panel
     -- (On the Settings tab until 1.2.1; moved here to make room there for the bobber mark)
-    ry = ry - 150
+    ry = ry - 164 -- (150 until 1.2.16: the Size block has two sliders now)
     Heading(frame, "Live panel", right, ry)
     local lock = W.Check(frame, "Lock the live panel in place", function(checked)
         settings.panelLocked = checked
@@ -329,6 +339,9 @@ local function Build(frame)
         local windowPercent = math.floor(W.opacity.window * 100 + 0.5)
         windowOpacity:Set(windowPercent)
         windowOpacity.value:SetText(("%d%%"):format(windowPercent))
+        local windowScalePercent = math.floor((settings.windowScale or 1) * 100 + 0.5)
+        windowScale:Set(windowScalePercent)
+        windowScale.value:SetText(("%d%%"):format(windowScalePercent))
         local scalePercent = math.floor((settings.panelScale or 1) * 100 + 0.5)
         scale:Set(scalePercent)
         scale.value:SetText(("%d%%"):format(scalePercent))

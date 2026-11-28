@@ -4,6 +4,19 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.16 (2026-11-28): two size sliders; general vendors behind a tick box.** Both were my
+objections to my own earlier work, and the owner agreed ("lets make two sliders, and do the
+switch to include/exclude general vendors").
+- Appearance, Size: "Window" (`windowScale`, new, applied on letting go) and "Live panel"
+  (`panelScale`, as before 1.2.12). The block is 14 taller (rows 22 apart); the Live panel
+  block under it starts 14 lower and should end about 6 above the window's bottom edge. NOT
+  seen in the game: whether it fits.
+- Zones tab: `Anglers.General(row)` = a vendor whose title has none of fish, tackle, bait,
+  angl. Left out unless "General vendors too" is ticked (`anglersGeneral`, off by default); the
+  tick box sits where the character list is while the sessions show. Gubber Blump (no title)
+  counts as general.
+- Tests pass; committed, tagged; not uploaded.
+
 **1.2.15 (2026-11-28): "Collect logs" moved up beside the "New versions" heading** (seen in
 the game by the owner: at the bottom right it lay over the note about updates, which runs
 to the bottom of the tab). Its right edge is the note's (right + 360). Tests pass; committed,

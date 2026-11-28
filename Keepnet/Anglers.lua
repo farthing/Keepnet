@@ -139,12 +139,23 @@ function Anglers.Serves(row, side)
     return side == nil or row.side == "N" or row.side == side
 end
 
+-- A general trade vendor: sells a pole or a lure among everything else, and nothing in the
+-- title says fishing. Trainers never are.
+function Anglers.General(row)
+    if row.kind ~= "vendor" then return false end
+    local title = (row.title or ""):lower()
+    return not (title:find("fish", 1, true) or title:find("tackle", 1, true) or title:find("bait", 1, true)
+        or title:find("angl", 1, true))
+end
+
 -- The people a character of that side can use, in one zone or (zone nil) in all of them: by
--- zone A to Z, the trainers before the vendors, then by name. side nil: everybody.
-function Anglers.List(zone, side)
+-- zone A to Z, the trainers before the vendors, then by name. side nil: everybody. The
+-- general trade vendors are left out unless general is true.
+function Anglers.List(zone, side, general)
     local list = {}
     for _, row in ipairs(DATA) do
-        if (zone == nil or row.zone == zone) and Anglers.Serves(row, side) then
+        if (zone == nil or row.zone == zone) and Anglers.Serves(row, side)
+            and (general or not Anglers.General(row)) then
             list[#list + 1] = row
         end
     end
@@ -157,12 +168,8 @@ function Anglers.List(zone, side)
 end
 
 -- How many of them a zone has for that side
-function Anglers.Count(zone, side)
-    local count = 0
-    for _, row in ipairs(DATA) do
-        if row.zone == zone and Anglers.Serves(row, side) then count = count + 1 end
-    end
-    return count
+function Anglers.Count(zone, side, general)
+    return #Anglers.List(zone, side, general)
 end
 
 -- What the person does, in words: "Trainer", "Vendor" or "Trainer and vendor"

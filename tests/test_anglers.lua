@@ -8,7 +8,14 @@ function T.run(ns)
     Stub.login()
 
     -- ------------------------------------------------------------------------- the data
-    local all = Anglers.List()
+    local all = Anglers.List(nil, nil, true)
+    local dedicated = Anglers.List()
+    check(#dedicated < #all and #dedicated >= 30, "the general trade vendors are left out unless asked for")
+    local only = true
+    for _, row in ipairs(dedicated) do if Anglers.General(row) then only = false end end
+    check(only, "what is left trains Fishing or has fishing in its title")
+    check(Anglers.General({ kind = "vendor", title = "Trade Supplies" }) and not Anglers.General({ kind = "vendor",
+        title = "Tackle and Bait" }) and not Anglers.General({ kind = "trainer" }), "told apart by kind and title")
     check(#all >= 40, "the trainers and vendors of the world are known")
     local kinds, sides, sound, ids = { trainer = 0, vendor = 0, both = 0 }, { A = 0, H = 0, N = 0 }, true, {}
     for _, row in ipairs(all) do
@@ -33,7 +40,7 @@ function T.run(ns)
         for _, row in ipairs(list) do names[row.name] = row end
         return names
     end
-    local horde, alliance = Anglers.List(nil, "H"), Anglers.List(nil, "A")
+    local horde, alliance = Anglers.List(nil, "H", true), Anglers.List(nil, "A", true)
     local clean = true
     for _, row in ipairs(horde) do if row.side == "A" then clean = false end end
     for _, row in ipairs(alliance) do if row.side == "H" then clean = false end end
@@ -80,7 +87,15 @@ function T.run(ns)
     check(not tab.who:IsShown(), "whose sessions doesn't matter there")
     check(tab.clickHint:IsShown() and tab.clickHint:GetText():find("targeting macro", 1, true)
         and tab.clickHint:GetText():find("waypoint", 1, true), "under the button: what a click on one does")
-    eq(#people.data, #horde, "no zone clicked: everybody for this side")
+    eq(#people.data, #Anglers.List(nil, "H"), "no zone clicked: everybody for this side, without the general vendors")
+    local tick = tab.general
+    check(tick:IsShown() and not tick:GetChecked(), "a tick box offers the general vendors, off to begin with")
+    tick:SetChecked(true)
+    tick:GetScript("OnClick")(tick)
+    eq(#people.data, #horde, "ticked: the general vendors are listed too")
+    tick:SetChecked(false)
+    tick:GetScript("OnClick")(tick)
+    eq(#people.data, #Anglers.List(nil, "H"), "and gone again when it is cleared")
     check(tab.heading:GetText():find("for the Horde", 1, true), "and the heading says for whom")
     eq(#people.columns, 4, "name, what, zone and where")
 
