@@ -3,6 +3,11 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.19
+
+- The log window explains how to send a log, step by step: Select all, Ctrl+C, then paste it
+  into a new issue on GitHub.
+
 ## 1.2.18
 
 - The log window has a "Select all" button, and says "Copied." when you press Ctrl+C.

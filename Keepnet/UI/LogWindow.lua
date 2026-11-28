@@ -7,13 +7,12 @@ local W = ns.Widgets
 local LogWindow = {}
 ns.LogWindow = LogWindow
 
-local WIDTH, HEIGHT = 620, 400
+local WIDTH, HEIGHT = 620, 440
 local window, box, count
 
 local function Fill()
     local text, lines = ns.LogReport()
-    count:SetText(("%d line%s. Ctrl+A, Ctrl+C, then paste into a new issue at %s"):format(lines,
-        lines == 1 and "" or "s", ns.ISSUES))
+    count:SetText(("%d line%s"):format(lines, lines == 1 and "" or "s"))
     box:SetText(text)
     box:SetCursorPosition(0)
     box:HighlightText()
@@ -38,7 +37,22 @@ local function Create()
     count:SetPoint("LEFT", title, "RIGHT", 10, 0)
 
     local scroll = CreateFrame("ScrollFrame", nil, window)
-    scroll:SetPoint("TOPLEFT", 14, -54)
+    -- How to send it, step by step: an addon can't copy or send anything itself
+    local how = W.Text(window, "GameFontHighlightSmall",
+        "To send this log to Keepnet's author:
+"
+        .. "1. Click \"Select all\" below. (Everything is also selected when this window opens.)
+"
+        .. "2. Press Ctrl+C to copy it. The game doesn't let an addon copy for you.
+"
+        .. "3. Open " .. ns.ISSUES .. " in your browser, start a new issue and paste with Ctrl+V.
+"
+        .. "Your character names have been taken out of the text.")
+    how:SetPoint("TOPLEFT", 14, -52)
+    how:SetWidth(WIDTH - 28)
+    how:SetJustifyH("LEFT")
+    LogWindow.how = how
+    scroll:SetPoint("TOPLEFT", 14, -124)
     scroll:SetPoint("BOTTOMRIGHT", -14, 44)
     scroll:EnableMouseWheel(true)
     local at = 0

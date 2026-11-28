@@ -4,6 +4,12 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.19 (2026-11-28): the log window explains itself** (the owner: "add explanation text to
+the log window, that they need to copy the text, that click selects all and so on"): five
+lines above the text (Select all, Ctrl+C, where to paste with Ctrl+V, names taken out); the
+window is 40 taller and the text box starts 70 lower. Not seen in the game: whether the five
+lines fit above the box. Tests pass; committed, tagged; not uploaded.
+
 **1.2.18 (2026-11-28): "Select all" in the log window and a "Copied." line on Ctrl+C.** The
 owner asked for a copy button. An addon can not copy: `CopyToClipboard` is refused for addon
 code on this client (ADDON_ACTION_FORBIDDEN, as a note in Mastercraft's Core.lua records), so
