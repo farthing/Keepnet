@@ -3,6 +3,10 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.18
+
+- The log window has a "Select all" button, and says "Copied." when you press Ctrl+C.
+
 ## 1.2.17
 
 - The log from "Collect logs" is ready to send: it starts with the Keepnet and game versions,

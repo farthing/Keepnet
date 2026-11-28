@@ -4,6 +4,13 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.18 (2026-11-28): "Select all" in the log window and a "Copied." line on Ctrl+C.** The
+owner asked for a copy button. An addon can not copy: `CopyToClipboard` is refused for addon
+code on this client (ADDON_ACTION_FORBIDDEN, as a note in Mastercraft's Core.lua records), so
+it is never called. The button selects everything and the copy stays the player's Ctrl+C;
+`OnKeyDown` on the box only notices it. Not seen in the game: whether OnKeyDown fires for
+Ctrl+C in an EditBox here. Tests pass; committed, tagged; not uploaded.
+
 **1.2.17 (2026-11-28): the collected log is made for sending to GitHub issues, without the
 player in it.** The owner asked whether the button could email the log (it can't: an addon
 has no network and writes no files), then: "copy and paste looks good, and use github

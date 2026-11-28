@@ -54,12 +54,27 @@ local function Create()
     box:SetFontObject("GameFontHighlightSmall")
     box:SetWidth(WIDTH - 28)
     box:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+    -- The game lets no addon put text on the clipboard (the call is refused), so the copy is
+    -- the player's own Ctrl+C; this only says that it was seen
+    box:SetScript("OnKeyDown", function(_, key)
+        if key == "C" and IsControlKeyDown and IsControlKeyDown() then
+            count:SetText("|cff" .. ns.Tone("ok") .. "Copied.|r Now paste it into a new issue at " .. ns.ISSUES)
+        end
+    end)
     scroll:SetScrollChild(box)
 
     local close = W.Button(window, "Close", 80, 22, function() window:Hide() end)
     close:SetPoint("BOTTOMRIGHT", -14, 12)
     local again = W.Button(window, "Refresh", 80, 22, Fill)
     again:SetPoint("RIGHT", close, "LEFT", -8, 0)
+    -- Selects everything and puts the cursor in the box, so that Ctrl+C is all that is left
+    local all = W.Button(window, "Select all", 90, 22, function()
+        box:SetFocus()
+        box:HighlightText()
+        count:SetText("All selected: press Ctrl+C to copy.")
+    end)
+    all:SetPoint("BOTTOMLEFT", 14, 12)
+    LogWindow.all = all
     local clear = W.Button(window, "Clear", 80, 22, function()
         ns.LogClear()
         Fill()

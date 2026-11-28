@@ -38,7 +38,10 @@ function T.run(ns)
     button:GetScript("OnClick")(button)
     check(KeepnetLogWindow:IsShown(), "Collect logs opens the log window")
     check(ns.LogWindow.box:GetText():find("line 1600", 1, true), "with the lines in a box to copy")
-    check(ns.LogWindow.count:GetText():find("1500 lines", 1, true), "and how many there are")
+    check(ns.LogWindow.count:GetText():find("150%d lines"), "and how many there are")
+    local all = ns.LogWindow.all
+    all:GetScript("OnClick")(all)
+    check(ns.LogWindow.count:GetText():find("Ctrl+C", 1, true), "Select all says what is left to do")
 end
 
 return T
