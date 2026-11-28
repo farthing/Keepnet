@@ -4,6 +4,15 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.14 (2026-11-28): text follows the colour blind set** (the owner: "make the text conform
+to colour blind settings"). `ns.Tone("ok" / "some" / "none")` in `Util.lua` gives the hex for
+the set chosen as `bobberPalette` (or the game's mode); every fixed 40ff40 / ffd100 / ff6060
+in the screens now asks it (about 26 places; `Waters.COLORS` too). The gold "g" keeps its
+coin colour. The text tones are lighter than the mark's where small text needs it (the
+vermillion; monochrome is white, light grey, mid grey): my choice, not checked by a colour
+blind person. A text already on screen changes at its next redraw. Tests pass
+(`test_tones.lua`); committed, tagged; not uploaded; not seen in the game.
+
 **1.2.13 (2026-11-28): the "Click one:" line under the Trainers & vendors button is green**
 (40ff40, the highlight font; the owner: "more visible, green text maybe"). The Matrix colour
 set inks every text green anyway. Tests pass; committed, tagged; not uploaded.

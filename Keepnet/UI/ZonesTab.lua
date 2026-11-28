@@ -70,7 +70,7 @@ local SESSION_COLUMNS = {
     {
         title = "Date", width = 128, desc = true,
         text = function(row)
-            return Util.DateTime(row.session.started) .. (row.live and "  |cff40ff40running|r" or "")
+            return Util.DateTime(row.session.started) .. (row.live and "  |cff" .. ns.Tone("ok") .. "running|r" or "")
         end,
         value = function(row) return row.session.started end,
     },
@@ -203,7 +203,7 @@ local function Build(frame)
     switch:SetPoint("TOPRIGHT", -UI.LEFT - PICKER_WIDTH - 8, UI.TOP + 2)
     -- Under the button while the trainers and vendors show: what a click on one does
     local clickHint = W.Text(frame, "GameFontHighlightSmall",
-        "|cff40ff40Click one: Keepnet makes a targeting macro for them, and a waypoint when you are in their zone.|r")
+        "|cff" .. ns.Tone("ok") .. "Click one: Keepnet makes a targeting macro for them, and a waypoint when you are in their zone.|r")
     clickHint:SetPoint("TOPRIGHT", -UI.LEFT, UI.TOP - 19)
     clickHint:SetJustifyH("RIGHT")
     clickHint:Hide()

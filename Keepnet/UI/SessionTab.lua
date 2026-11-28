@@ -36,7 +36,7 @@ local function SourceText(row)
     if row.source == "vendor" then return "Vendor" end
     if row.source == "opened" then return "|cff9d9d9dopened|r" end
     if row.source == "coins" then return "" end
-    return "|cffff6060no price|r"
+    return "|cff" .. ns.Tone("none") .. "no price|r"
 end
 
 local COINS_ICON = "Interface\\Icons\\INV_Misc_Coin_01"
@@ -171,7 +171,7 @@ local function Build(frame)
             when = when .. " to " .. date("%H:%M", session.ended)
         end
         heading:SetText(("%s  |cffffffff%s, %s|r%s"):format(session.zone, Core.CharacterName(session.char),
-            when, live and "  |cff40ff40running|r" or ""))
+            when, live and "  |cff" .. ns.Tone("ok") .. "running|r" or ""))
         summary:SetText(("Time %s    Casts %d    Catches %d    Missed %d    Value %s    Per hour %s"):format(
             Util.Clock(session.active), session.casts, session.catches, session.misses,
             Util.Money(value), perHour and Util.Money(perHour) or "-"))

@@ -156,14 +156,14 @@ local function RefreshKit()
         -- How many of it are in the bags. A worn item that puts a lure on isn't counted.
         if lure and not lure.worn then text = text .. " x" .. lure.count end
         text = text .. (lure and lure.bonus and ("  +" .. lure.bonus) or "")
-        if not lure then text = text .. "  |cffff6060none left|r" end
+        if not lure then text = text .. "  |cff" .. ns.Tone("none") .. "none left|r" end
     elseif mode == "off" then
         text = "|cff9d9d9dnot applied by the key|r"
     else
-        text = "|cffff6060none to apply|r"
+        text = "|cff" .. ns.Tone("none") .. "none to apply|r"
     end
     if left then
-        text = text .. "  |cff40ff40" .. Util.MinutesSeconds(left) .. "|r"
+        text = text .. "  |cff" .. ns.Tone("ok") .. "" .. Util.MinutesSeconds(left) .. "|r"
     elseif lure and mode ~= "off" then
         text = text .. "  |cff9d9d9dnext press|r"
     end
@@ -186,11 +186,11 @@ local function RefreshKit()
     if settings.foodMode == "off" then
         kit.foodText:SetText("Food: |cff9d9d9doff|r")
     elseif not food then
-        kit.foodText:SetText("Food: |cffff6060none in your bags|r")
+        kit.foodText:SetText("Food: |cff" .. ns.Tone("none") .. "none in your bags|r")
     elseif Buffs.Waiting() then
-        kit.foodText:SetText("Food: " .. ItemName(food) .. "  |cffffd100eating|r")
+        kit.foodText:SetText("Food: " .. ItemName(food) .. "  |cff" .. ns.Tone("some") .. "eating|r")
     elseif Buffs.IsOn(food) then
-        kit.foodText:SetText("Food: " .. ItemName(food) .. "  |cff40ff40fed|r")
+        kit.foodText:SetText("Food: " .. ItemName(food) .. "  |cff" .. ns.Tone("ok") .. "fed|r")
     else
         kit.foodText:SetText("Food: " .. ItemName(food) .. "  |cff9d9d9dnext press|r")
     end
@@ -208,7 +208,7 @@ local function RefreshKit()
             kit.gearText:SetText("Gear: |cff9d9d9dnothing to put on|r")
         else
             kit.gearText:SetText(("Gear: %s%s"):format(table.concat(names, ", "),
-                bonus > 0 and ("  |cff40ff40+" .. bonus .. "|r") or ""))
+                bonus > 0 and ("  |cff" .. ns.Tone("ok") .. "+" .. bonus .. "|r") or ""))
         end
     end
 end
@@ -591,7 +591,7 @@ local function RefreshSkill()
         panel.skillFill:Hide()
     end
     panel.skillText:SetText(("Fishing %d / %d%s"):format(rank, max,
-        bonus > 0 and ("  |cff40ff40+%d (%d)|r"):format(bonus, rank + bonus) or ""))
+        bonus > 0 and ("  |cff" .. ns.Tone("ok") .. "+%d (%d)|r"):format(bonus, rank + bonus) or ""))
 end
 
 -- "Rockscale Cod 12:30   Shiny Silver Coin 28:10", or what the key is waiting for
@@ -600,7 +600,7 @@ local function BuffLine()
         return notice.text
     end
     if Buffs.Waiting() then
-        return "|cffffd100Eating: the key waits until you're fed|r"
+        return "|cff" .. ns.Tone("some") .. "Eating: the key waits until you're fed|r"
     end
     local parts = {}
     for _, buff in ipairs(Buffs.Active()) do

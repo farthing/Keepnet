@@ -3,6 +3,12 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.14
+
+- The colour blind set chosen on the Settings tab now colours Keepnet's text as well as the
+  bobber mark: everything that was green, yellow or red (the skill a zone asks for, "running",
+  "fed", "none left", warnings and the like) takes the set's three colours.
+
 ## 1.2.13
 
 - The line under the "Trainers & vendors" button is green, so it is easier to see.

@@ -66,7 +66,7 @@ local COLUMNS = {
     {
         title = "Zone", width = 176,
         text = function(row)
-            return row.session.zone .. (row.live and "  |cff40ff40running|r" or "")
+            return row.session.zone .. (row.live and "  |cff" .. ns.Tone("ok") .. "running|r" or "")
         end,
         value = function(row) return row.session.zone end,
     },

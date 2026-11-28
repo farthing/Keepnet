@@ -226,11 +226,11 @@ local function Build(frame)
         gear:SetChecked(settings.gear and true or false)
         local lines = {}
         for _, item in ipairs(Gear.Wearing()) do
-            lines[#lines + 1] = ("|cff40ff40On|r  %s: %s  %s"):format(Gear.SLOT_NAMES[item.slot] or "?",
+            lines[#lines + 1] = ("|cff" .. ns.Tone("ok") .. "On|r  %s: %s  %s"):format(Gear.SLOT_NAMES[item.slot] or "?",
                 Util.LinkName(item.link) or "?", Gear.BonusText(item.bonus))
         end
         for _, item in ipairs(Gear.Plan()) do
-            lines[#lines + 1] = ("|cffffd100In bags|r  %s: %s  %s%s"):format(Gear.SLOT_NAMES[item.slot] or "?",
+            lines[#lines + 1] = ("|cff" .. ns.Tone("some") .. "In bags|r  %s: %s  %s%s"):format(Gear.SLOT_NAMES[item.slot] or "?",
                 Util.LinkName(item.link) or "?", Gear.BonusText(item.bonus),
                 item.wornBonus > 0 and ("  (wearing %s)"):format(Gear.BonusText(item.wornBonus)) or "")
         end
@@ -244,7 +244,7 @@ local function Build(frame)
         local rank, max, bonus = Skill.Get()
         if rank then
             parts[#parts + 1] = ("Fishing %d / %d%s"):format(rank, max,
-                bonus > 0 and ("  |cff40ff40+%d|r from lure and gear"):format(bonus) or "")
+                bonus > 0 and ("  |cff" .. ns.Tone("ok") .. "+%d|r from lure and gear"):format(bonus) or "")
         else
             parts[#parts + 1] = "|cff9d9d9dFishing skill unknown.|r"
         end
@@ -288,7 +288,7 @@ local function Build(frame)
             local have = Util.ItemCount(settings.foodItem)
             foodSlot:SetItem(settings.foodItem, have, have == 0, true)
             foodLabel:SetText(("%s\n|cff%s%d in your bags|r"):format(Util.ItemInfo(settings.foodItem) or ("item " .. settings.foodItem),
-                have > 0 and "9d9d9d" or "ff6060", have))
+                have > 0 and "9d9d9d" or ns.Tone("none"), have))
         else
             foodSlot:SetItem(nil)
             foodSlot:Show() -- stays as an empty slot to drop food on

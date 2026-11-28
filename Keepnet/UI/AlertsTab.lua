@@ -93,7 +93,7 @@ local function Build(frame)
             if Alerts.Play(choice) then
                 feedback:SetText("")
             else
-                feedback:SetText("|cffff6060" .. Alerts.SoundName(choice) .. " didn't play.|r "
+                feedback:SetText("|cff" .. ns.Tone("none") .. "" .. Alerts.SoundName(choice) .. " didn't play.|r "
                     .. "A file of your own must be in the sounds folder, and the game only sees a new file after a restart.")
             end
         end)
@@ -119,7 +119,7 @@ local function Build(frame)
             addFeedback:SetText("")
             UI.Refresh()
         else
-            addFeedback:SetText("|cffff6060That isn't a sound file name.|r Type just the name, ending in .ogg or .mp3, such as  splash.ogg")
+            addFeedback:SetText("|cff" .. ns.Tone("none") .. "That isn't a sound file name.|r Type just the name, ending in .ogg or .mp3, such as  splash.ogg")
         end
     end
     box = W.EditBox(frame, 230, Add)
@@ -141,7 +141,7 @@ local function Build(frame)
         row.name:SetWordWrap(false)
         row.play = W.Button(frame, "Play", 46, 20, function()
             if row.file and not Alerts.Play("file:" .. row.file.name) then
-                addFeedback:SetText("|cffff6060" .. row.file.name .. " didn't play.|r Is it in the folder, and has the game been restarted since?")
+                addFeedback:SetText("|cff" .. ns.Tone("none") .. "" .. row.file.name .. " didn't play.|r Is it in the folder, and has the game been restarted since?")
             else
                 addFeedback:SetText("")
             end

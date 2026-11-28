@@ -447,7 +447,7 @@ local function Build(frame)
             slot.icon:SetTexture(Util.ItemIcon(settings.lureItem))
             local name = Util.ItemInfo(settings.lureItem) or ("item " .. settings.lureItem)
             local have = Util.ItemCount(settings.lureItem)
-            slotLabel:SetText(("%s\n|cff%s%d in your bags|r"):format(name, have > 0 and "9d9d9d" or "ff6060", have))
+            slotLabel:SetText(("%s\n|cff%s%d in your bags|r"):format(name, have > 0 and "9d9d9d" or ns.Tone("none"), have))
         else
             slot.icon:SetTexture(nil)
             slotLabel:SetText("No lure chosen\n|cff9d9d9dDrop one here or click one below|r")
@@ -511,7 +511,7 @@ local function Build(frame)
                 .. "then. Grey items, items that bind when picked up and items it has no price for count at "
                 .. "the vendor price.")
         else
-            goldNote:SetText("|cffff6060" .. description .. ".|r")
+            goldNote:SetText("|cff" .. ns.Tone("none") .. "" .. description .. ".|r")
         end
     end
 end

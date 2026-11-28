@@ -3,7 +3,7 @@
 -- (tests\run_tests.py).
 local ADDON, ns = ...
 ns.ADDON = ADDON or "Keepnet"
-ns.VERSION = "1.2.13"
+ns.VERSION = "1.2.14"
 
 local Util = {}
 ns.Util = Util
@@ -187,6 +187,33 @@ end
 -- ---------------------------------------------------------------------------------------------
 -- Text
 -- ---------------------------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------------------------
+-- The three colours text uses to say good, careful and bad ("ok", "some", "none"): green,
+-- yellow and red, or those of the colour blind set chosen on the Settings tab (the same choice
+-- the bobber mark follows; "game" takes the game's own colour blind mode). Lighter than the
+-- mark's own colours where those would be hard to read as small text on a dark window.
+-- ---------------------------------------------------------------------------------------------
+local TONES = {
+    normal = { ok = "40ff40", some = "ffd100", none = "ff6060" },
+    -- sky blue, yellow, vermillion
+    protanopia = { ok = "57b5e8", some = "f0e342", none = "e8742a" },
+    deuteranopia = { ok = "57b5e8", some = "f0e342", none = "e8742a" },
+    -- cyan, pink, red
+    tritanopia = { ok = "4fd1d1", some = "ffa1c7", none = "ff5050" },
+    -- by brightness alone
+    mono = { ok = "ffffff", some = "b0b0b0", none = "808080" },
+}
+local GAME_TONES = { [1] = "protanopia", [2] = "deuteranopia", [3] = "tritanopia" }
+
+function ns.Tone(kind)
+    local key = (ns.settings and ns.settings.bobberPalette) or "normal"
+    if key == "game" then
+        local filter = tonumber(Util.GetCVar and Util.GetCVar("colorblindSimulator") or "")
+        key = GAME_TONES[filter or 0] or "normal"
+    end
+    return (TONES[key] or TONES.normal)[kind] or "ffffff"
+end
+
 local GOLD, SILVER, COPPER = "|cffffd100g|r", "|cffc7c7cfs|r", "|cffeda55fc|r"
 
 local function Thousands(n)

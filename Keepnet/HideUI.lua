@@ -287,7 +287,7 @@ events:SetScript("OnEvent", function(_, event, arg1, arg2)
         end
     elseif event == "UI_ERROR_MESSAGE" then
         if hiddenAll and type(arg2) == "string" and not Util.Hidden(arg2) then
-            Notice("|cffff6060" .. arg2 .. "|r")
+            Notice("|cff" .. ns.Tone("none") .. "" .. arg2 .. "|r")
         end
     else
         ShowAgain()

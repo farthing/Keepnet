@@ -87,7 +87,8 @@ function Waters.Parts(zone)
 end
 
 -- The text colour for each standing below: green, yellow, red
-Waters.COLORS = { ok = "40ff40", some = "ffd100", none = "ff6060" }
+-- (those of the colour blind set in use: ns.Tone)
+Waters.COLORS = setmetatable({}, { __index = function(_, kind) return ns.Tone(kind) end })
 
 -- "ok" when the skill is enough for guaranteed catches, "some" when the line can be cast but
 -- fish will get away, "none" when it can't be cast there at all
