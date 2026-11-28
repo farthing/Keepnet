@@ -4,7 +4,7 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
-**1.2.19 (2026-11-28): the log window explains itself** (the owner: "add explanation text to
+**1.2.20 (2026-11-28): the log window explains itself (the tag v1.2.19 is a broken commit: its LogWindow.lua does not load; never use it)** (the owner: "add explanation text to
 the log window, that they need to copy the text, that click selects all and so on"): five
 lines above the text (Select all, Ctrl+C, where to paste with Ctrl+V, names taken out); the
 window is 40 taller and the text box starts 70 lower. Not seen in the game: whether the five

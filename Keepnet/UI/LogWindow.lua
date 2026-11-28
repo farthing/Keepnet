@@ -39,14 +39,10 @@ local function Create()
     local scroll = CreateFrame("ScrollFrame", nil, window)
     -- How to send it, step by step: an addon can't copy or send anything itself
     local how = W.Text(window, "GameFontHighlightSmall",
-        "To send this log to Keepnet's author:
-"
-        .. "1. Click \"Select all\" below. (Everything is also selected when this window opens.)
-"
-        .. "2. Press Ctrl+C to copy it. The game doesn't let an addon copy for you.
-"
-        .. "3. Open " .. ns.ISSUES .. " in your browser, start a new issue and paste with Ctrl+V.
-"
+        "To send this log to Keepnet's author:\n"
+        .. "1. Click \"Select all\" below. (Everything is also selected when this window opens.)\n"
+        .. "2. Press Ctrl+C to copy it. The game doesn't let an addon copy for you.\n"
+        .. "3. Open " .. ns.ISSUES .. " in your browser, start a new issue and paste with Ctrl+V.\n"
         .. "Your character names have been taken out of the text.")
     how:SetPoint("TOPLEFT", 14, -52)
     how:SetWidth(WIDTH - 28)
