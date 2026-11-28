@@ -99,9 +99,17 @@ local function Create()
     end
 end
 
+-- The window takes the size chosen on the Appearance tab (the same one the live panel has)
+function UI.ApplyScale()
+    if not window then return end
+    local scale = tonumber(ns.settings and ns.settings.panelScale) or 1
+    window:SetScale(math.max(0.7, math.min(1.5, scale)))
+end
+
 -- Opens the window on a tab ("session", "history", "zones" or "settings")
 function UI.Show(key)
     if not window then Create() end
+    UI.ApplyScale()
     window:Show()
     Select(key or current or order[1])
 end

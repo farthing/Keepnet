@@ -3,6 +3,11 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.12
+
+- The size slider on the Appearance tab is now "Scale" and sizes Keepnet's window as well as
+  the live panel (70 % to 150 %). The window takes the new size when you let go of the slider.
+
 ## 1.2.11
 
 - While the trainers and vendors are listed, a line under the button says what a click on one

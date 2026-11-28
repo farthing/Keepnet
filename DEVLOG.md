@@ -4,6 +4,15 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.12 (2026-11-28): one "Scale" slider for the window and the live panel** (the owner: "a
+scale slider added to appearance. which adjust the scale of the settings and live window").
+The Appearance tab already had a "Live panel" size slider (`panelScale`, 70 to 150 %) and no
+room for a second row, so that slider was renamed and the window follows the same setting
+(`UI.ApplyScale`: on showing the window, on letting go of the slider, on the reset button).
+The log window is not scaled. Not seen in the game: how the window behaves when it rescales
+around its centre, and whether its place on screen still suits at 150 %. Tests pass;
+committed, tagged; not uploaded.
+
 **1.2.11 (2026-11-28): a line under the "Trainers & vendors" button, only while that list
 shows** (the owner asked for it): "Click one: Keepnet makes a targeting macro for them, and a
 waypoint when you are in their zone." Right-aligned in the 12 px between the button row and

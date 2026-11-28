@@ -146,7 +146,9 @@ local function Build(frame)
     -- --------------------------------------------------------------------------- size
     ry = ry - 124
     Heading(frame, "Size", right, ry)
-    local scaleLabel = W.Text(frame, "GameFontHighlightSmall", "Live panel")
+    -- One size for both: the live panel and the window. The panel follows the slider as it
+    -- moves; the window only when the mouse lets go, or it would slide away under the pointer.
+    local scaleLabel = W.Text(frame, "GameFontHighlightSmall", "Scale")
     scaleLabel:SetPoint("TOPLEFT", right, ry - 26)
     local scale
     scale = W.Slider(frame, 170, 70, 150, 5, function(value)
@@ -155,6 +157,11 @@ local function Build(frame)
         ns.Fire("SETTINGS")
     end)
     scale:SetPoint("TOPLEFT", right + 90, ry - 26)
+    scale.tooltip = "The size of the live panel and of this window."
+    if scale.HookScript then
+        scale:HookScript("OnMouseUp", function() UI.ApplyScale() end)
+    end
+    UI.scaleSlider = scale
 
     local borders = W.Check(frame, "Thin borders round panels and buttons", function(checked)
         settings.borders = checked
@@ -186,6 +193,7 @@ local function Build(frame)
         settings.glassWindow, settings.glassPanel = W.GLASS_TINT, W.GLASS_TINT
         settings.borders = true
         Apply()
+        UI.ApplyScale()
     end)
     reset:SetPoint("TOPLEFT", right, ry - 114)
 
