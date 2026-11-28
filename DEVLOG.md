@@ -4,9 +4,17 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.23 (2026-11-28, evening): the switch on the Zones tab changes its words.** Seen on the
+first picture of the trainers list: the button still read "Trainers & vendors". A flat
+button keeps its words in `button.label`, and `button:SetText` reached nothing; `MakeButton`
+now gives its buttons SetText and GetText that go to the label. The test had only looked at
+what was shown, not at the words. 1.2.22 ON CURSEFORGE HAS THIS FAULT: upload 1.2.23 (owed).
+Tests pass; committed, tagged.
+
 **1.2.22 is on CurseForge (2026-11-28, evening; "Uploading" when last looked), with the new
 summary, the description and the Issues link to GitHub. See `PUBLISHING.md`, "1.2.22". The personal description (first person, made with the help of Claude) is on the site too.
-Open: five pictures (listed there; captures in `mediaaw1222-*.png`). Next upload: `release.py --since 1.2.22`.**
+Open: five pictures (listed there; captures in `media
+aw1222-*.png`). Next upload: `release.py --since 1.2.22`.**
 
 **2026-11-28: GitHub issue forms.** `.github/ISSUE_TEMPLATE`: "Report a problem" (what
 happened, the pasted log; label `problem`) and "Suggest a feature" (label `idea`); the owner

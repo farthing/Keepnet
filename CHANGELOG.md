@@ -3,6 +3,11 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.23
+
+- The "Trainers & vendors" button on the Zones tab now reads "Sessions" while the trainers and
+  vendors are showing, so it says how to get back.
+
 ## 1.2.22
 
 - Problem reports go to one place, GitHub issues, and a long log is cut to its newest lines so

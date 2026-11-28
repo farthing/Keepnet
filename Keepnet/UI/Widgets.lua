@@ -736,6 +736,9 @@ local function MakeButton(parent, text, width, height, onClick, kind)
     W.Skin(button, W.COLORS.button, nil, kind)
     button.label = W.Text(button, "GameFontHighlightSmall", text)
     button.label:SetPoint("CENTER")
+    -- The words are the label's: a button of this kind has no text of its own to change
+    function button:SetText(value) self.label:SetText(value) end
+    function button:GetText() return self.label:GetText() end
     button:SetScript("OnEnter", function(self)
         -- (a button of the retro look doesn't light up under the mouse: it goes in when held)
         if not W.retro then self:SetBackdropColor(unpack(W.COLORS.buttonHover)) end
