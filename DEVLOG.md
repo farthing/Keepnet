@@ -4,6 +4,11 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.15 (2026-11-28): "Collect logs" moved up beside the "New versions" heading** (seen in
+the game by the owner: at the bottom right it lay over the note about updates, which runs
+to the bottom of the tab). Its right edge is the note's (right + 360). Tests pass; committed,
+tagged; not uploaded; the new place not yet seen in the game.
+
 **1.2.14 (2026-11-28): text follows the colour blind set** (the owner: "make the text conform
 to colour blind settings"). `ns.Tone("ok" / "some" / "none")` in `Util.lua` gives the hex for
 the set chosen as `bobberPalette` (or the game's mode); every fixed 40ff40 / ffd100 / ff6060

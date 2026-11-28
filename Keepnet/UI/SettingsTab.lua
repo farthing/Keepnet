@@ -429,7 +429,8 @@ local function Build(frame)
 
     -- -------------------------------------------------------------------------- the log
     local collect = W.Button(frame, "Collect logs", 110, 22, function() ns.LogWindow.Show() end)
-    collect:SetPoint("BOTTOMRIGHT", -UI.LEFT, 12)
+    -- On the heading's own line, at the right: the note under the tick box runs to the bottom
+    collect:SetPoint("TOPRIGHT", frame, "TOPLEFT", right + 360, ry + 4)
     collect.tooltip = "Shows everything Keepnet has done lately, as text to copy."
     ns.LogWindow.button = collect
 

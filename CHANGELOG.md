@@ -3,6 +3,11 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.15
+
+- "Collect logs" sits beside the "New versions" heading on the Settings tab, clear of the text
+  under it.
+
 ## 1.2.14
 
 - The colour blind set chosen on the Settings tab now colours Keepnet's text as well as the
