@@ -466,18 +466,21 @@ The owner: "we're uploading now. so push to curse, make the curse changes."
   can't miss." (177 of 256 characters; also the TOC's Notes).
 - **Description** saved with the new feature order, the trainers and vendors point,
   "Something not working?" and "Got an idea?" ("Changes saved successfully").
-  - `setContent` only held when nothing else was fired at the editor: `ed.focus()` and a
-    `blur` after it put the old text back. Use `setContent`, `setDirty(true)`, `fire('change')`
-    and read the content back before Save.
+  - **`setContent` alone does NOT save the description.** The page said "Changes saved
+    successfully" (it saved the summary) and kept the old description; a reload showed it.
+    What worked: open the Description tab (`#/projects/1825443/description`), give the text
+    with `ed.execCommand('selectAll')` + `ed.execCommand('mceInsertContent', false, html)`,
+    then click in the editor and press a real key (space, Backspace) with the browser tool:
+    only then is Save enabled for the description. Read it back on the PUBLIC page.
 - **Issues link:** the setting is on the LEGACY site,
   `legacy.curseforge.com/wow/addons/keepnet/settings/issues`: Issue Tracker "External",
   `https://github.com/farthing/Keepnet/issues`, Save Changes (the page reloads; read back).
-- **NOT on the site yet:** the more personal description (first-person opening, shorter
-  feature list, a Trainers and vendors section, "How this was made" naming Claude), written
-  the same evening on the owner's "i want the description to be more human" and "a line at
-  the bottom saying created with the help of claude". It is in
-  `media/curseforge-description.html`; it speaks in the owner's voice, so it waits for their
-  yes.
+- **The personal description is on the site** (about 20 minutes later; the owner: "push
+  please. i think we're good"): a first-person opening, a shorter feature list, a Trainers
+  and vendors section, and "How this was made" at the bottom (the owner is not a programmer;
+  written with the help of Claude; every change tried in the game). The owner asked for
+  both ("more human", "a line at the bottom saying created with the help of claude",
+  "point out I am not a programmer or developer"). Seen on the public page.
 - **Pictures owed** (the owner asked for the list): Zones with the Trainers & vendors button
   (redo 04), the trainers and vendors list (new), Appearance with two sliders (redo 07),
   Settings with Report a problem (redo 08, on a released copy or with the development
