@@ -3,7 +3,7 @@
 -- (tests\run_tests.py).
 local ADDON, ns = ...
 ns.ADDON = ADDON or "Keepnet"
-ns.VERSION = "1.2.8"
+ns.VERSION = "1.2.10"
 
 local Util = {}
 ns.Util = Util
@@ -15,6 +15,53 @@ ns.Util = Util
 -- ---------------------------------------------------------------------------------------------
 local listeners = {}
 
+-- ---------------------------------------------------------------------------------------------
+-- The log: one line for everything Keepnet does (every message between its files, every line
+-- it prints, every purchase it weighs up), the newest LOG_MOST of them. Kept in the saved data
+-- so it survives a reload; the Settings tab has a button that shows it for copying. It never
+-- leaves the game by itself.
+-- ---------------------------------------------------------------------------------------------
+local LOG_MOST = 1500
+local log = {}
+-- Fired many times a minute with nothing to tell
+local LOG_QUIET = { TICK = true }
+
+local function Plain(value)
+    local kind = type(value)
+    if kind == "string" then return value end
+    if kind == "number" or kind == "boolean" or kind == "nil" then return tostring(value) end
+    return "<" .. kind .. ">"
+end
+
+function ns.Log(...)
+    local parts = {}
+    for i = 1, select("#", ...) do
+        -- (a value the game hides can't even be looked at)
+        local ok, text = pcall(Plain, (select(i, ...)))
+        parts[i] = ok and text or "<hidden>"
+    end
+    local stamp = date and date("%m-%d %H:%M:%S") or ""
+    log[#log + 1] = stamp .. "  " .. table.concat(parts, " ")
+    while #log > LOG_MOST do table.remove(log, 1) end
+end
+
+-- Continues in the saved table (what was logged before it was known is carried over)
+function ns.LogKeepIn(saved)
+    if type(saved) ~= "table" then return end
+    for _, line in ipairs(log) do saved[#saved + 1] = line end
+    while #saved > LOG_MOST do table.remove(saved, 1) end
+    log = saved
+end
+
+-- Everything logged, oldest first, as one text; and how many lines that is
+function ns.LogText()
+    return table.concat(log, "\n"), #log
+end
+
+function ns.LogClear()
+    for i = #log, 1, -1 do log[i] = nil end
+end
+
 function ns.On(name, fn)
     local list = listeners[name]
     if not list then
@@ -25,11 +72,13 @@ function ns.On(name, fn)
 end
 
 function ns.Fire(name, ...)
+    if not LOG_QUIET[name] then ns.Log("event", name, ...) end
     local list = listeners[name]
     if not list then return end
     for i = 1, #list do
         local ok, err = pcall(list[i], ...)
         if not ok then
+            ns.Log("ERROR in a listener of", name, tostring(err))
             local handler = geterrorhandler and geterrorhandler()
             if handler then
                 handler(err)
@@ -197,6 +246,7 @@ function Util.LinkName(link)
 end
 
 function Util.Print(message)
+    ns.Log("said", tostring(message))
     local text = "|cff4fc3f7Keepnet|r: " .. tostring(message)
     if DEFAULT_CHAT_FRAME then
         DEFAULT_CHAT_FRAME:AddMessage(text)

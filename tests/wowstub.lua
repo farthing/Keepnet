@@ -185,7 +185,8 @@ for name in ([[
     SetAutoFocus SetTextInsets SetMaxLetters ClearFocus SetPropagateKeyboardInput
     SetTexCoord SetBlendMode GenerateMenu
     SetShadowColor SetShadowOffset SetClipsChildren SetHighlightColor GetFrameStrata HasFocus
-    SetHighlightTexture
+    SetHighlightTexture SetMultiLine SetScrollChild SetVerticalScroll HighlightText SetFocus SetCursorPosition
+    SetFontObject
 ]]):gmatch("%S+") do
     QUIET[name] = true
 end

@@ -32,7 +32,7 @@ ALLOWED_GLOBALS = {
     "KeepnetMinimapButton",
     "KeepnetCastButton",
     "KeepnetPanel",
-    "KeepnetWindow",
+    "KeepnetWindow", "KeepnetLogWindow",
     "KeepnetPicker",
     "KeepnetGearButton",
     "KeepnetRetroFont",  # the Windows 95 look's font: the game names every font an addon makes

@@ -427,6 +427,12 @@ local function Build(frame)
     updatesNote:SetWidth(360)
     updatesNote:SetJustifyH("LEFT")
 
+    -- -------------------------------------------------------------------------- the log
+    local collect = W.Button(frame, "Collect logs", 110, 22, function() ns.LogWindow.Show() end)
+    collect:SetPoint("BOTTOMRIGHT", -UI.LEFT, 12)
+    collect.tooltip = "Shows everything Keepnet has done lately, as text to copy."
+    ns.LogWindow.button = collect
+
     return function()
         updates:SetChecked(settings.updates and true or false)
         updatesNote:SetText(ns.Updates and ns.Updates.Describe() or "")

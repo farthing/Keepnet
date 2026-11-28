@@ -3,6 +3,17 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.10
+
+- A log of what Keepnet does: every step it takes, every line it prints and every purchase it
+  weighs up (your gold, the gold you keep, the price, how many it could pay for). "Collect
+  logs" at the bottom of the Settings tab shows it as text to copy. It stays in your game
+  unless you copy it out.
+
+- Click a trainer or vendor on the Zones tab: Keepnet makes a macro, "KeepnetTarget", that
+  targets them (rewritten at every click; find it under /macro), and when you are in their
+  zone it marks the spot on your map.
+
 ## 1.2.9
 
 - Fishing trainers and tackle vendors, zone by zone: a new "Trainers & vendors" button on the

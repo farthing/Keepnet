@@ -190,6 +190,7 @@ function Vendor.Shop()
     -- it. With that much or less, nothing is bought at all.
     local floor = Vendor.FloorCopper()
     local budget = money - floor
+    ns.Log("vendor opened: money", money, "kept", floor, "to spend", budget)
     local bought, spent, short = {}, 0, {}
     for index = 1, Number(GetMerchantNumItems()) or 0 do
         local ok, item = pcall(ItemAt, index)
@@ -208,6 +209,8 @@ function Vendor.Shop()
                 local each = item.price * item.batch
                 local purchases = math.ceil(want / item.batch)
                 local canPay = each > 0 and math.floor(budget / each) or purchases
+                ns.Log("vendor:", name, "want", want, "in bags", Util.ItemCount(item.id), "price each", item.price,
+                    "sold by", item.batch, "vendor has", item.available or "no limit", "can pay for", canPay)
                 if canPay < purchases then
                     short[#short + 1] = name
                     purchases = math.max(0, canPay)

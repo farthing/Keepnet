@@ -246,6 +246,8 @@ local function Build(frame)
         rows = 18,
         sort = 0,
         id = function(row) return row.id end,
+        -- A click: a macro that targets them, and a map mark when they are in this zone
+        onSelect = function(row) Anglers.Go(row) end,
         onEnter = function(row, rowFrame)
             GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT")
             GameTooltip:SetText(row.name)
@@ -255,6 +257,8 @@ local function Build(frame)
             if row.sells then GameTooltip:AddLine("Sells: " .. row.sells, 1, 1, 1, true) end
             if row.side == "N" then GameTooltip:AddLine("Serves both sides.", 0.6, 0.6, 0.6, true) end
             if row.note then GameTooltip:AddLine(row.note, 0.6, 0.6, 0.6, true) end
+            GameTooltip:AddLine("Click: a macro that targets them, and a map mark when you are in their zone.",
+                0.6, 0.6, 0.6, true)
             GameTooltip:Show()
         end,
         onLeave = function() GameTooltip:Hide() end,

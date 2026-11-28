@@ -102,6 +102,12 @@ function T.run(ns)
     eq(first.cells[2]:GetText(), "Trainer", "what they do")
     first:GetScript("OnEnter")(first)
     first:GetScript("OnLeave")(first)
+    -- A click asks for a target macro and a map mark; where the game offers neither (as
+    -- here) or the character is elsewhere, it says so and nothing breaks
+    first:GetScript("OnClick")(first)
+    local _, why = Anglers.Waypoint(orgrimmar[1])
+    check(type(why) == "string", "no map mark outside the zone, with the reason")
+    eq(select(2, Anglers.Waypoint({ zone = "Orgrimmar" })), "the spot isn't known", "nor without a spot")
 
     row = ZoneRow("Stormwind City")
     row:GetScript("OnClick")(row)

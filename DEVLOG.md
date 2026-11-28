@@ -4,6 +4,31 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.10 (2026-11-28): a log with a "Collect logs" button, and a click on a trainer or vendor.
+Passes its offline tests (`test_log.lua` 11 checks, `test_anglers.lua` 40); committed and
+tagged; NOT uploaded; nothing of it seen in the game.**
+- **The log** (the owner: "add logging for everything the add-on does, with a button under
+  settings to collect logs"; it came out of a purchase of 17 lures instead of 20, which was the
+  gold kept back: 7 g with 4 g kept).
+  - `ns.Log(...)` in `Util.lua`: the newest 1500 lines, kept in `KeepnetDB.log` so a reload
+    keeps them. Logged: every `ns.Fire` with what it sends (except TICK), every line Keepnet
+    prints, an error in a listener, loading, and at a vendor the money, the gold kept, and per
+    lure the number wanted, in the bags, the price and how many can be paid for.
+  - "Collect logs" at the bottom right of the Settings tab opens `UI\LogWindow.lua`: the text
+    in a box, selected, to copy with Ctrl+C (an addon can't write a file); Refresh, Clear.
+  - Not logged on purpose: nothing leaves the game. Character names can be in the lines (a
+    session's key), so a pasted log may hold them: keep pasted logs out of the public repo.
+  - Never seen in the game: the box, its scrolling (mouse wheel, a plain ScrollFrame) and how
+    1500 lines behave in it.
+- **A click on a trainer or vendor** (the owner: "have either a targeting macro created and
+  potentially a waypoint add (if in its zone)"): `Anglers.Go`. One macro, "KeepnetTarget"
+  (`/target Name`), made or rewritten at every click, never in combat; and
+  `C_Map.SetUserWaypoint` at the spot when the character's zone is the person's. A chat line
+  says what was done and what not. One macro rewritten rather than one per person: my choice
+  (the macro list is short). Neither call has run on this client.
+- `ns.VERSION` in `Util.lua` had stayed at 1.2.8 through 1.2.9 (the TOC said 1.2.9): both say
+  1.2.10 now. Bump both by hand.
+
 **1.2.9 (2026-11-28): fishing trainers and tackle vendors by zone, for the character's side;
 new tag line and feature order. Passes its offline tests (`test_anglers.lua`, 38 checks);
 committed and tagged; NOT installed, NOT uploaded (1.2.7 is the last on CurseForge), never

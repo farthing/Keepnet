@@ -457,6 +457,9 @@ local function Init()
     Fill(db.settings)
     ns.db = db
     ns.settings = db.settings
+    db.log = db.log or {}
+    ns.LogKeepIn(db.log)
+    ns.Log("Keepnet", ns.VERSION, "loaded")
     -- This character's own data (see Core.Identify). Until the game says who is playing it
     -- is a table that is not saved, so nothing of one character is filed under another.
     ns.char = { gearChoice = {} }

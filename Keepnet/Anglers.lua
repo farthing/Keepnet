@@ -176,3 +176,67 @@ function Anglers.Where(row)
     if not (row.x and row.y) then return "" end
     return ("%.1f, %.1f"):format(row.x, row.y)
 end
+
+-- ---------------------------------------------------------------------------------------------
+-- A click on a person: a macro that targets them, and a mark on the map when they are in the
+-- zone the character is standing in
+-- ---------------------------------------------------------------------------------------------
+Anglers.MACRO = "KeepnetTarget"
+
+-- Makes (or rewrites) the one macro "KeepnetTarget" so that it targets this person. Returns
+-- true, or false and why not. Macros can't be made or changed in combat.
+function Anglers.TargetMacro(row)
+    if not (CreateMacro and EditMacro and GetMacroIndexByName) then return false, "this game has no macros for addons" end
+    if InCombatLockdown and InCombatLockdown() then return false, "not in combat" end
+    local body = "/target " .. row.name
+    local ok, err = pcall(function()
+        local index = GetMacroIndexByName(Anglers.MACRO)
+        if index and index > 0 then
+            EditMacro(index, Anglers.MACRO, nil, body)
+        else
+            CreateMacro(Anglers.MACRO, "INV_Fishingpole_02", body, nil)
+        end
+    end)
+    if not ok then return false, tostring(err) end
+    return true
+end
+
+-- Puts the map's own mark where the person stands, when they are in the zone the character is
+-- in and the spot is known. Returns true, or false and why not.
+function Anglers.Waypoint(row)
+    if not (row.x and row.y) then return false, "the spot isn't known" end
+    local here = GetRealZoneText and GetRealZoneText()
+    if here ~= row.zone then return false, "you are not in " .. row.zone end
+    if not (C_Map and C_Map.GetBestMapForUnit and C_Map.SetUserWaypoint and UiMapPoint) then
+        return false, "this game has no map marks for addons"
+    end
+    local ok, err = pcall(function()
+        local map = C_Map.GetBestMapForUnit("player")
+        C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(map, row.x / 100, row.y / 100))
+        if C_SuperTrack and C_SuperTrack.SetSuperTrackedUserWaypoint then
+            C_SuperTrack.SetSuperTrackedUserWaypoint(true)
+        end
+    end)
+    if not ok then return false, tostring(err) end
+    return true
+end
+
+-- Both, and one line in chat saying what was done
+function Anglers.Go(row)
+    local parts = {}
+    local macro, whyNot = Anglers.TargetMacro(row)
+    if macro then
+        parts[#parts + 1] = ('the macro "%s" now targets them (find it under /macro and put it on a bar)'):format(Anglers.MACRO)
+    else
+        parts[#parts + 1] = "no target macro (" .. whyNot .. ")"
+    end
+    local marked, why = Anglers.Waypoint(row)
+    if marked then
+        parts[#parts + 1] = "marked on your map"
+    else
+        parts[#parts + 1] = "no map mark (" .. why .. ")"
+    end
+    ns.Log("angler clicked:", row.name, row.zone, macro and "macro made" or whyNot, marked and "map marked" or why)
+    ns.Util.Print(row.name .. ": " .. table.concat(parts, "; ") .. ".")
+    return macro, marked
+end
