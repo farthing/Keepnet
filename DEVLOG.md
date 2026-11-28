@@ -5,7 +5,7 @@ Newest state first. Read this before working on the addon.
 ## RESUME HERE
 
 **1.2.9 (2026-11-28): fishing trainers and tackle vendors by zone, for the character's side;
-new tag line and feature order. Passes its offline tests (`test_anglers.lua`, 40+ checks);
+new tag line and feature order. Passes its offline tests (`test_anglers.lua`, 38 checks);
 committed and tagged; NOT installed, NOT uploaded (1.2.7 is the last on CurseForge), never
 seen in the game.**
 - **The owner:** "an area that has a list of each fishing vendor and trainer per zone. for the
