@@ -4,6 +4,11 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.22 is on CurseForge (2026-11-28, evening; "Uploading" when last looked), with the new
+summary, the description and the Issues link to GitHub. See `PUBLISHING.md`, "1.2.22". Open:
+the personal rewrite of the description waits for the owner's yes, and five pictures are
+owed (listed there). Next upload: `release.py --since 1.2.22`.**
+
 **2026-11-28: GitHub issue forms.** `.github/ISSUE_TEMPLATE`: "Report a problem" (what
 happened, the pasted log; label `problem`) and "Suggest a feature" (label `idea`); the owner
 asked whether the page had a feature request section. README and the description have a

@@ -452,6 +452,37 @@ The owner: "push to curse".
 - Screenshots of the author site often time out in this browser; reading the page with
   scripts worked throughout.
 
+## 1.2.22 (2026-11-28, evening)
+
+The owner: "we're uploading now. so push to curse, make the curse changes."
+
+- **Keepnet 1.2.22 uploaded** as the twelfth file (`dist/Keepnet-1.2.22.zip`, 51 files, 396 KB,
+  no development mark): release, 1.60.1, Auctionator optional (copied from 1.2.7), published
+  automatically once approved, display name "Keepnet 1.2.22". "Uploading" when last looked.
+  Its changelog is written for the site (`dist/changelog-1.2.22-site.html`, not tracked) and
+  covers 1.2.8 to 1.2.22 as a whole. **Next: `release.py --since 1.2.22`.**
+- **Summary** is now "Easy one-key fishing, searchable session history and tracking, the skill
+  every zone asks for, fishing trainers and vendors by zone for your faction, and a bobber you
+  can't miss." (177 of 256 characters; also the TOC's Notes).
+- **Description** saved with the new feature order, the trainers and vendors point,
+  "Something not working?" and "Got an idea?" ("Changes saved successfully").
+  - `setContent` only held when nothing else was fired at the editor: `ed.focus()` and a
+    `blur` after it put the old text back. Use `setContent`, `setDirty(true)`, `fire('change')`
+    and read the content back before Save.
+- **Issues link:** the setting is on the LEGACY site,
+  `legacy.curseforge.com/wow/addons/keepnet/settings/issues`: Issue Tracker "External",
+  `https://github.com/farthing/Keepnet/issues`, Save Changes (the page reloads; read back).
+- **NOT on the site yet:** the more personal description (first-person opening, shorter
+  feature list, a Trainers and vendors section, "How this was made" naming Claude), written
+  the same evening on the owner's "i want the description to be more human" and "a line at
+  the bottom saying created with the help of claude". It is in
+  `media/curseforge-description.html`; it speaks in the owner's voice, so it waits for their
+  yes.
+- **Pictures owed** (the owner asked for the list): Zones with the Trainers & vendors button
+  (redo 04), the trainers and vendors list (new), Appearance with two sliders (redo 07),
+  Settings with Report a problem (redo 08, on a released copy or with the development
+  sentence blanked), the Report a problem window (new).
+
 ### Waiting for the next upload (written 2026-11-25, night; done with 1.1.4, see above)
 
 `media\curseforge-description.html` is ahead of the site: it has what 1.0.2 to 1.0.8 add
