@@ -233,6 +233,19 @@ needed. `sounds-local\` is never committed.
 - Lures are recognised from their tooltip ("Use: When applied to your fishing pole ..."), which
   is English wording; on another language only the built-in list of known lures is found.
 
+## Something not working?
+
+Open Keepnet, go to the **Settings** tab and click **Report a problem**. A window opens with a
+log of what Keepnet has been doing and the steps to send it: click **Select all**, press Ctrl+C,
+and paste it into a new issue at <https://github.com/farthing/Keepnet/issues> (or into a comment
+on the CurseForge page if you have no GitHub account). Say what you expected and what happened
+instead.
+
+The log holds only Keepnet's own steps: no chat and no other players. Your character names are
+taken out before it is shown; it does include your gold where Keepnet weighed up a purchase.
+Nothing is sent by itself: an addon can't reach the internet, so the log leaves your game only
+when you copy it out.
+
 ## Files
 
 ```

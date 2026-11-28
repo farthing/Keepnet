@@ -4,6 +4,14 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.21 (2026-11-28): reporting a problem can be found.** My three suggestions, taken by the
+owner ("do all 3"): the Settings button is "Report a problem" (was "Collect logs"); the log
+window and the report's header name a second way to send it, a comment on the CurseForge page,
+for players with no GitHub account; README and `media/curseforge-description.html` have a
+"Something not working?" section. The SITE description still waits for the next upload.
+Tests pass; committed, tagged; not uploaded; not seen in the game (the window is 12 taller
+for the extra line).
+
 **1.2.20 (2026-11-28): the log window explains itself (the tag v1.2.19 is a broken commit: its LogWindow.lua does not load; never use it)** (the owner: "add explanation text to
 the log window, that they need to copy the text, that click selects all and so on"): five
 lines above the text (Select all, Ctrl+C, where to paste with Ctrl+V, names taken out); the

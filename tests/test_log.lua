@@ -42,6 +42,8 @@ function T.run(ns)
     local how = ns.LogWindow.how:GetText()
     check(how:find("Select all", 1, true) and how:find("Ctrl+C", 1, true) and how:find("Ctrl+V", 1, true)
         and how:find("github.com/farthing/Keepnet/issues", 1, true), "the window says how to send it, step by step")
+    check(how:find("curseforge.com/wow/addons/keepnet", 1, true), "with a second way for players without an account")
+    eq(button.label and button.label:GetText() or button:GetText(), "Report a problem", "the button says why to press it")
     local all = ns.LogWindow.all
     all:GetScript("OnClick")(all)
     check(ns.LogWindow.count:GetText():find("Ctrl+C", 1, true), "Select all says what is left to do")

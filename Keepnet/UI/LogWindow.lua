@@ -7,7 +7,7 @@ local W = ns.Widgets
 local LogWindow = {}
 ns.LogWindow = LogWindow
 
-local WIDTH, HEIGHT = 620, 440
+local WIDTH, HEIGHT = 620, 452
 local window, box, count
 
 local function Fill()
@@ -31,7 +31,7 @@ local function Create()
     window:SetScript("OnDragStop", window.StopMovingOrSizing)
     if UISpecialFrames then table.insert(UISpecialFrames, "KeepnetLogWindow") end
 
-    local title = W.Text(window, "GameFontNormal", "Keepnet log")
+    local title = W.Text(window, "GameFontNormal", "Report a problem")
     title:SetPoint("TOPLEFT", 14, -32)
     count = W.Text(window, "GameFontDisableSmall")
     count:SetPoint("LEFT", title, "RIGHT", 10, 0)
@@ -43,12 +43,13 @@ local function Create()
         .. "1. Click \"Select all\" below. (Everything is also selected when this window opens.)\n"
         .. "2. Press Ctrl+C to copy it. The game doesn't let an addon copy for you.\n"
         .. "3. Open " .. ns.ISSUES .. " in your browser, start a new issue and paste with Ctrl+V.\n"
+        .. "    No GitHub account? Paste it into a comment at " .. ns.COMMENTS .. " instead.\n"
         .. "Your character names have been taken out of the text.")
     how:SetPoint("TOPLEFT", 14, -52)
     how:SetWidth(WIDTH - 28)
     how:SetJustifyH("LEFT")
     LogWindow.how = how
-    scroll:SetPoint("TOPLEFT", 14, -124)
+    scroll:SetPoint("TOPLEFT", 14, -136)
     scroll:SetPoint("BOTTOMRIGHT", -14, 44)
     scroll:EnableMouseWheel(true)
     local at = 0
@@ -68,7 +69,7 @@ local function Create()
     -- the player's own Ctrl+C; this only says that it was seen
     box:SetScript("OnKeyDown", function(_, key)
         if key == "C" and IsControlKeyDown and IsControlKeyDown() then
-            count:SetText("|cff" .. ns.Tone("ok") .. "Copied.|r Now paste it into a new issue at " .. ns.ISSUES)
+            count:SetText("|cff" .. ns.Tone("ok") .. "Copied.|r Now paste it where step 3 says.")
         end
     end)
     scroll:SetScrollChild(box)

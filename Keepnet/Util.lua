@@ -3,7 +3,7 @@
 -- (tests\run_tests.py).
 local ADDON, ns = ...
 ns.ADDON = ADDON or "Keepnet"
-ns.VERSION = "1.2.20"
+ns.VERSION = "1.2.21"
 
 local Util = {}
 ns.Util = Util
@@ -64,6 +64,8 @@ end
 
 -- Where a player sends a log
 ns.ISSUES = "github.com/farthing/Keepnet/issues"
+-- (and for players without an account there)
+ns.COMMENTS = "curseforge.com/wow/addons/keepnet"
 
 local function Escape(text)
     return (text:gsub("%p", "%%%0"))
@@ -111,7 +113,8 @@ function ns.LogReport()
         "Keepnet " .. tostring(ns.VERSION) .. " log, " .. #log .. " lines",
         "Game " .. build .. ", interface " .. interface .. ", language " .. tostring(GetLocale and GetLocale() or "?"),
         "Look " .. tostring(settings.theme) .. ", colour blind set " .. tostring(settings.bobberPalette or "normal"),
-        "Character names are taken out. Paste this into a new issue at " .. ns.ISSUES,
+        "Character names are taken out. Paste this into a new issue at " .. ns.ISSUES
+            .. " or into a comment at " .. ns.COMMENTS,
         "",
     }
     return table.concat(header, "\n") .. text, #log

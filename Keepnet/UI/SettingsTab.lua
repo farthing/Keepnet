@@ -428,10 +428,10 @@ local function Build(frame)
     updatesNote:SetJustifyH("LEFT")
 
     -- -------------------------------------------------------------------------- the log
-    local collect = W.Button(frame, "Collect logs", 110, 22, function() ns.LogWindow.Show() end)
+    local collect = W.Button(frame, "Report a problem", 130, 22, function() ns.LogWindow.Show() end)
     -- On the heading's own line, at the right: the note under the tick box runs to the bottom
     collect:SetPoint("TOPRIGHT", frame, "TOPLEFT", right + 360, ry + 4)
-    collect.tooltip = "Shows everything Keepnet has done lately, as text to copy."
+    collect.tooltip = "Something not working? This shows what Keepnet has done lately, as text to copy and send to its author."
     ns.LogWindow.button = collect
 
     return function()
