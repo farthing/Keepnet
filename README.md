@@ -245,6 +245,11 @@ taken out before it is shown; it does include your gold where Keepnet weighed up
 Nothing is sent by itself: an addon can't reach the internet, so the log leaves your game only
 when you copy it out.
 
+## Got an idea?
+
+Feature suggestions are welcome in the same place: open a new issue at
+<https://github.com/farthing/Keepnet/issues> and choose "Suggest a feature".
+
 ## Files
 
 ```

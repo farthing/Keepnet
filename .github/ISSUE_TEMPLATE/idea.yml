@@ -1,0 +1,17 @@
+name: Suggest a feature
+description: Something you would like Keepnet to do
+labels: ["idea"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like Keepnet to do?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: What would it help you with while fishing?
+      description: Knowing the situation helps more than the solution.
+    validations:
+      required: false

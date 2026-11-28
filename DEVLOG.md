@@ -4,6 +4,13 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**2026-11-28: GitHub issue forms.** `.github/ISSUE_TEMPLATE`: "Report a problem" (what
+happened, the pasted log; label `problem`) and "Suggest a feature" (label `idea`); the owner
+asked whether the page had a feature request section. README and the description have a
+"Got an idea?" pointer. OWED with the next CurseForge upload (the owner: "make that point to
+git as well"): set the project's Issues link to github.com/farthing/Keepnet/issues, and put
+the description up. The owner will still look at CurseForge comments from time to time.
+
 **1.2.22 (2026-11-28): reports go to GitHub issues only, and fit in one.** The owner: "keep all
 issues in one place. i don't want to have to check both git and curse". GitHub needs an
 account to post (so does a CurseForge comment); the CurseForge route added in 1.2.21 is gone
