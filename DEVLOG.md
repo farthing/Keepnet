@@ -4,6 +4,14 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**State at the end of 2026-11-28: 1.2.23 is the last file on CurseForge ("Processing" when last
+looked; 1.2.22 before it "Post Processing"), the description (personal voice, made with the
+help of Claude, 16 pictures) and the Issues link are live, five new pictures are in the gallery
+and the three they replace are deleted. OWED: titles and order for the five new pictures
+(PUBLISHING.md, "1.2.22"). The game holds the 1.2.23 development copy, in the Keepnet look
+with the sample sessions on (the owner uses Glass: they may want it back). Next upload:
+`release.py --since 1.2.23`.**
+
 **1.2.23 (2026-11-28, evening): the switch on the Zones tab changes its words.** Seen on the
 first picture of the trainers list: the button still read "Trainers & vendors". A flat
 button keeps its words in `button.label`, and `button:SetText` reached nothing; `MakeButton`

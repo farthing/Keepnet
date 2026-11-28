@@ -481,10 +481,22 @@ The owner: "we're uploading now. so push to curse, make the curse changes."
   written with the help of Claude; every change tried in the game). The owner asked for
   both ("more human", "a line at the bottom saying created with the help of claude",
   "point out I am not a programmer or developer"). Seen on the public page.
-- **Pictures owed** (the owner asked for the list): Zones with the Trainers & vendors button
-  (redo 04), the trainers and vendors list (new), Appearance with two sliders (redo 07),
-  Settings with Report a problem (redo 08, on a released copy or with the development
-  sentence blanked), the Report a problem window (new).
+- **1.2.23 uploaded the same evening** (the thirteenth file, "Processing" when last looked):
+  1.2.22 with the Zones tab's switch reading "Sessions" while the trainers show (found on a
+  picture). Its site changelog is 1.2.22's with one line in front. **Next: `--since 1.2.23`.**
+- **Five pictures** taken with the owner (Keepnet look, `/kn demo`, cut with `cut.ps1`; the
+  Report window with `-Box 1246,394,976,712`; the development sentence on Settings painted
+  out), added through "Add media" in one go:
+  `2292/192` 04-zones, `2292/193` 17-trainers-vendors, `2292/194` 07-appearance,
+  `2292/195` 08-settings, `2292/196` 18-report-a-problem.
+  - The three they replace are deleted: `2271/921`, `2284/294`, `2284/292` (hover the card,
+    click 25 in from its right edge and 26 down; "Delete media", OK). 19 pictures now.
+  - The description holds all five (16 pictures in it) and is saved; seen on the public page.
+- **OWED on the gallery:** the five new pictures have no titles and sit at the END of the
+  gallery. Titles: "Zones: the skill each asks for, and your sessions", "Fishing trainers
+  and vendors, zone by zone", "Appearance: looks, colours and sizes", "Settings", "Report a
+  problem: the log and how to send it". Order: zones after history, trainers after zones,
+  settings after alerts, appearance after interface hidden, report last.
 
 ### Waiting for the next upload (written 2026-11-25, night; done with 1.1.4, see above)
 
