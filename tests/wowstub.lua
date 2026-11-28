@@ -513,6 +513,8 @@ function UnitName() return Stub.player.name, Stub.player.surname end
 function GetRealmName() return Stub.realm end
 function GetRealZoneText() return Stub.zone end
 function GetSubZoneText() return Stub.subzone end
+-- The side being played: Stub.faction is "Alliance", "Horde" or nil (the game doesn't say)
+function UnitFactionGroup() return Stub.faction, Stub.faction end
 function InCombatLockdown() return Stub.lockdown end
 -- The channel's name, then (as in the game) when it began and when it ends, in thousandths
 -- of a second. Stub.lineSeconds is how long a line stays out; Stub.channelTimesHidden makes

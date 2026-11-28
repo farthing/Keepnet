@@ -1,10 +1,10 @@
 ## Interface: 16001
 ## Title: Keepnet
-## Notes: Fish smarter: see which zones your skill can fish, search every catch by character, spot your bobber at a glance, and pick your own sounds.
+## Notes: Easy one-key fishing, searchable session history and tracking, the skill every zone asks for, fishing trainers and vendors by zone for your faction, and a bobber you can't miss.
 ## Author: farthing
 ## X-License: MIT
 ## X-Curse-Project-ID: 1825443
-## Version: 1.2.8
+## Version: 1.2.9
 ## IconTexture: Interface\AddOns\Keepnet\Media\Icon
 ## SavedVariables: KeepnetDB
 ## OptionalDeps: EllesmereUI, Auctionator, TradeSkillMaster, Auc-Advanced, aux-forever, RECrystallize, OribosExchange, KeepnetSounds
@@ -16,6 +16,7 @@ Util.lua
 Sessions.lua
 Prices.lua
 Waters.lua
+Anglers.lua
 Rares.lua
 Core.lua
 Demo.lua

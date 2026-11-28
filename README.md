@@ -103,6 +103,10 @@ the net an angler keeps the catch in.
   harder water inside it. Click a session to open it with all of its details (a
   button there takes you back), or double-click a zone for all of its
   sessions in History.
+- **Trainers and vendors.** A button on the Zones tab swaps the sessions for the fishing trainers
+  and tackle vendors: those of the zone you clicked, or of every zone, each with what they do
+  and where they stand. Only the ones your faction can use are listed (your own and the neutral
+  ones).
 - **Where to catch it.** Type a fish or item name in History (part of a name is enough) and the
   list becomes the zones you caught it in, the zone where it made up the largest share of your
   catch first, with how many that was out of how many.

@@ -3,6 +3,13 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.9
+
+- Fishing trainers and tackle vendors, zone by zone: a new "Trainers & vendors" button on the
+  Zones tab lists who teaches Fishing and who sells poles and lures, with where they stand.
+  Click a zone for that zone's, or none for all of them. Only the ones your faction can use
+  are shown: your own and the neutral ones.
+
 ## 1.2.8
 
 - What a cast brought up stays on the strip under the live panel for 10 seconds instead of 8.

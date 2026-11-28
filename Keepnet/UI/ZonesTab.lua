@@ -9,8 +9,13 @@
 -- sessions in History. The sessions counted and listed are those of the character being
 -- played; the list at the top right changes that to another character of the account, or
 -- to all of them (UI.CharacterPicker).
+--
+-- A button beside that list turns the right side into the fishing trainers and tackle vendors
+-- (Anglers.lua) instead: those of the clicked zone, or of every zone while none is clicked,
+-- and only the ones the character's side can use (its own and the neutral ones).
 local _, ns = ...
 local Util, Sessions, Core, Waters, Skill, W, UI = ns.Util, ns.Sessions, ns.Core, ns.Waters, ns.Skill, ns.Widgets, ns.UI
+local Anglers = ns.Anglers
 
 local ZonesTab = {}
 ns.ZonesTab = ZonesTab
@@ -21,7 +26,12 @@ ZonesTab.RECENT = RECENT
 
 local ZONES_WIDTH = 274
 local GAP = 14
-local PICKER_WIDTH = 160
+local PICKER_WIDTH = 136
+local SWITCH_WIDTH = 124
+local SHOW_PEOPLE, SHOW_SESSIONS = "Trainers & vendors", "Sessions"
+
+-- What the right side lists: the zone's sessions, or its trainers and vendors
+local people = false
 
 -- The skill from which nothing gets away in the zone, in the colour the live panel uses for
 -- it: enough, some will get away, or can't be cast there. "-" where the number isn't known.
@@ -91,6 +101,36 @@ local SESSION_COLUMNS = {
     },
 }
 
+local PEOPLE_COLUMNS = {
+    {
+        title = "Name", width = 150,
+        text = function(row) return row.name end,
+    },
+    {
+        title = "What", width = 128,
+        text = function(row) return Anglers.Kind(row) end,
+    },
+    {
+        title = "Zone", width = 132,
+        text = function(row) return row.zone end,
+    },
+    {
+        title = "Where", width = 60, align = "RIGHT",
+        text = function(row) return Anglers.Where(row) end,
+    },
+}
+
+-- The trainers and vendors the character's side can use: the zone's, or everybody's (zone nil)
+function ZonesTab.PeopleRows(zone)
+    return Anglers.List(zone, Anglers.Side())
+end
+
+-- "for the Horde", or "" when the game doesn't say which side the character is on
+local function ForSide()
+    local name = Anglers.SideName(Anglers.Side())
+    return name and (" for the " .. name) or ""
+end
+
 -- One row per zone, in the list's own order: { zone, skill (nil when not known), sessions }. Every zone whose
 -- skill is known is there from the start with no sessions; a zone that isn't known joins the
 -- list once it has been fished.
@@ -147,13 +187,20 @@ local function Build(frame)
 
     local heading = W.Text(frame, "GameFontHighlightSmall")
     heading:SetPoint("TOPLEFT", UI.LEFT + ZONES_WIDTH + GAP, UI.TOP - 4)
-    heading:SetWidth(UI.WIDTH - 2 * UI.LEFT - ZONES_WIDTH - GAP - PICKER_WIDTH - 8)
+    heading:SetWidth(UI.WIDTH - 2 * UI.LEFT - ZONES_WIDTH - GAP - PICKER_WIDTH - SWITCH_WIDTH - 16)
     heading:SetJustifyH("LEFT")
     heading:SetWordWrap(false)
 
     -- Whose sessions: the character being played unless another is picked
     local who = UI.CharacterPicker(frame, PICKER_WIDTH)
     who:SetPoint("TOPRIGHT", -UI.LEFT, UI.TOP + 2)
+
+    -- Sessions, or trainers and vendors: the button names what a click changes to
+    local switch = W.Button(frame, SHOW_PEOPLE, SWITCH_WIDTH, 20, function()
+        people = not people
+        UI.Refresh()
+    end)
+    switch:SetPoint("TOPRIGHT", -UI.LEFT - PICKER_WIDTH - 8, UI.TOP + 2)
 
     -- Shown in the order ZoneRows gives until a heading is clicked; after that, rows of the
     -- same value keep that order among themselves
@@ -194,13 +241,52 @@ local function Build(frame)
     })
     sessions:SetPoint("TOPLEFT", UI.LEFT + ZONES_WIDTH + GAP, UI.TOP - 30)
 
+    -- In the same place as the sessions, one or the other showing
+    local folk = W.Table(frame, PEOPLE_COLUMNS, {
+        rows = 18,
+        sort = 0,
+        id = function(row) return row.id end,
+        onEnter = function(row, rowFrame)
+            GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT")
+            GameTooltip:SetText(row.name)
+            if row.title then GameTooltip:AddLine(row.title, 1, 0.82, 0, true) end
+            local place = Anglers.Where(row)
+            GameTooltip:AddLine(row.zone .. (place ~= "" and ("  " .. place) or ""), 1, 1, 1, true)
+            if row.sells then GameTooltip:AddLine("Sells: " .. row.sells, 1, 1, 1, true) end
+            if row.side == "N" then GameTooltip:AddLine("Serves both sides.", 0.6, 0.6, 0.6, true) end
+            if row.note then GameTooltip:AddLine(row.note, 0.6, 0.6, 0.6, true) end
+            GameTooltip:Show()
+        end,
+        onLeave = function() GameTooltip:Hide() end,
+    })
+    folk:SetPoint("TOPLEFT", UI.LEFT + ZONES_WIDTH + GAP, UI.TOP - 30)
+    folk:Hide()
+
     ZonesTab.zones, ZonesTab.sessions, ZonesTab.heading, ZonesTab.who = zones, sessions, heading, who
+    ZonesTab.people, ZonesTab.switch = folk, switch
 
     return function()
         who:Sync()
         local own = UI.Viewed() == Core.Character()
         zones:SetData(ZonesTab.ZoneRows())
         local chosen = zones:Selected()
+        switch:SetText(people and SHOW_SESSIONS or SHOW_PEOPLE)
+        sessions:SetShown(not people)
+        folk:SetShown(people)
+        -- Whose sessions doesn't matter to the trainers and vendors
+        who:SetShown(not people)
+        if people then
+            local rows = ZonesTab.PeopleRows(chosen and chosen.zone)
+            folk:SetData(rows)
+            if not chosen then
+                folk.empty:SetText("No trainers or vendors are known.")
+                heading:SetText(("Every fishing trainer and vendor%s"):format(ForSide()))
+            else
+                folk.empty:SetText(("No fishing trainer or vendor here%s."):format(ForSide()))
+                heading:SetText(("%s: %d%s"):format(chosen.zone, #rows, ForSide()))
+            end
+            return
+        end
         if not chosen then
             sessions.empty:SetText("Click a zone to list its sessions.")
             sessions:SetData({})

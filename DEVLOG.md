@@ -4,6 +4,37 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.9 (2026-11-28): fishing trainers and tackle vendors by zone, for the character's side;
+new tag line and feature order. Passes its offline tests (`test_anglers.lua`, 40+ checks);
+committed and tagged; NOT installed, NOT uploaded (1.2.7 is the last on CurseForge), never
+seen in the game.**
+- **The owner:** "an area that has a list of each fishing vendor and trainer per zone. for the
+  faction the character is" (Horde sees Horde and neutral, Alliance sees Alliance and neutral).
+- **Where:** the Zones tab. The window has no room for an eighth tab (7 x 104 wide), so a
+  button beside the character list ("Trainers & vendors" / "Sessions") swaps the right side.
+  A zone clicked: that zone's people; none clicked: everybody. Columns Name, What, Zone,
+  Where; the tooltip adds the title, what is sold and a note. My choice, not the owner's.
+- **Data:** `Keepnet\Anglers.lua`, 101 people (26 train, 3 of them also sell; the rest
+  vendors), from Wowhead's Forever NPC pages, gathered by a helper agent through the browser.
+  "Vendor" = sells a fishing pole or a lure, which takes in about 70 general trade vendors; say
+  the word and they are cut down to dedicated tackle sellers. Coordinates are the first spot
+  Wowhead lists. Left out: two with no clear side (Dala Fairmaw in Mount Hyjal, Kenneth
+  "Kirby" Millstead in Riverglades) and six with no spawn. Wowhead lists no seller for the
+  Aquadynamic Fish Lens or Flesh Eating Worm.
+- Mastercraft (installed, all rights reserved) holds a trainer table; it was seen while
+  looking for a source and NOT used. Nothing was checked in the game.
+- The side comes from `UnitFactionGroup("player")`; when the game gives neither, nobody is
+  left out.
+- **Tag line** (TOC Notes; the owner gave the framework: easy fishing, searchable history and
+  tracking, zone requirements, vendors/trainers by faction, visible bobber): "Easy one-key
+  fishing, searchable session history and tracking, the skill every zone asks for, fishing
+  trainers and vendors by zone for your faction, and a bobber you can't miss." My wording;
+  the owner has not seen it yet. `media/curseforge-description.html` has those features first
+  in its list, then the others. The SITE still has the old summary and description: put both
+  up with the next upload.
+- **Ideas:** a click on a person sets a map waypoint; learn people the list lacks when a
+  trainer or vendor window opens.
+
 **Decided 2026-11-27: no cast after the lure.** The owner asked for "apply lure if available,
 after applying, auto cast".
 - A cast by itself isn't possible (protected; one key press, one action) and would be
