@@ -3,6 +3,10 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.13
+
+- The line under the "Trainers & vendors" button is green, so it is easier to see.
+
 ## 1.2.12
 
 - The size slider on the Appearance tab is now "Scale" and sizes Keepnet's window as well as

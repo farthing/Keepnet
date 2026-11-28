@@ -4,6 +4,10 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.13 (2026-11-28): the "Click one:" line under the Trainers & vendors button is green**
+(40ff40, the highlight font; the owner: "more visible, green text maybe"). The Matrix colour
+set inks every text green anyway. Tests pass; committed, tagged; not uploaded.
+
 **1.2.12 (2026-11-28): one "Scale" slider for the window and the live panel** (the owner: "a
 scale slider added to appearance. which adjust the scale of the settings and live window").
 The Appearance tab already had a "Live panel" size slider (`panelScale`, 70 to 150 %) and no

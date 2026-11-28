@@ -202,8 +202,8 @@ local function Build(frame)
     end)
     switch:SetPoint("TOPRIGHT", -UI.LEFT - PICKER_WIDTH - 8, UI.TOP + 2)
     -- Under the button while the trainers and vendors show: what a click on one does
-    local clickHint = W.Text(frame, "GameFontDisableSmall",
-        "Click one: Keepnet makes a targeting macro for them, and a waypoint when you are in their zone.")
+    local clickHint = W.Text(frame, "GameFontHighlightSmall",
+        "|cff40ff40Click one: Keepnet makes a targeting macro for them, and a waypoint when you are in their zone.|r")
     clickHint:SetPoint("TOPRIGHT", -UI.LEFT, UI.TOP - 19)
     clickHint:SetJustifyH("RIGHT")
     clickHint:Hide()
