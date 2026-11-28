@@ -4,6 +4,20 @@ Newest state first. Read this before working on the addon.
 
 ## RESUME HERE
 
+**1.2.17 (2026-11-28): the collected log is made for sending to GitHub issues, without the
+player in it.** The owner asked whether the button could email the log (it can't: an addon
+has no network and writes no files), then: "copy and paste looks good, and use github
+issues ... make sure the log does not have any dangerous data of the player".
+- `ns.LogReport()`: a header (Keepnet version, game build and interface, language, look,
+  colour blind set, where to paste it) and the lines with every character name Keepnet knows
+  on the account, the played character's name and anything shaped like a player GUID taken
+  out. The saved log itself is unchanged; the scrub is on the way out.
+- What the log holds at all: Keepnet's own events (tables show as "<table>"), the lines it
+  prints, vendor sums (the player's gold, in copper), NPC names clicked. No chat, no other
+  players, no account or realm. Gold was left in on purpose: it is what explains a purchase.
+- The repo is already public with issues on (checked with gh that day).
+- Tests pass; committed, tagged; not uploaded.
+
 **1.2.16 (2026-11-28): two size sliders; general vendors behind a tick box.** Both were my
 objections to my own earlier work, and the owner agreed ("lets make two sliders, and do the
 switch to include/exclude general vendors").

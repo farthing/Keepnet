@@ -11,8 +11,9 @@ local WIDTH, HEIGHT = 620, 400
 local window, box, count
 
 local function Fill()
-    local text, lines = ns.LogText()
-    count:SetText(("%d line%s. Click in the text, Ctrl+A, then Ctrl+C to copy."):format(lines, lines == 1 and "" or "s"))
+    local text, lines = ns.LogReport()
+    count:SetText(("%d line%s. Ctrl+A, Ctrl+C, then paste into a new issue at %s"):format(lines,
+        lines == 1 and "" or "s", ns.ISSUES))
     box:SetText(text)
     box:SetCursorPosition(0)
     box:HighlightText()

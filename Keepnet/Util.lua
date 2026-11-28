@@ -3,7 +3,7 @@
 -- (tests\run_tests.py).
 local ADDON, ns = ...
 ns.ADDON = ADDON or "Keepnet"
-ns.VERSION = "1.2.16"
+ns.VERSION = "1.2.17"
 
 local Util = {}
 ns.Util = Util
@@ -60,6 +60,61 @@ end
 
 function ns.LogClear()
     for i = #log, 1, -1 do log[i] = nil end
+end
+
+-- Where a player sends a log
+ns.ISSUES = "github.com/farthing/Keepnet/issues"
+
+local function Escape(text)
+    return (text:gsub("%p", "%%%0"))
+end
+
+-- The log as it is handed to the player for sending: a few lines saying which Keepnet and
+-- which game, then the lines, with nothing in them that says who the player is. Taken out:
+-- the names of every character Keepnet knows on the account (and of the one being played),
+-- and anything shaped like the game's own number for a player. The log never holds chat,
+-- other players, the account or the realm's address; this is the belt to those braces.
+function ns.LogReport()
+    local names = {}
+    local function Name(value)
+        if type(value) == "string" and #value >= 3 then names[value] = true end
+    end
+    if UnitName then
+        local ok, first, second = pcall(UnitName, "player")
+        if ok then Name(first) Name(second) end
+    end
+    for key, character in pairs((ns.db and ns.db.chars) or {}) do
+        Name(key)
+        if type(key) == "string" then
+            for part in key:gmatch("[^%-]+") do Name(part) end
+        end
+        if type(character) == "table" then Name(character.name) end
+    end
+    -- (the longest first, so a whole key goes before the name inside it)
+    local ordered = {}
+    for name in pairs(names) do ordered[#ordered + 1] = name end
+    table.sort(ordered, function(a, b) return #a > #b end)
+
+    local text = table.concat(log, "\n")
+    for _, name in ipairs(ordered) do
+        text = text:gsub(Escape(name), "<character>")
+    end
+    text = text:gsub("Player%-%d+%-%x+", "<player>")
+
+    local build, interface = "?", "?"
+    if GetBuildInfo then
+        local ok, version, number, _, toc = pcall(GetBuildInfo)
+        if ok then build, interface = tostring(version) .. " (" .. tostring(number) .. ")", tostring(toc) end
+    end
+    local settings = ns.settings or {}
+    local header = {
+        "Keepnet " .. tostring(ns.VERSION) .. " log, " .. #log .. " lines",
+        "Game " .. build .. ", interface " .. interface .. ", language " .. tostring(GetLocale and GetLocale() or "?"),
+        "Look " .. tostring(settings.theme) .. ", colour blind set " .. tostring(settings.bobberPalette or "normal"),
+        "Character names are taken out. Paste this into a new issue at " .. ns.ISSUES,
+        "",
+    }
+    return table.concat(header, "\n") .. text, #log
 end
 
 function ns.On(name, fn)

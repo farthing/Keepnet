@@ -22,6 +22,16 @@ function T.run(ns)
     check(text:find("line 1600", 1, true) and not text:find("line 50\n", 1, true), "the oldest go first")
     eq(#ns.db.log, 1500, "the saved data holds the same")
 
+    -- What is handed over for sending says which Keepnet, and never who the player is
+    ns.Log("session of", ns.Core.Character(), "and", (UnitName("player")), "Player-1234-0ABCDEF9")
+    local report = ns.LogReport()
+    check(report:find("Keepnet " .. ns.VERSION .. " log", 1, true), "the report starts with the version")
+    check(report:find("github.com/farthing/Keepnet/issues", 1, true), "and where to send it")
+    check(report:find("session of <character> and <character> <player>", 1, true),
+        "the character's name, its key and a player's number are taken out")
+    check(not report:find((UnitName("player")), 1, true), "the name is nowhere in it")
+    check(ns.LogText():find((UnitName("player")), 1, true), "(the log itself is left as it was)")
+
     -- The button on the Settings tab opens the text for copying
     ns.UI.Show("settings")
     local button = ns.LogWindow.button

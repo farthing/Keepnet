@@ -3,6 +3,12 @@
 What changed for players, newest first. The section for a version becomes the changelog of
 its file on CurseForge (`tools\release.py --upload`).
 
+## 1.2.17
+
+- The log from "Collect logs" is ready to send: it starts with the Keepnet and game versions,
+  your character names are taken out of it, and the window says where it goes (a new issue at
+  github.com/farthing/Keepnet/issues).
+
 ## 1.2.16
 
 - Two size sliders on the Appearance tab: one for Keepnet's window and one for the live
